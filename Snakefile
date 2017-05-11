@@ -5,9 +5,9 @@ configfile: "sifaka_config.json"
 fastq_directory = "~/Data/sifaka"
 
 pcoq_1_path = "reference/GCF_000956105.1_Pcoq_1.0_genomic.fna"
-pcoq_1_prefix = "reference/GCF_000956105.1_Pcoq_1.0_genomic
+pcoq_1_prefix = "reference/GCF_000956105.1_Pcoq_1.0_genomic"
 
-# xyalign_path = 
+# xyalign_path =
 samtools_path = "samtools"
 bwa_path = "bwa"
 bbmerge_sh_path = "bbmerge.sh"
