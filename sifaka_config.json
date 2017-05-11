@@ -1,0 +1,54 @@
+{
+	"males": [
+		"M288",
+		"M418"
+	],
+
+	"females": [
+		"F249",
+		"F406"
+	],
+
+	"fastq_prefixes": [
+		"F249_read1",
+		"F249_read2",
+		"F406_read1",
+		"F406_read2"
+		"M288_read1",
+		"M288_read2",
+		"M418_read1",
+		"M418_read2"
+	],
+
+	"F249": {
+		"ID": "F429",
+		"SM": "F429",
+		"LB": "F429",
+		"PU": "D1W6GACXX.4",
+		"PL": "Illumina"
+	},
+
+	"F406": {
+		"ID": "F406",
+		"SM": "F406",
+		"LB": "F406",
+		"PU": "D1W6GACXX.4",
+		"PL": "Illumina"
+	},
+
+	"M288": {
+		"ID": "M288",
+		"SM": "M288",
+		"LB": "M288",
+		"PU": "D1W6GACXX.4",
+		"PL": "Illumina"
+	},
+
+	"M418": {
+		"ID": "M418",
+		"SM": "M418",
+		"LB": "M418",
+		"PU": "D1W6GACXX.4",
+		"PL": "Illumina"
+	},
+}
