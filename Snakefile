@@ -2,7 +2,7 @@ import os
 
 configfile: "sifaka_config.json"
 
-fastq_directory = "~/Data/sifaka"
+fastq_directory = "/home/thwebste/Data/sifaka"
 
 pcoq_1_path = "reference/GCF_000956105.1_Pcoq_1.0_genomic.fna"
 pcoq_1_prefix = "reference/GCF_000956105.1_Pcoq_1.0_genomic"
