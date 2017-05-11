@@ -13,7 +13,7 @@
 		"F249_read1",
 		"F249_read2",
 		"F406_read1",
-		"F406_read2"
+		"F406_read2",
 		"M288_read1",
 		"M288_read2",
 		"M418_read1",
@@ -50,5 +50,5 @@
 		"LB": "M418",
 		"PU": "D1W6GACXX.4",
 		"PL": "Illumina"
-	},
+	}
 }
