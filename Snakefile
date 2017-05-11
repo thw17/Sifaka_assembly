@@ -51,7 +51,7 @@ rule fastqc_analysis:
 
 rule adapter_discovery:
 	input:
-		fq1 = os.path.join(fastq_directory, "{sample}_read1.fastq.gz")
+		fq1 = os.path.join(fastq_directory, "{sample}_read1.fastq.gz"),
 		fq2 = os.path.join(fastq_directory, "{sample}_read2.fastq.gz")
 	output:
 		"adapters/{sample}.adapters.fa"
