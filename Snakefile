@@ -185,7 +185,7 @@ rule generate_callable_sites_hg38:
 	input:
 		ref = hg38_path,
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.bam",
-		bai = "processed_bams/{sample}.{genome}.mkdup.sorted.bam.bai"
+		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.bam.bai"
 	output:
 		"callable_sites/{sample}.{genome}.callablesites"
 	params:
@@ -199,7 +199,7 @@ rule generate_callable_sites_pcoq:
 	input:
 		ref = pcoq_1_path,
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.bam",
-		bai = "processed_bams/{sample}.{genome}.mkdup.sorted.bam.bai"
+		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.bam.bai"
 	output:
 		"callable_sites/{sample}.{genome}.callablesites"
 	params:
