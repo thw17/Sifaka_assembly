@@ -184,28 +184,28 @@ rule index_bam:
 rule generate_callable_sites_hg38:
 	input:
 		ref = hg38_path,
-		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.bam",
-		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.bam.bai"
+		bam = "processed_bams/{sample}.hg38.sorted.mkdup.bam",
+		bai = "processed_bams/{sample}.hg38.sorted.mkdup.bam.bai"
 	output:
-		"callable_sites/{sample}.{genome}.callablesites"
+		"callable_sites/{sample}.hg38.callablesites"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk,
-		summary = "stats/{sample}.{genome}.callable.summary"
+		summary = "stats/{sample}.hg38.callable.summary"
 	shell:
 		"java -Xmx12g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T CallableLoci -R {input.ref} -I {input.bam} --minDepth 4 --summary {params.summary} -o {output}"
 
 rule generate_callable_sites_pcoq:
 	input:
 		ref = pcoq_1_path,
-		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.bam",
-		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.bam.bai"
+		bam = "processed_bams/{sample}.pcoq.sorted.mkdup.bam",
+		bai = "processed_bams/{sample}.pcoq.sorted.mkdup.bam.bai"
 	output:
-		"callable_sites/{sample}.{genome}.callablesites"
+		"callable_sites/{sample}.pcoq.callablesites"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk,
-		summary = "stats/{sample}.{genome}.callable.summary"
+		summary = "stats/{sample}.pcoq.callable.summary"
 	shell:
 		"java -Xmx12g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T CallableLoci -R {input.ref} -I {input.bam} --minDepth 4 --summary {params.summary} -o {output}"
 
