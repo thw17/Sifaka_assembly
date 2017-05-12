@@ -3,6 +3,7 @@ import os
 configfile: "sifaka_config.json"
 
 fastq_directory = "/home/thwebste/Data/sifaka"
+temp_directory = "temp/"
 
 pcoq_1_path = "reference/GCF_000956105.1_Pcoq_1.0_genomic.fna"
 pcoq_1_prefix = "reference/GCF_000956105.1_Pcoq_1.0_genomic"
@@ -16,6 +17,7 @@ bbmerge_sh_path = "bbmerge.sh"
 bbduksh_path = "bbduk.sh"
 fastqc_path = "fastqc"
 samblaster_path = "samblaster"
+gatk_path = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
 
 all_samples = config["males"] + config["females"]
 
@@ -25,8 +27,10 @@ rule all:
 		expand("adapters/{sample}.adapters.fa", sample=all_samples),
 		expand("processed_bams/{sample}.hg38.sorted.mkdup.bam", sample=all_samples),
 		expand("processed_bams/{sample}.pcoq.sorted.mkdup.bam", sample=all_samples),
-		expand("stats/{sample}.pcoq.mkdup.sorted.bam.stats", sample=all_samples),
-		expand("stats/{sample}.hg38.mkdup.sorted.bam.stats", sample=all_samples),
+		expand("stats/{sample}.pcoq.sorted.mkdup.bam.stats", sample=all_samples),
+		expand("stats/{sample}.hg38.sorted.mkdup.bam.stats", sample=all_samples),
+		expand("callable_sites/{sample}.hg38.ONLYcallablesites.bed", sample=all_samples)
+		expand("callable_sites/{sample}.pcoq.ONLYcallablesites.bed", sample=all_samples)
 
 rule prepare_reference_pcoq_1:
 	input:
@@ -163,8 +167,60 @@ rule map_and_process_trimmed_reads_pcoq:
 
 rule bam_stats:
 	input:
-		"processed_bams/{sample}.{chrom}.sorted.mkdup.bam"
+		"processed_bams/{sample}.{genome}.sorted.mkdup.bam"
 	output:
-		"stats/{sample}.{chrom}.mkdup.sorted.bam.stats"
+		"stats/{sample}.{genome}.sorted.mkdup.bam.stats"
 	shell:
 		"samtools stats {input} | grep ^SN | cut -f 2- > {output}"
+
+rule index_bam:
+	input:
+		"processed_bams/{sample}.{genome}.sorted.mkdup.bam"
+	output:
+		"processed_bams/{sample}.{genome}.sorted.mkdup.bam.bai"
+	shell:
+		"samtools index {input}"
+
+rule generate_callable_sites_hg38:
+	input:
+		ref = hg38_path,
+		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.bam",
+		bai = "processed_bams/{sample}.{genome}.mkdup.sorted.bam.bai"
+	output:
+		"callable_sites/{sample}.{genome}.callablesites"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk,
+		summary = "stats/{sample}.{genome}.callable.summary"
+	shell:
+		"java -Xmx12g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T CallableLoci -R {input.ref} -I {input.bam} --minDepth 4 --summary {params.summary} -o {output}"
+
+rule extract_callable_sites:
+	input:
+		"callable_sites/{sample}.{genome}.callablesites"
+	output:
+		"callable_sites/{sample}.{genome}.ONLYcallablesites.bed"
+	shell:
+		"sed -e '/CALLABLE/!d' {input} > {output}"
+
+rule generate_callable_sites_pcoq:
+	input:
+		ref = pcoq_1_path,
+		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.bam",
+		bai = "processed_bams/{sample}.{genome}.mkdup.sorted.bam.bai"
+	output:
+		"callable_sites/{sample}.{genome}.callablesites"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk,
+		summary = "stats/{sample}.{genome}.callable.summary"
+	shell:
+		"java -Xmx12g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T CallableLoci -R {input.ref} -I {input.bam} --minDepth 4 --summary {params.summary} -o {output}"
+
+rule extract_callable_sites:
+	input:
+		"callable_sites/{sample}.{genome}.callablesites"
+	output:
+		"callable_sites/{sample}.{genome}.ONLYcallablesites.bed"
+	shell:
+		"sed -e '/CALLABLE/!d' {input} > {output}"
