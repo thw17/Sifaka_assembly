@@ -24,7 +24,9 @@ rule all:
 		expand("fastqc/{fq_prefix}_fastqc.html", fq_prefix=config["fastq_prefixes"]),
 		expand("adapters/{sample}.adapters.fa", sample=all_samples),
 		expand("processed_bams/{sample}.hg38.sorted.mkdup.bam", sample=all_samples),
-		expand("processed_bams/{sample}.pcoq.sorted.mkdup.bam", sample=all_samples)
+		expand("processed_bams/{sample}.pcoq.sorted.mkdup.bam", sample=all_samples),
+		expand("stats/{sample}.pcoq.mkdup.sorted.bam.stats", sample=all_samples),
+		expand("stats/{sample}.hg38.mkdup.sorted.bam.stats", sample=all_samples),
 
 rule prepare_reference_pcoq_1:
 	input:
@@ -158,3 +160,11 @@ rule map_and_process_trimmed_reads_pcoq:
 		"| {params.samblaster} "
 		"| {params.samtools} fixmate -O bam - - | {params.samtools} sort "
 		"-O bam -o {output}"
+
+rule bam_stats:
+	input:
+		"processed_bams/{sample}.{chrom}.sorted.mkdup.bam"
+	output:
+		"stats/{sample}.{chrom}.mkdup.sorted.bam.stats"
+	shell:
+		"samtools stats {input} | grep ^SN | cut -f 2- > {output}"
