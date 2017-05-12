@@ -195,14 +195,6 @@ rule generate_callable_sites_hg38:
 	shell:
 		"java -Xmx12g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T CallableLoci -R {input.ref} -I {input.bam} --minDepth 4 --summary {params.summary} -o {output}"
 
-rule extract_callable_sites:
-	input:
-		"callable_sites/{sample}.{genome}.callablesites"
-	output:
-		"callable_sites/{sample}.{genome}.ONLYcallablesites.bed"
-	shell:
-		"sed -e '/CALLABLE/!d' {input} > {output}"
-
 rule generate_callable_sites_pcoq:
 	input:
 		ref = pcoq_1_path,
