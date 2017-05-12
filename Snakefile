@@ -17,7 +17,7 @@ bbmerge_sh_path = "bbmerge.sh"
 bbduksh_path = "bbduk.sh"
 fastqc_path = "fastqc"
 samblaster_path = "samblaster"
-gatk_path = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
+gatk = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
 
 all_samples = config["males"] + config["females"]
 
