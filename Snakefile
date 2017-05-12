@@ -29,7 +29,7 @@ rule all:
 		expand("processed_bams/{sample}.pcoq.sorted.mkdup.bam", sample=all_samples),
 		expand("stats/{sample}.pcoq.sorted.mkdup.bam.stats", sample=all_samples),
 		expand("stats/{sample}.hg38.sorted.mkdup.bam.stats", sample=all_samples),
-		expand("callable_sites/{sample}.hg38.ONLYcallablesites.bed", sample=all_samples)
+		expand("callable_sites/{sample}.hg38.ONLYcallablesites.bed", sample=all_samples),
 		expand("callable_sites/{sample}.pcoq.ONLYcallablesites.bed", sample=all_samples)
 
 rule prepare_reference_pcoq_1:
