@@ -237,7 +237,7 @@ rule gatk_gvcf_pcoq:
 	input:
 		ref = pcoq_1_path,
 		bam = "processed_bams/{sample}.pcoq.sorted.mkdup.bam",
-		bai = "processed_bams/{sample}.pcoq.sorted.mkdup.bam.bai"
+		bai = "processed_bams/{sample}.pcoq.sorted.mkdup.bam.bai",
 		callable = "callable_sites/{sample}.pcoq.ONLYcallablesites.bed"
 	output:
 		"vcf/{sample}.pcoq.g.vcf"
@@ -252,7 +252,7 @@ rule gatk_gvcf_hg38:
 	input:
 		ref = hg38_path,
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.bam",
-		bai = "processed_bams/{sample}.hg38.sorted.mkdup.bam.bai"
+		bai = "processed_bams/{sample}.hg38.sorted.mkdup.bam.bai",
 		callable = "callable_sites/{sample}.hg38.ONLYcallablesites.bed"
 	output:
 		"vcf/{sample}.hg38.g.vcf"
