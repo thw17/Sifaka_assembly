@@ -18,6 +18,8 @@ bbduksh_path = "bbduk.sh"
 fastqc_path = "fastqc"
 samblaster_path = "samblaster"
 gatk = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
+bgzip_path = "bgzip"
+tabix_path = "tabix"
 
 all_samples = config["males"] + config["females"]
 
@@ -30,7 +32,11 @@ rule all:
 		expand("stats/{sample}.pcoq.sorted.mkdup.bam.stats", sample=all_samples),
 		expand("stats/{sample}.hg38.sorted.mkdup.bam.stats", sample=all_samples),
 		expand("callable_sites/{sample}.hg38.ONLYcallablesites.bed", sample=all_samples),
-		expand("callable_sites/{sample}.pcoq.ONLYcallablesites.bed", sample=all_samples)
+		expand("callable_sites/{sample}.pcoq.ONLYcallablesites.bed", sample=all_samples),
+		expand("stats/{sample}.pcoq.mapq.stats", sample=all_samples),
+		expand("stats/{sample}.hg38.mapq.stats", sample=all_samples),
+		"vcf/sifakas.pcoq.raw.vcf.gz.tbi",
+		"vcf/sifakas.hg38.raw.vcf.gz.tbi"
 
 rule prepare_reference_pcoq_1:
 	input:
@@ -216,3 +222,99 @@ rule extract_callable_sites:
 		"callable_sites/{sample}.{genome}.ONLYcallablesites.bed"
 	shell:
 		"sed -e '/CALLABLE/!d' {input} > {output}"
+
+rule mapq_check:
+	input:
+		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.bam",
+		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.bam.bai"
+	output:
+		"stats/{sample}.{genome}.mapq.stats"
+	threads: 4
+	shell:
+		"scripts/mapqs -infile {input.bam} -outfile {output} -threads {threads}"
+
+rule gatk_gvcf_pcoq:
+	input:
+		ref = pcoq_1_path,
+		bam = "processed_bams/{sample}.pcoq.sorted.mkdup.bam",
+		bai = "processed_bams/{sample}.pcoq.sorted.mkdup.bam.bai"
+		callable = "callable_sites/{sample}.pcoq.ONLYcallablesites.bed"
+	output:
+		"vcf/{sample}.pcoq.g.vcf"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	shell:
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+
+rule gatk_gvcf_hg38:
+	input:
+		ref = hg38_path,
+		bam = "processed_bams/{sample}.hg38.sorted.mkdup.bam",
+		bai = "processed_bams/{sample}.hg38.sorted.mkdup.bam.bai"
+		callable = "callable_sites/{sample}.hg38.ONLYcallablesites.bed"
+	output:
+		"vcf/{sample}.hg38.g.vcf"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	shell:
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+
+rule genotype_gvcfs_pcoq:
+	input:
+		ref = pcoq_1_path,
+		gvcfs = expand("vcf/{sample}.pcoq.g.vcf", sample=all_samples)
+	output:
+		v = "vcf/sifakas.pcoq.raw.vcf",
+		idx = "vcf/sifakas.pcoq.raw.vcf.idx"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
+rule genotype_gvcfs_hg38:
+	input:
+		ref = hg38_path,
+		gvcfs = expand("vcf/{sample}.hg38.g.vcf", sample=all_samples)
+	output:
+		v = "vcf/sifakas.hg38.raw.vcf",
+		idx = "vcf/sifakas.hg38.raw.vcf.idx"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
+rule zip_vcf:
+	input:
+		vcf = "vcf/sifakas.{genome}.raw.vcf"
+	output:
+		"vcf/sifakas.{genome}.raw.vcf.gz"
+	params:
+		bgzip = bgzip_path
+	shell:
+		"{params.bgzip} {input.vcf}"
+
+rule index_zipped_vcf:
+	input:
+		vcf = "vcf/sifakas.{genome}.raw.vcf.gz"
+	output:
+		"vcf/sifakas.{genome}.raw.vcf.gz.tbi"
+	params:
+		tabix = tabix_path
+	shell:
+		"{params.tabix} -p vcf {input}"
