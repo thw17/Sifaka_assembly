@@ -1,5 +1,9 @@
-// Quickly calculates MAPQ statistics for a bam file
+/*
+Quickly calculates MAPQ statistics for a bam file
 
+Tim Webster
+May 15, 2017
+*/
 package main
 
 import (
@@ -15,10 +19,10 @@ import (
 )
 
 var (
-	file = flag.String("infile", "", "input bam file")
+	file    = flag.String("infile", "", "input bam file")
 	outfile = flag.String("outfile", "", "output file for stats")
-	conc = flag.Int("threads", 0, "number of threads to use (0 = auto)")
-	help = flag.Bool("help", false, "display help")
+	conc    = flag.Int("threads", 0, "number of threads to use (0 = auto)")
+	help    = flag.Bool("help", false, "display help")
 )
 
 var mapqs []int
