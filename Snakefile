@@ -12,18 +12,19 @@ hg38_prefix = "reference/Homo_sapiens_assembly38"
 
 platypus_environment = "sifaka_platypus" # conda environment - platypus needs python 2.7
 
-# xyalign_path =
-samtools_path = "samtools"
-bwa_path = "bwa"
-bbmerge_sh_path = "bbmerge.sh"
 bbduksh_path = "bbduk.sh"
+bbmerge_sh_path = "bbmerge.sh"
 bedtools_path = "bedtools"
-fastqc_path = "fastqc"
-samblaster_path = "samblaster"
-gatk = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
 bgzip_path = "bgzip"
-tabix_path = "tabix"
+bwa_path = "bwa"
+fastqc_path = "fastqc"
+freebayes_path = "freebayes"
+gatk = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
 platypus_path = "platypus"
+samblaster_path = "samblaster"
+samtools_path = "samtools"
+tabix_path = "tabix"
+# xyalign_path =
 
 all_samples = config["males"] + config["females"]
 
