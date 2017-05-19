@@ -52,10 +52,11 @@ rule all:
 			"stats/{sample}.hg38.mapq.stats", sample=all_samples),
 		expand(
 			"vcf/sifakas.pcoq.{caller}.raw.vcf.gz.tbi",
-			caller=["freebayes", "platypus"]),
+			caller=["freebayes", "platypus", "gatk"]),
 		expand(
 			"vcf/sifakas.hg38.{caller}.raw.vcf.gz.tbi",
-			caller=["freebayes", "platypus"])
+			caller=["freebayes", "platypus", "gatk"])
+
 
 rule prepare_reference_pcoq_1:
 	input:
