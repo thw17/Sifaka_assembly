@@ -1,6 +1,10 @@
 # Sifaka_assembly
 This repository contains code to assemble and analyze sifaka exomic data.
 
+For questions, contact:
+Tim Webster
+Arizona State University
+
 ## Goals
 The main goals of this project are to explore:
 1) the success of human exome capture probes in Strepsirrhine primates
@@ -37,6 +41,7 @@ The assembly/analysis pipeline is written in Snakemake.  It handles running a va
 	 ./mapqs -h
 	 ```
  If you get something that looks like:
+
 	 ```
 	 Usage of ./mapqs:
 	   -help
