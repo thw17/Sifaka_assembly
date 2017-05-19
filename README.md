@@ -12,18 +12,18 @@ The assembly/analysis pipeline is written in Snakemake.  It handles running a va
 * First, install [Anaconda](https://www.continuum.io/downloads) or [Miniconda](https://conda.io/miniconda.html) for Python version 3.6 or higher.
 
 * Next, add relevant channels to conda (e.g., bioconda) with the following commands:
-```
-conda config --add channels r
-conda config --add channels conda-forge
-conda config --add channels bioconda
-```
+	```
+	conda config --add channels r
+	conda config --add channels conda-forge
+	conda config --add channels bioconda
+	```
 * Create the environments we'll be working in and install required packages with the commands:
 
-  ```
-  conda create --name Sifaka_snakemake python=3.6 bbmap bedtools htslib bwa fastqc freebayes samblaster samtools
+	```
+	conda create --name Sifaka_snakemake python=3.6 bbmap bedtools htslib bwa fastqc freebayes samblaster samtools
 
-  conda create --name sifaka_platypus platypus-variant
-  ```
+	conda create --name sifaka_platypus platypus-variant
+	```
 
  These two commands will create two separate environments, one (Sifaka_snakemake) that will be used for the main pipeline and most commands and a second for Platypus variant calling because Platypus requires a different version of Python.
 
@@ -33,23 +33,24 @@ conda config --add channels bioconda
 
  `mapqs` should work on most systems.  You can check this by changing to the `scripts` directory and entering the command:
 
- ```
- ./mapqs -h
- ```
+	 ```
+	 ./mapqs -h
+	 ```
  If you get something that looks like:
- ```
- Usage of ./mapqs:
-   -help
-     	display help
-   -infile string
-     	input bam file
-   -outfile string
-     	output file for stats
-   -threads int
-     	number of threads to use (0 = auto)
- ```
+	 ```
+	 Usage of ./mapqs:
+	   -help
+	     	display help
+	   -infile string
+	     	input bam file
+	   -outfile string
+	     	output file for stats
+	   -threads int
+	     	number of threads to use (0 = auto)
+	 ```
  then you should be fine.  On the other hand, if you get an error, then you'll need to compile mapqs.go. To do this:
- 	1. Check to see if Go is installed on your system: ```go version```
+
+	1. Check to see if Go is installed on your system: ```go version```
 		* If not, download and install Go ([instructions here](https://golang.org/doc/install))
 	2. Get the required go packages: ```go get github.com/biogo/hts/...```
 	3. Change to the scripts directory and compile: ```go build mapq.go```
