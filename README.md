@@ -55,7 +55,7 @@ The assembly/analysis pipeline is written in Snakemake.  It handles running a va
 	 ```
  then you should be fine.  On the other hand, if you get an error, then you'll need to compile mapqs.go. To do this:
 
-	1. Check to see if Go is installed on your system: ```go version```
-		* If not, download and install Go ([instructions here](https://golang.org/doc/install))
-	2. Get the required go packages: ```go get github.com/biogo/hts/...```
-	3. Change to the scripts directory and compile: ```go build mapq.go```
+1. Check to see if Go is installed on your system: ```go version```
+	* If not, download and install Go ([instructions here](https://golang.org/doc/install))
+2. Get the required go packages: ```go get github.com/biogo/hts/...```
+3. Change to the scripts directory and compile: ```go build mapq.go```
