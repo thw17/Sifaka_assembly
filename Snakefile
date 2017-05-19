@@ -351,7 +351,7 @@ rule platypus_variant_calling_pcoq:
 	threads: 4
 	run:
 		bam_files = ",".join(input.bams)
-		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --targets {input.callable} --assemble=1 --outputRefCalls=1")
+		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
 
 rule platypus_variant_calling_hg38:
 	input:
@@ -367,7 +367,7 @@ rule platypus_variant_calling_hg38:
 	threads: 4
 	run:
 		bam_files = ",".join(input.bams)
-		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --targets {input.callable} --assemble=1 --outputRefCalls=1")
+		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
 
 rule freebayes_pcoq:
 	input:
