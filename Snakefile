@@ -380,7 +380,7 @@ rule freebayes_pcoq:
 	params:
 		freebayes = freebayes_path
 	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} --report-monomorphic {input.bams}"
+		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
 
 rule freebayes_hg38:
 	input:
@@ -393,7 +393,7 @@ rule freebayes_hg38:
 	params:
 		freebayes = freebayes_path
 	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} --report-monomorphic {input.bams}"
+		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
 
 rule zip_vcf:
 	input:
