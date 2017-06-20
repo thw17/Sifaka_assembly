@@ -452,7 +452,7 @@ rule genotype_gvcfs_macaque:
 		ref = mmul_path,
 		gvcfs = expand("vcf/{sample}.mmul.g.vcf.gz", sample=macaque_samples)
 	output:
-		v = "vcf/sifakas.mmul.gatk.raw.vcf.gz"
+		v = "vcf/macaques.mmul.gatk.raw.vcf.gz"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk
