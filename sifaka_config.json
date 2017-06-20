@@ -1,15 +1,25 @@
 {
-	"males": [
+	"sifaka_males": [
 		"M288",
 		"M418"
 	],
 
-	"females": [
+	"sifaka_females": [
 		"F249",
 		"F406"
 	],
 
-	"fastq_prefixes": [
+	"macaque_males": [
+		"WI055",
+		"WI059"
+	],
+
+	"macaque_females": [
+		"WI056",
+		"WI057"
+	],
+
+	"sifaka_fastq_prefixes": [
 		"F249_read1",
 		"F249_read2",
 		"F406_read1",
@@ -18,6 +28,17 @@
 		"M288_read2",
 		"M418_read1",
 		"M418_read2"
+	],
+
+	"macaque_fastq_prefixes": [
+		"WI055_read1",
+		"WI055_read2",
+		"WI056_read1",
+		"WI056_read2",
+		"WI057_read1",
+		"WI057_read2",
+		"WI059_read1",
+		"WI059_read2"
 	],
 
 	"F249": {
@@ -49,6 +70,38 @@
 		"SM": "M418",
 		"LB": "M418",
 		"PU": "D1W6GACXX.4",
+		"PL": "Illumina"
+	},
+
+	"WI055": {
+		"ID": "WI055",
+		"SM": "WI055",
+		"LB": "WI055",
+		"PU": "C5VGTACXX.1",
+		"PL": "Illumina"
+	},
+
+	"WI056": {
+		"ID": "WI056",
+		"SM": "WI056",
+		"LB": "WI056",
+		"PU": "C5VGTACXX.1",
+		"PL": "Illumina"
+	},
+
+	"WI057": {
+		"ID": "WI057",
+		"SM": "WI057",
+		"LB": "WI057",
+		"PU": "C5VGTACXX.1",
+		"PL": "Illumina"
+	},
+
+	"WI059": {
+		"ID": "WI059",
+		"SM": "WI059",
+		"LB": "WI059",
+		"PU": "C5T66ACXX.1",
 		"PL": "Illumina"
 	}
 }
