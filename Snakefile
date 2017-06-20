@@ -300,7 +300,7 @@ rule generate_callable_sites_pcoq:
 
 rule generate_callable_sites_mmul:
 	input:
-		ref = pcoq_1_path,
+		ref = mmul_path,
 		bam = "processed_bams/{sample}.mmul.sorted.mkdup.bam",
 		bai = "processed_bams/{sample}.mmul.sorted.mkdup.bam.bai"
 	output:
