@@ -183,7 +183,7 @@ rule map_and_process_trimmed_reads_hg38:
 		fai = hg38_path + ".fai",
 		ref = hg38_path
 	output:
-		"processed_bams/{sample}.hg38.sorted.mkdup.bam"
+		"processed_bams/{sample}.{species}.hg38.sorted.mkdup.bam"
 	params:
 		id = lambda wildcards: config[wildcards.sample]["ID"],
 		sm = lambda wildcards: config[wildcards.sample]["SM"],
