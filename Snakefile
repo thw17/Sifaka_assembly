@@ -36,7 +36,7 @@ macaque_samples = config["macaque_males"] + config["macaque_females"]
 rule all:
 	input:
 		expand(
-			"fastqc/{fq_prefix}_fastqc.html", fq_prefix="all_fastq_prefixes"),
+			"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
 		expand(
 			"adapters/{sample}.adapters.fa", sample=all_samples),
 		expand(
