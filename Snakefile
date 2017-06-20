@@ -183,7 +183,7 @@ rule map_and_process_trimmed_reads_hg38:
 		fai = hg38_path + ".fai",
 		ref = hg38_path
 	output:
-		"processed_bams/{sample}.{species}.hg38.sorted.mkdup.bam"
+		"processed_bams/{sample}.hg38.sorted.mkdup.bam"
 	params:
 		id = lambda wildcards: config[wildcards.sample]["ID"],
 		sm = lambda wildcards: config[wildcards.sample]["SM"],
@@ -533,8 +533,8 @@ rule platypus_variant_calling_mmul:
 rule platypus_variant_calling_hg38_sifakas:
 	input:
 		ref = hg38_path,
-		bams = expand("processed_bams/{sample}.sifaka.hg38.sorted.mkdup.bam", sample=sifaka_samples),
-		bais = expand("processed_bams/{sample}.sifaka.hg38.sorted.mkdup.bam.bai", sample=sifaka_samples),
+		bams = expand("processed_bams/{sample}.hg38.sorted.mkdup.bam", sample=sifaka_samples),
+		bais = expand("processed_bams/{sample}.hg38.sorted.mkdup.bam.bai", sample=sifaka_samples),
 		callable = "callable_sites/combined.sifaka.hg38.ONLYcallablesites.bed"
 	output:
 		vcf = "vcf/sifakas.hg38.platypus.raw.vcf"
@@ -549,8 +549,8 @@ rule platypus_variant_calling_hg38_sifakas:
 rule platypus_variant_calling_hg38_macaque:
 	input:
 		ref = hg38_path,
-		bams = expand("processed_bams/{sample}.macaque.hg38.sorted.mkdup.bam", sample=macaque_samples),
-		bais = expand("processed_bams/{sample}.macaque.hg38.sorted.mkdup.bam.bai", sample=macaque_samples),
+		bams = expand("processed_bams/{sample}.hg38.sorted.mkdup.bam", sample=macaque_samples),
+		bais = expand("processed_bams/{sample}.hg38.sorted.mkdup.bam.bai", sample=macaque_samples),
 		callable = "callable_sites/combined.macaque.hg38.ONLYcallablesites.bed"
 	output:
 		vcf = "vcf/macaques.hg38.platypus.raw.vcf"
@@ -591,8 +591,8 @@ rule freebayes_mmul:
 rule freebayes_hg38_sifaka:
 	input:
 		ref = hg38_path,
-		bams = expand("processed_bams/{sample}.sifaka.hg38.sorted.mkdup.bam", sample=sifaka_samples),
-		bais = expand("processed_bams/{sample}.sifaka.hg38.sorted.mkdup.bam.bai", sample=sifaka_samples),
+		bams = expand("processed_bams/{sample}.hg38.sorted.mkdup.bam", sample=sifaka_samples),
+		bais = expand("processed_bams/{sample}.hg38.sorted.mkdup.bam.bai", sample=sifaka_samples),
 		callable = "callable_sites/combined.sifaka.hg38.ONLYcallablesites.bed"
 	output:
 		vcf = "vcf/sifakas.hg38.freebayes.raw.vcf"
@@ -604,8 +604,8 @@ rule freebayes_hg38_sifaka:
 rule freebayes_hg38_macaques:
 	input:
 		ref = hg38_path,
-		bams = expand("processed_bams/{sample}.macaque.hg38.sorted.mkdup.bam", sample=macaque_samples),
-		bais = expand("processed_bams/{sample}.macaque.hg38.sorted.mkdup.bam.bai", sample=macaque_samples),
+		bams = expand("processed_bams/{sample}.hg38.sorted.mkdup.bam", sample=macaque_samples),
+		bais = expand("processed_bams/{sample}.hg38.sorted.mkdup.bam.bai", sample=macaque_samples),
 		callable = "callable_sites/combined.macaque.hg38.ONLYcallablesites.bed"
 	output:
 		vcf = "vcf/macaques.hg38.freebayes.raw.vcf"
