@@ -405,30 +405,49 @@ rule gatk_gvcf_hg38_sifaka:
 		ref = hg38_path,
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.bam.bai",
-		callable = "callable_sites/combined.sifaka.hg38.ONLYcallablesites.bed"
+		callable = "callable_sites/combined.sifaka.hg38.ONLYcallablesites.bed",
+		chromosome = "{chrom}"
 	output:
-		"vcf/{sample}.sifaka.hg38.g.vcf.gz"
+		"vcf/{sample}.sifaka.hg38.{chrom}.g.vcf.gz"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk
 	threads: 4
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} -L {input.chromosome} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_gvcf_hg38_macaque:
 	input:
 		ref = hg38_path,
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.bam.bai",
-		callable = "callable_sites/combined.macaque.hg38.ONLYcallablesites.bed"
+		callable = "callable_sites/combined.macaque.hg38.ONLYcallablesites.bed",
+		chromosome = "{chrom}"
 	output:
-		"vcf/{sample}.macaque.hg38.g.vcf.gz"
+		"vcf/{sample}.macaque.hg38.{chrom}.g.vcf.gz"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk
 	threads: 4
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} -L {input.chromosome} --emitRefConfidence GVCF -o {output}"
+
+rule gatk_cat_variants_hg38:
+	input:
+		ref = hg38_path,
+		gvcfs = expand(
+			"vcf/{{sample}}.{{species}}.hg38.{chrom}.g.vcf.gz", chrom=config["hg38_chroms"])
+	output:
+		"vcf/{sample}.{species}.hg38.g.vcf.gz"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("-V " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -cp {params.gatk_path} org.broadinstitute.gatk.tools.CatVariants -R {input.ref} -o {output}")
 
 rule genotype_gvcfs_pcoq:
 	input:
