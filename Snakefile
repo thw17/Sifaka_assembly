@@ -400,12 +400,20 @@ rule gatk_gvcf_macaques:
 	shell:
 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 
+rule split_hg38_callable_bed_by_chrom:
+	input:
+		callable = "callable_sites/combined.{species}.hg38.ONLYcallablesites.bed"
+	output:
+		"callable_sites/combined.{species}.hg38.{chrom}.ONLYcallablesites.bed"
+	shell:
+		"""awk '$1=="{wildcards.chrom}"' {input.callable} > {output}"""
+
 rule gatk_gvcf_hg38_sifaka:
 	input:
 		ref = hg38_path,
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.bam.bai",
-		callable = "callable_sites/combined.sifaka.hg38.ONLYcallablesites.bed"
+		callable = "callable_sites/combined.sifaka.hg38.{chrom}.ONLYcallablesites.bed"
 	output:
 		"vcf/{sample}.sifaka.hg38.{chrom}.g.vcf.gz"
 	params:
@@ -414,14 +422,14 @@ rule gatk_gvcf_hg38_sifaka:
 		chromosome = "{chrom}"
 	threads: 4
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} -L {params.chromosome} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_gvcf_hg38_macaque:
 	input:
 		ref = hg38_path,
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.bam.bai",
-		callable = "callable_sites/combined.macaque.hg38.ONLYcallablesites.bed"
+		callable = "callable_sites/combined.macaque.hg38.{chrom}.ONLYcallablesites.bed"
 	output:
 		"vcf/{sample}.macaque.hg38.{chrom}.g.vcf.gz"
 	params:
@@ -430,7 +438,7 @@ rule gatk_gvcf_hg38_macaque:
 		chromosome = "{chrom}"
 	threads: 4
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} -L {params.chromosome} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_cat_variants_hg38:
 	input:
