@@ -455,7 +455,7 @@ rule gatk_cat_variants_hg38:
 		for i in input.gvcfs:
 			variant_files.append("-V " + i)
 		variant_files = " ".join(variant_files)
-		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -cp {params.gatk_path} org.broadinstitute.gatk.tools.CatVariants -R {input.ref} -o {output} {variant_files}")
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -cp {params.gatk_path} org.broadinstitute.gatk.tools.CatVariants -R {input.ref} -out {output} {variant_files}")
 
 rule genotype_gvcfs_pcoq:
 	input:
