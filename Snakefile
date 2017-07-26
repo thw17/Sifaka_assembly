@@ -77,7 +77,7 @@ rule all:
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"callable_sites/combined.{species}.hg38.{sampling}.ONLYcallablesites.bed",
-			species=["macaque","sifaka"], sampling=["downsampled", "unsampled"]))
+			species=["macaque","sifaka"], sampling=["downsampled", "unsampled"])
 		# expand(
 		# 	"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
 		# 	caller=["freebayes", "platypus", "gatk"],
