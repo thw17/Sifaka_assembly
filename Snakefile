@@ -41,49 +41,56 @@ rule all:
 			"adapters/{sample}.adapters.fa", sample=all_samples),
 		expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
-			sample=all_samples),
+			sample=all_samples, sampling=["downsampling", "unsampled"]),
 		expand(
 			"processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
-			sample=sifaka_samples),
+			sample=sifaka_samples, sampling=["downsampling", "unsampled"]),
 		expand(
 			"processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
-			sample=macaque_samples),
+			sample=macaque_samples, sampling=["downsampling", "unsampled"]),
 		expand(
 			"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
-			sample=sifaka_samples),
+			sample=sifaka_samples, sampling=["downsampling", "unsampled"]),
 		expand(
 			"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
-			sample=macaque_samples),
+			sample=macaque_samples, sampling=["downsampling", "unsampled"]),
 		expand(
 			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
-			sample=all_samples),
+			sample=all_samples, sampling=["downsampling", "unsampled"]),
 		expand(
 			"callable_sites/{sample}.hg38.{sampling}.ONLYcallablesites.bed",
-			sample=all_samples),
+			sample=all_samples, sampling=["downsampling", "unsampled"]),
 		expand(
 			"callable_sites/{sample}.pcoq.{sampling}.ONLYcallablesites.bed",
-			sample=sifaka_samples),
+			sample=sifaka_samples, sampling=["downsampling", "unsampled"]),
 		expand(
 			"callable_sites/{sample}.mmul.{sampling}.ONLYcallablesites.bed",
-			sample=macaque_samples),
+			sample=macaque_samples, sampling=["downsampling", "unsampled"]),
 		expand(
-			"stats/{sample}.pcoq.{sampling}.mapq.stats", sample=sifaka_samples),
+			"stats/{sample}.pcoq.{sampling}.mapq.stats",
+			sample=sifaka_samples, sampling=["downsampling", "unsampled"]),
 		expand(
-			"stats/{sample}.hg38.{sampling}.mapq.stats", sample=all_samples),
+			"stats/{sample}.hg38.{sampling}.mapq.stats",
+			sample=all_samples, sampling=["downsampling", "unsampled"]),
 		expand(
-			"stats/{sample}.mmul.{sampling}.mapq.stats", sample=macaque_samples),
+			"stats/{sample}.mmul.{sampling}.mapq.stats",
+			sample=macaque_samples, sampling=["downsampling", "unsampled"]),
 		expand(
 			"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
-			caller=["freebayes", "platypus", "gatk"]),
+			caller=["freebayes", "platypus", "gatk"],
+			sampling=["downsampling", "unsampled"]),
 		expand(
 			"vcf/macaques.mmul.{caller}.{sampling}.raw.vcf.gz.tbi",
-			caller=["freebayes", "platypus", "gatk"]),
+			caller=["freebayes", "platypus", "gatk"],
+			sampling=["downsampling", "unsampled"]),
 		expand(
 			"vcf/sifakas.hg38.{caller}.{sampling}.raw.vcf.gz.tbi",
-			caller=["freebayes", "platypus", "gatk"]),
+			caller=["freebayes", "platypus", "gatk"],
+			sampling=["downsampling", "unsampled"]),
 		expand(
 			"vcf/macaques.hg38.{caller}.{sampling}.raw.vcf.gz.tbi",
-			caller=["freebayes", "platypus", "gatk"])
+			caller=["freebayes", "platypus", "gatk"],
+			sampling=["downsampling", "unsampled"])
 
 rule prepare_reference_pcoq_1:
 	input:
