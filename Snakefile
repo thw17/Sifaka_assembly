@@ -188,7 +188,7 @@ rule map_and_process_trimmed_reads:
 	input:
 		fq1 = "trimmed_fastqs/{sample}_trimmed_read1.fastq.gz",
 		fq2 = "trimmed_fastqs/{sample}_trimmed_read2.fastq.gz",
-		fai = lambda wildcards: config["genome_paths"][wildcards.genome] + ".fai"
+		fai = lambda wildcards: config["genome_paths"][wildcards.genome] + ".fai",
 		ref = lambda wildcards: config["genome_paths"][wildcards.genome]
 	output:
 		"processed_bams/{sample}.{genome}.sorted.mkdup.unsampled.bam"
