@@ -1,4 +1,16 @@
 {
+	"genome_paths": {
+		"mmul": "reference/GCF_000772875.2_Mmul_8.0.1_genomic.fna",
+		"pcoq": "reference/GCF_000956105.1_Pcoq_1.0_genomic.fna",
+		"hg38": "reference/Homo_sapiens_assembly38.fasta"
+	},
+
+	"genome_prefixes": {
+		"mmul": "reference/GCF_000772875.2_Mmul_8.0.1_genomic",
+		"pcoq": "reference/GCF_000956105.1_Pcoq_1.0_genomic",
+		"hg38": "reference/Homo_sapiens_assembly38"
+	},
+
 	"sifaka_males": [
 		"M288",
 		"M418"
