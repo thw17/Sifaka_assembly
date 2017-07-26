@@ -270,9 +270,9 @@ rule extract_callable_sites:
 		"sed -e '/CALLABLE/!d' {input} > {output}"
 
 rule combine_callable_sites_mmul:
-	input: lambda wildcards:
+	input:
 		expand(
-			"callable_sites/{sample}.mmul.{wildcards.sampling}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.mmul.{{sampling}}.ONLYcallablesites.bed",
 			sample=macaque_samples)
 	output:
 		"callable_sites/combined.mmul.{sampling}.ONLYcallablesites.bed"
@@ -282,9 +282,9 @@ rule combine_callable_sites_mmul:
 		"cat {input} | sort -k1,1 -k2,2n | {params.bedtools} merge -i stdin > {output}"
 
 rule combine_callable_sites_pcoq:
-	input: lambda wildcards:
+	input:
 		expand(
-			"callable_sites/{sample}.pcoq.{wildcards.sampling}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.pcoq.{{sampling}}.ONLYcallablesites.bed",
 			sample=sifaka_samples)
 	output:
 		"callable_sites/combined.pcoq.{sampling}.ONLYcallablesites.bed"
@@ -294,9 +294,9 @@ rule combine_callable_sites_pcoq:
 		"cat {input} | sort -k1,1 -k2,2n | {params.bedtools} merge -i stdin > {output}"
 
 rule combine_callable_sites_hg38_sifakas:
-	input: lambda wildcards:
+	input:
 		expand(
-			"callable_sites/{sample}.hg38.{wildcards.sampling}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.hg38.{{sampling}}.ONLYcallablesites.bed",
 			sample=sifaka_samples)
 	output:
 		"callable_sites/combined.sifaka.hg38.{sampling}.ONLYcallablesites.bed"
@@ -306,9 +306,9 @@ rule combine_callable_sites_hg38_sifakas:
 		"cat {input} | sort -k1,1 -k2,2n | {params.bedtools} merge -i stdin > {output}"
 
 rule combine_callable_sites_hg38_macaques:
-	input: lambda wildcards:
+	input:
 		expand(
-			"callable_sites/{sample}.hg38.{wildcards.sampling}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.hg38.{{sampling}}.ONLYcallablesites.bed",
 			sample=macaque_samples)
 	output:
 		"callable_sites/combined.macaque.hg38.{sampling}.ONLYcallablesites.bed"
