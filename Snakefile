@@ -276,7 +276,7 @@ rule combine_callable_sites_mmul:
 			"callable_sites/{sample}.mmul.ONLYcallablesites.{{sampling}}.bed",
 			sample=macaque_samples)
 	output:
-		"callable_sites/combined.mmul.ONLYcallablesites.{sampling}.bed"
+		"callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
 	params:
 		bedtools = bedtools_path
 	shell:
@@ -288,7 +288,7 @@ rule combine_callable_sites_pcoq:
 			"callable_sites/{sample}.pcoq.ONLYcallablesites.{{sampling}}.bed",
 			sample=sifaka_samples)
 	output:
-		"callable_sites/combined.pcoq.ONLYcallablesites.{sampling}.bed"
+		"callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
 	params:
 		bedtools = bedtools_path
 	shell:
@@ -300,7 +300,7 @@ rule combine_callable_sites_hg38_sifakas:
 			"callable_sites/{sample}.hg38.ONLYcallablesites.{{sampling}}.bed",
 			sample=sifaka_samples)
 	output:
-		"callable_sites/combined.sifaka.hg38.ONLYcallablesites.{sampling}.bed"
+		"callable_sites/combined.sifaka.hg38.COMBINEDcallablesites.{sampling}.bed"
 	params:
 		bedtools = bedtools_path
 	shell:
@@ -312,7 +312,7 @@ rule combine_callable_sites_hg38_macaques:
 			"callable_sites/{sample}.hg38.ONLYcallablesites.{{sampling}}.bed",
 			sample=macaque_samples)
 	output:
-		"callable_sites/combined.macaque.hg38.ONLYcallablesites.{sampling}.bed"
+		"callable_sites/combined.macaque.hg38.COMBINEDcallablesites.{sampling}.bed"
 	params:
 		bedtools = bedtools_path
 	shell:
@@ -320,9 +320,9 @@ rule combine_callable_sites_hg38_macaques:
 
 rule split_hg38_callable_bed_by_chrom:
 	input:
-		callable = "callable_sites/combined.{species}.hg38.ONLYcallablesites.{sampling}.bed"
+		callable = "callable_sites/combined.{species}.hg38.COMBINEDcallablesites.{sampling}.bed"
 	output:
-		"callable_sites/combined.{species}.hg38.{chrom}.ONLYcallablesites.{sampling}.bed"
+		"callable_sites/combined.{species}.hg38.{chrom}.COMBINEDcallablesites.{sampling}.bed"
 	shell:
 		"""awk '$1=="{wildcards.chrom}"' {input.callable} > {output}"""
 
