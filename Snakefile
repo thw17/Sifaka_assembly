@@ -57,15 +57,15 @@ rule all:
 		expand(
 			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
 			sample=all_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"callable_sites/{sample}.hg38.{sampling}.ONLYcallablesites.bed",
-		# 	sample=all_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"callable_sites/{sample}.pcoq.{sampling}.ONLYcallablesites.bed",
-		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"callable_sites/{sample}.mmul.{sampling}.ONLYcallablesites.bed",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"callable_sites/{sample}.hg38.{sampling}.ONLYcallablesites.bed",
+			sample=all_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"callable_sites/{sample}.pcoq.{sampling}.ONLYcallablesites.bed",
+			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"callable_sites/{sample}.mmul.{sampling}.ONLYcallablesites.bed",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"])
 		# expand(
 		# 	"stats/{sample}.pcoq.{sampling}.mapq.stats",
 		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
