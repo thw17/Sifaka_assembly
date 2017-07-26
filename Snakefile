@@ -78,7 +78,7 @@ rule all:
 		expand(
 			"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
 			caller=["freebayes", "platypus", "gatk"],
-			sampling=["downsampled", "unsampled"])
+			sampling=["downsampled", "unsampled"]),
 		expand(
 			"vcf/macaques.mmul.{caller}.{sampling}.raw.vcf.gz.tbi",
 			caller=["freebayes", "platypus", "gatk"],
