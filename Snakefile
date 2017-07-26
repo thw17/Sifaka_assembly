@@ -660,3 +660,22 @@ rule index_zipped_vcf:
 		tabix = tabix_path
 	shell:
 		"{params.tabix} -p vcf {input}"
+
+rule downsample_bams:
+	input:
+		"processed_bams/{sample}.{genome}.sorted.mkdup.bam"
+	output:
+		"processed_bams/{sample}.{genome}.sorted.mkdup.downsampled.bam"
+	params:
+		samtools = samtools_path,
+		downsample_fraction = lambda wildcards: config[wildcards.genome][sample]
+	shell:
+		"{params.samtools} view -f 1024 -s 0.{params.downsample_fraction} -b {input} > {output}"
+
+rule index_downsample:
+	input:
+		"processed_bams/{sample}.{genome}.sorted.mkdup.downsampled.bam"
+	output:
+		"processed_bams/{sample}.{genome}.sorted.mkdup.downsampled.bam.bai"
+	shell:
+		"samtools index {input}"
