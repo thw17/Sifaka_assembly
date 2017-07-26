@@ -319,9 +319,9 @@ rule extract_callable_sites:
 		"sed -e '/CALLABLE/!d' {input} > {output}"
 
 rule combine_callable_sites_mmul:
-	input:
+	input: lambda wildcards:
 		expand(
-			"callable_sites/{sample}.mmul.{sampling}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.mmul.{wildcards.sampling}.ONLYcallablesites.bed",
 			sample=macaque_samples)
 	output:
 		"callable_sites/combined.mmul.{sampling}.ONLYcallablesites.bed"
