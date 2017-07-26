@@ -78,23 +78,23 @@ rule all:
 		expand(
 			"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
 			species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
+			caller=["freebayes", "platypus", "gatk"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.mmul.{caller}.{sampling}.raw.vcf.gz.tbi",
+			caller=["freebayes", "platypus", "gatk"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/sifakas.hg38.{caller}.{sampling}.raw.vcf.gz.tbi",
+			caller=["freebayes", "platypus", "gatk"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.hg38.{caller}.{sampling}.raw.vcf.gz.tbi",
+			caller=["freebayes", "platypus", "gatk"],
 			sampling=["downsampled", "unsampled"])
-		# expand(
-		# 	"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
-		# 	caller=["freebayes", "platypus", "gatk"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/macaques.mmul.{caller}.{sampling}.raw.vcf.gz.tbi",
-		# 	caller=["freebayes", "platypus", "gatk"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/sifakas.hg38.{caller}.{sampling}.raw.vcf.gz.tbi",
-		# 	caller=["freebayes", "platypus", "gatk"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/macaques.hg38.{caller}.{sampling}.raw.vcf.gz.tbi",
-		# 	caller=["freebayes", "platypus", "gatk"],
-		# 	sampling=["downsampled", "unsampled"])
 
 rule prepare_reference_pcoq_1:
 	input:
