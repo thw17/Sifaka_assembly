@@ -74,7 +74,7 @@ rule all:
 			sample=all_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.mmul.{sampling}.mapq.stats",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"])
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
 			caller=["freebayes", "platypus", "gatk"],
