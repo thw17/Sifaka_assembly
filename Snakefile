@@ -670,14 +670,36 @@ rule index_zipped_vcf:
 	shell:
 		"{params.tabix} -p vcf {input}"
 
-rule downsample_bams:
+rule downsample_bams_hg38:
 	input:
-		"processed_bams/{sample}.{genome}.sorted.mkdup.bam"
+		"processed_bams/{sample}.hg38.sorted.mkdup.bam"
 	output:
-		"processed_bams/{sample}.{genome}.sorted.mkdup.downsampled.bam"
+		"processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam"
 	params:
 		samtools = samtools_path,
-		downsample_fraction = lambda wildcards: config[wildcards.genome][wildcards.sample]
+		downsample_fraction = lambda wildcards: config["hg38"][wildcards.sample]
+	shell:
+		"{params.samtools} view -f 1024 -s 0.{params.downsample_fraction} -b {input} > {output}"
+
+rule downsample_bams_mmul:
+	input:
+		"processed_bams/{sample}.mmul.sorted.mkdup.bam"
+	output:
+		"processed_bams/{sample}.mmul.sorted.mkdup.downsampled.bam"
+	params:
+		samtools = samtools_path,
+		downsample_fraction = lambda wildcards: config["mmul"][wildcards.sample]
+	shell:
+		"{params.samtools} view -f 1024 -s 0.{params.downsample_fraction} -b {input} > {output}"
+
+rule downsample_bams_pcoq:
+	input:
+		"processed_bams/{sample}.pcoq.sorted.mkdup.bam"
+	output:
+		"processed_bams/{sample}.pcoq.sorted.mkdup.downsampled.bam"
+	params:
+		samtools = samtools_path,
+		downsample_fraction = lambda wildcards: config["pcoq"][wildcards.sample]
 	shell:
 		"{params.samtools} view -f 1024 -s 0.{params.downsample_fraction} -b {input} > {output}"
 
