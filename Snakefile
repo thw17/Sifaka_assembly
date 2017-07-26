@@ -74,7 +74,16 @@ rule all:
 			caller=["freebayes", "platypus", "gatk"]),
 		expand(
 			"vcf/macaques.hg38.{caller}.raw.vcf.gz.tbi",
-			caller=["freebayes", "platypus", "gatk"])
+			caller=["freebayes", "platypus", "gatk"]),
+		expand(
+			"processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam.bai",
+			sample=all_samples),
+		expand(
+			"processed_bams/{sample}.pcoq.sorted.mkdup.downsampled.bam.bai",
+			sample=sifaka_samples),
+		expand(
+			"processed_bams/{sample}.mmul.sorted.mkdup.downsampled.bam.bai",
+			sample=macaque_samples)
 
 
 rule prepare_reference_pcoq_1:
