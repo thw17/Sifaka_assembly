@@ -291,7 +291,7 @@ rule bam_stats:
 
 rule generate_callable_sites:
 	input:
-		ref = lambda wildcards: config["genome_paths"][wildcards.genome]
+		ref = lambda wildcards: config["genome_paths"][wildcards.genome],
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
 	output:
