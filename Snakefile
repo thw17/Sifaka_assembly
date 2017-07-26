@@ -76,7 +76,7 @@ rule all:
 			"stats/{sample}.mmul.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"callable_sites/combined.{species}.hg38.{chrom}.ONLYcallablesites.{sampling}.bed",
+			"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
 			species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
 			sampling=["downsampled", "unsampled"])
 		# expand(
@@ -322,7 +322,7 @@ rule split_hg38_callable_bed_by_chrom:
 	input:
 		callable = "callable_sites/combined.{species}.hg38.COMBINEDcallablesites.{sampling}.bed"
 	output:
-		"callable_sites/combined.{species}.hg38.{chrom}.COMBINEDcallablesites.{sampling}.bed"
+		"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed"
 	shell:
 		"""awk '$1=="{wildcards.chrom}"' {input.callable} > {output}"""
 
