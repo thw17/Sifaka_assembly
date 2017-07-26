@@ -79,7 +79,6 @@ rule all:
 			"callable_sites/combined.{species}.hg38.{chrom}.{sampling}.ONLYcallablesites.bed",
 			species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
 			sampling=["downsampled", "unsampled"])
-		)
 		# expand(
 		# 	"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
 		# 	caller=["freebayes", "platypus", "gatk"],
