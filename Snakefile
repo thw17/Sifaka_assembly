@@ -371,7 +371,7 @@ rule mapq_check:
 
 rule gatk_gvcf:
 	input:
-		ref = lambda wildcards: config["genome_paths"][wildcards.genome]
+		ref = lambda wildcards: config["genome_paths"][wildcards.genome],
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.{genome}.{sampling}.ONLYcallablesites.bed"
