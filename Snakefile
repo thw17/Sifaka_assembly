@@ -65,16 +65,16 @@ rule all:
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"callable_sites/{sample}.mmul.{sampling}.ONLYcallablesites.bed",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.pcoq.{sampling}.mapq.stats",
+			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.hg38.{sampling}.mapq.stats",
+			sample=all_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.mmul.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"])
-		# expand(
-		# 	"stats/{sample}.pcoq.{sampling}.mapq.stats",
-		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.hg38.{sampling}.mapq.stats",
-		# 	sample=all_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.mmul.{sampling}.mapq.stats",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		# expand(
 		# 	"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
 		# 	caller=["freebayes", "platypus", "gatk"],
