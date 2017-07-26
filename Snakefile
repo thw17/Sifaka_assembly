@@ -266,17 +266,17 @@ rule extract_callable_sites:
 	input:
 		"callable_sites/{sample}.{genome}.{sampling}.callablesites"
 	output:
-		"callable_sites/{sample}.{genome}.{sampling}.ONLYcallablesites.bed"
+		"callable_sites/{sample}.{genome}.ONLYcallablesites.{sampling}.bed"
 	shell:
 		"sed -e '/CALLABLE/!d' {input} > {output}"
 
 rule combine_callable_sites_mmul:
 	input:
 		expand(
-			"callable_sites/{sample}.mmul.{{sampling}}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.mmul.ONLYcallablesites.{{sampling}}.bed",
 			sample=macaque_samples)
 	output:
-		"callable_sites/combined.mmul.{sampling}.ONLYcallablesites.bed"
+		"callable_sites/combined.mmul.ONLYcallablesites.{sampling}.bed"
 	params:
 		bedtools = bedtools_path
 	shell:
@@ -285,10 +285,10 @@ rule combine_callable_sites_mmul:
 rule combine_callable_sites_pcoq:
 	input:
 		expand(
-			"callable_sites/{sample}.pcoq.{{sampling}}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.pcoq.ONLYcallablesites.{{sampling}}.bed",
 			sample=sifaka_samples)
 	output:
-		"callable_sites/combined.pcoq.{sampling}.ONLYcallablesites.bed"
+		"callable_sites/combined.pcoq.ONLYcallablesites.{sampling}.bed"
 	params:
 		bedtools = bedtools_path
 	shell:
@@ -297,10 +297,10 @@ rule combine_callable_sites_pcoq:
 rule combine_callable_sites_hg38_sifakas:
 	input:
 		expand(
-			"callable_sites/{sample}.hg38.{{sampling}}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.hg38.ONLYcallablesites.{{sampling}}.bed",
 			sample=sifaka_samples)
 	output:
-		"callable_sites/combined.sifaka.hg38.{sampling}.ONLYcallablesites.bed"
+		"callable_sites/combined.sifaka.hg38.ONLYcallablesites.{sampling}.bed"
 	params:
 		bedtools = bedtools_path
 	shell:
@@ -309,14 +309,22 @@ rule combine_callable_sites_hg38_sifakas:
 rule combine_callable_sites_hg38_macaques:
 	input:
 		expand(
-			"callable_sites/{sample}.hg38.{{sampling}}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.hg38.ONLYcallablesites.{{sampling}}.bed",
 			sample=macaque_samples)
 	output:
-		"callable_sites/combined.macaque.hg38.{sampling}.ONLYcallablesites.bed"
+		"callable_sites/combined.macaque.hg38.ONLYcallablesites.{sampling}.bed"
 	params:
 		bedtools = bedtools_path
 	shell:
 		"cat {input} | sort -k1,1 -k2,2n | {params.bedtools} merge -i stdin > {output}"
+
+rule split_hg38_callable_bed_by_chrom:
+	input:
+		callable = "callable_sites/combined.{species}.hg38.ONLYcallablesites.{sampling}.bed"
+	output:
+		"callable_sites/combined.{species}.hg38.{chrom}.ONLYcallablesites.{sampling}.bed"
+	shell:
+		"""awk '$1=="{wildcards.chrom}"' {input.callable} > {output}"""
 
 rule mapq_check:
 	input:
@@ -342,14 +350,6 @@ rule gatk_gvcf:
 	threads: 4
 	shell:
 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
-
-rule split_hg38_callable_bed_by_chrom:
-	input:
-		callable = "callable_sites/combined.{species}.hg38.{sampling}.ONLYcallablesites.bed"
-	output:
-		"callable_sites/combined.{species}.hg38.{chrom}.{sampling}.ONLYcallablesites.bed"
-	shell:
-		"""awk '$1=="{wildcards.chrom}"' {input.callable} > {output}"""
 
 rule gatk_gvcf_hg38_sifaka:
 	input:
