@@ -77,7 +77,7 @@ rule all:
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"callable_sites/combined.{species}.hg38.{chrom}.{sampling}.ONLYcallablesites.bed",
-			species=["macaque", "sifaka"], "chrom"=config["hg38_chroms"],
+			species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
 			sampling=["downsampled", "unsampled"])
 		)
 		# expand(
