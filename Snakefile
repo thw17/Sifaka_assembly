@@ -465,7 +465,7 @@ rule gatk_cat_variants_hg38:
 	input:
 		ref = hg38_path,
 		gvcfs = expand(
-			"vcf/{{sample}}.{{species}}.hg38.{chrom}.{sampling}.g.vcf.gz",
+			"vcf/{{sample}}.{{species}}.hg38.{chrom}.{{sampling}}.g.vcf.gz",
 			chrom=config["hg38_chroms"])
 	output:
 		"vcf/{sample}.{species}.hg38.{sampling}.g.vcf.gz"
@@ -483,7 +483,7 @@ rule genotype_gvcfs_pcoq:
 	input:
 		ref = pcoq_1_path,
 		gvcfs = expand(
-			"vcf/{sample}.pcoq.{sampling}.g.vcf.gz",
+			"vcf/{sample}.pcoq.{{sampling}}.g.vcf.gz",
 			sample=sifaka_samples)
 	output:
 		v = "vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz"
