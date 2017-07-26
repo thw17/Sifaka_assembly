@@ -47,16 +47,16 @@ rule all:
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"])
-		# expand(
-		# 	"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
-		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
-		# 	sample=all_samples, sampling=["downsampled", "unsampled"]),
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
+			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
+			sample=all_samples, sampling=["downsampled", "unsampled"]),
 		# expand(
 		# 	"callable_sites/{sample}.hg38.{sampling}.ONLYcallablesites.bed",
 		# 	sample=all_samples, sampling=["downsampled", "unsampled"]),
