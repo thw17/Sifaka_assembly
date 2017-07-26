@@ -58,13 +58,13 @@ rule all:
 			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
 			sample=all_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"callable_sites/{sample}.hg38.{sampling}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.hg38.ONLYcallablesites.{sampling}.bed",
 			sample=all_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"callable_sites/{sample}.pcoq.{sampling}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.pcoq.ONLYcallablesites.{sampling}.bed",
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"callable_sites/{sample}.mmul.{sampling}.ONLYcallablesites.bed",
+			"callable_sites/{sample}.mmul.ONLYcallablesites.{sampling}.bed",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.pcoq.{sampling}.mapq.stats",
@@ -76,7 +76,7 @@ rule all:
 			"stats/{sample}.mmul.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"callable_sites/combined.{species}.hg38.{chrom}.{sampling}.ONLYcallablesites.bed",
+			"callable_sites/combined.{species}.hg38.{chrom}.ONLYcallablesites.{sampling}.bed",
 			species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
 			sampling=["downsampled", "unsampled"])
 		# expand(
