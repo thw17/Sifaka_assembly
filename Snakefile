@@ -677,7 +677,7 @@ rule downsample_bams:
 		"processed_bams/{sample}.{genome}.sorted.mkdup.downsampled.bam"
 	params:
 		samtools = samtools_path,
-		downsample_fraction = lambda wildcards: config[wildcards.genome][sample]
+		downsample_fraction = lambda wildcards: config[wildcards.genome][wildcards.sample]
 	shell:
 		"{params.samtools} view -f 1024 -s 0.{params.downsample_fraction} -b {input} > {output}"
 
