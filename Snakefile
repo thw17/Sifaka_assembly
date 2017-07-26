@@ -76,9 +76,12 @@ rule all:
 			"stats/{sample}.mmul.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
-			caller=["freebayes", "platypus", "gatk"],
-			sampling=["downsampled", "unsampled"])
+			"callable_sites/combined.{species}.hg38.{sampling}.ONLYcallablesites.bed",
+			species=["macaque","sifaka"])
+		# expand(
+		# 	"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
+		# 	caller=["freebayes", "platypus", "gatk"],
+		# 	sampling=["downsampled", "unsampled"])
 		# expand(
 		# 	"vcf/macaques.mmul.{caller}.{sampling}.raw.vcf.gz.tbi",
 		# 	caller=["freebayes", "platypus", "gatk"],
