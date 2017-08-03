@@ -40,78 +40,93 @@ rule all:
 		expand(
 			"adapters/{sample}.adapters.fa", sample=all_samples),
 		expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
+			"processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam",
+			sample=all_samples),
 		expand(
-			"processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
-			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+			"processed_bams/{sample}.pcoq.sorted.mkdup.unsampled.bam",
+			sample=sifaka_samples),
 		expand(
-			"processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+			"processed_bams/{sample}.mmul.sorted.mkdup.unsampled.bam",
+			sample=macaque_samples),
 		expand(
-			"processed_bams/{sample}.rhemac2.sorted.mkdup.{sampling}.bam",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
-			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.rhemac2.sorted.mkdup.bam.{sampling}.stats",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"callable_sites/{sample}.hg38.ONLYcallablesites.{sampling}.bed",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"callable_sites/{sample}.pcoq.ONLYcallablesites.{sampling}.bed",
-			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"callable_sites/{sample}.mmul.ONLYcallablesites.{sampling}.bed",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"callable_sites/{sample}.rhemac2.ONLYcallablesites.{sampling}.bed",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.pcoq.{sampling}.mapq.stats",
-			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.hg38.{sampling}.mapq.stats",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.mmul.{sampling}.mapq.stats",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.rhemac2.{sampling}.mapq.stats",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
-			species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed",
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed",
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"callable_sites/combined.rhemac2.COMBINEDcallablesites.{sampling}.bed",
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.rhemac2.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"])
+			"processed_bams/{sample}.rhemac2.sorted.mkdup.unsampled.bam",
+			sample=macaque_samples)
+
+		#
+		# expand(
+		# 	"processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
+		# 	sample=all_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
+		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"processed_bams/{sample}.rhemac2.sorted.mkdup.{sampling}.bam",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
+		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.rhemac2.sorted.mkdup.bam.{sampling}.stats",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
+		# 	sample=all_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"callable_sites/{sample}.hg38.ONLYcallablesites.{sampling}.bed",
+		# 	sample=all_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"callable_sites/{sample}.pcoq.ONLYcallablesites.{sampling}.bed",
+		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"callable_sites/{sample}.mmul.ONLYcallablesites.{sampling}.bed",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"callable_sites/{sample}.rhemac2.ONLYcallablesites.{sampling}.bed",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.pcoq.{sampling}.mapq.stats",
+		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.hg38.{sampling}.mapq.stats",
+		# 	sample=all_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.mmul.{sampling}.mapq.stats",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.rhemac2.{sampling}.mapq.stats",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
+		# 	species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed",
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed",
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"callable_sites/combined.rhemac2.COMBINEDcallablesites.{sampling}.bed",
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/macaques.rhemac2.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"])
 		# expand(
 		# 	"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
 		# 	sampling=["downsampled", "unsampled"]),
+
 		# expand(
 		# 	"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
 		# 	sampling=["downsampled", "unsampled"])
