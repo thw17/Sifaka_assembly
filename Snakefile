@@ -98,6 +98,9 @@ rule all:
 			"callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed",
 			sampling=["downsampled", "unsampled"]),
 		expand(
+			"callable_sites/combined.rhemac2.COMBINEDcallablesites.{sampling}.bed",
+			sampling=["downsampled", "unsampled"]),
+		expand(
 			"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
@@ -105,13 +108,13 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 		expand(
 			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"])
+		# expand(
+		# 	"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"])
 		# expand(
 		# 	"vcf/sifakas.pcoq.{caller}.{sampling}.raw.vcf.gz.tbi",
 		# 	caller=["freebayes", "platypus", "gatk"],
