@@ -416,7 +416,7 @@ rule gatk_gvcf:
 
 rule gatk_gvcf_hg38_sifaka:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.sifaka.hg38.{chrom}.CHROMcallablesites.{sampling}.bed"
@@ -432,7 +432,7 @@ rule gatk_gvcf_hg38_sifaka:
 
 rule gatk_gvcf_hg38_macaque:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.macaque.hg38.{chrom}.CHROMcallablesites.{sampling}.bed"
@@ -448,7 +448,7 @@ rule gatk_gvcf_hg38_macaque:
 
 rule gatk_cat_variants_hg38:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		gvcfs = expand(
 			"vcf/{{sample}}.{{species}}.hg38.{chrom}.{{sampling}}.g.vcf.gz",
 			chrom=config["hg38_chroms"])
@@ -466,7 +466,7 @@ rule gatk_cat_variants_hg38:
 
 rule genotype_gvcfs_pcoq:
 	input:
-		ref = pcoq_1_path,
+		ref = config["genome_paths"]["pcoq"],
 		gvcfs = expand(
 			"vcf/{sample}.pcoq.{{sampling}}.g.vcf.gz",
 			sample=sifaka_samples)
@@ -485,7 +485,7 @@ rule genotype_gvcfs_pcoq:
 
 rule genotype_gvcfs_mmul:
 	input:
-		ref = mmul_path,
+		ref = config["genome_paths"]["mmul"],
 		gvcfs = expand(
 			"vcf/{sample}.mmul.{{sampling}}.g.vcf.gz",
 			sample=macaque_samples)
@@ -504,7 +504,7 @@ rule genotype_gvcfs_mmul:
 
 rule genotype_gvcfs_rhemac2:
 	input:
-		ref = rhemac2_path,
+		ref = config["genome_paths"]["rhemac2"],
 		gvcfs = expand(
 			"vcf/{sample}.rhemac2.{{sampling}}.g.vcf.gz",
 			sample=macaque_samples)
@@ -523,7 +523,7 @@ rule genotype_gvcfs_rhemac2:
 
 rule genotype_gvcfs_hg38_sifaka:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		gvcfs = expand(
 			"vcf/{sample}.sifaka.hg38.{{sampling}}.g.vcf.gz",
 			sample=sifaka_samples)
@@ -542,7 +542,7 @@ rule genotype_gvcfs_hg38_sifaka:
 
 rule genotype_gvcfs_hg38_macaque:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		gvcfs = expand(
 			"vcf/{sample}.macaque.hg38.{{sampling}}.g.vcf.gz",
 			sample=macaque_samples)
@@ -561,7 +561,7 @@ rule genotype_gvcfs_hg38_macaque:
 
 rule platypus_variant_calling_pcoq:
 	input:
-		ref = pcoq_1_path,
+		ref = config["genome_paths"]["pcoq"],
 		bams = expand(
 			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam",
 			sample=sifaka_samples),
@@ -581,7 +581,7 @@ rule platypus_variant_calling_pcoq:
 
 rule platypus_variant_calling_mmul:
 	input:
-		ref = mmul_path,
+		ref = config["genome_paths"]["mmul"],
 		bams = expand(
 			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
@@ -601,7 +601,7 @@ rule platypus_variant_calling_mmul:
 
 rule platypus_variant_calling_rhemac2:
 	input:
-		ref = rhemac2_path,
+		ref = config["genome_paths"]["rhemac2"],
 		bams = expand(
 			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
@@ -621,7 +621,7 @@ rule platypus_variant_calling_rhemac2:
 
 rule platypus_variant_calling_hg38_sifakas:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		bams = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
 			sample=sifaka_samples),
@@ -641,7 +641,7 @@ rule platypus_variant_calling_hg38_sifakas:
 
 rule platypus_variant_calling_hg38_macaque:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		bams = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
@@ -661,7 +661,7 @@ rule platypus_variant_calling_hg38_macaque:
 
 rule freebayes_pcoq:
 	input:
-		ref = pcoq_1_path,
+		ref = config["genome_paths"]["pcoq"],
 		bams = expand(
 			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam",
 			sample=sifaka_samples),
@@ -678,7 +678,7 @@ rule freebayes_pcoq:
 
 rule freebayes_mmul:
 	input:
-		ref = mmul_path,
+		ref = config["genome_paths"]["mmul"],
 		bams = expand(
 			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
@@ -695,7 +695,7 @@ rule freebayes_mmul:
 
 rule freebayes_rhemac2:
 	input:
-		ref = rhemac2_path,
+		ref = config["genome_paths"]["rhemac2"],
 		bams = expand(
 			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
@@ -712,7 +712,7 @@ rule freebayes_rhemac2:
 
 rule freebayes_hg38_sifaka:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		bams = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
 			sample=sifaka_samples),
@@ -729,7 +729,7 @@ rule freebayes_hg38_sifaka:
 
 rule freebayes_hg38_macaques:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		bams = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
