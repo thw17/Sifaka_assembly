@@ -124,7 +124,7 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 		expand(
 			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"])
+			sampling=["downsampled", "unsampled"]),
 		expand(
 			"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"])
