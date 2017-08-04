@@ -50,6 +50,9 @@ rule all:
 			sample=macaque_samples),
 		expand(
 			"processed_bams/{sample}.rhemac2.sorted.mkdup.unsampled.bam",
+			sample=macaque_samples),
+		expand(
+			"stats/{sample}.rhemac2.sorted.mkdup.bam.unsampled.stats",
 			sample=macaque_samples)
 
 		#
