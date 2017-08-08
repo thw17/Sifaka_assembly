@@ -124,6 +124,14 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 		expand(
 			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz"
+			sample=sifaka_samples, chrom=config["hg38_chroms"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/{sample}.macaques.hg38.{chrom}.{sampling}.g.vcf.gz"
+			sample=macaque_samples, chrom=config["hg38_chroms"],
 			sampling=["downsampled", "unsampled"])
 
 		# expand(
@@ -484,6 +492,44 @@ rule gatk_cat_variants_hg38:
 		variant_files = " ".join(variant_files)
 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -cp {params.gatk_path} org.broadinstitute.gatk.tools.CatVariants -R {input.ref} -out {output} {variant_files}")
 
+rule genotype_gvcfs_hg38_sifaka:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		gvcfs = expand(
+			"vcf/{sample}.sifaka.hg38.{{sampling}}.g.vcf.gz",
+			sample=sifaka_samples)
+	output:
+		v = "vcf/sifakas.hg38.gatk.{sampling}.raw.vcf"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
+rule genotype_gvcfs_hg38_macaque:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		gvcfs = expand(
+			"vcf/{sample}.macaque.hg38.{{sampling}}.g.vcf.gz",
+			sample=macaque_samples)
+	output:
+		v = "vcf/macaques.hg38.gatk.{sampling}.raw.vcf"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
 rule genotype_gvcfs_pcoq:
 	input:
 		ref = config["genome_paths"]["pcoq"],
@@ -541,228 +587,190 @@ rule genotype_gvcfs_rhemac2:
 		variant_files = " ".join(variant_files)
 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
 
-rule genotype_gvcfs_hg38_sifaka:
-	input:
-		ref = config["genome_paths"]["hg38"],
-		gvcfs = expand(
-			"vcf/{sample}.sifaka.hg38.{{sampling}}.g.vcf.gz",
-			sample=sifaka_samples)
-	output:
-		v = "vcf/sifakas.hg38.gatk.{sampling}.raw.vcf"
-	params:
-		temp_dir = temp_directory,
-		gatk_path = gatk
-	threads: 4
-	run:
-		variant_files = []
-		for i in input.gvcfs:
-			variant_files.append("--variant " + i)
-		variant_files = " ".join(variant_files)
-		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
-
-rule genotype_gvcfs_hg38_macaque:
-	input:
-		ref = config["genome_paths"]["hg38"],
-		gvcfs = expand(
-			"vcf/{sample}.macaque.hg38.{{sampling}}.g.vcf.gz",
-			sample=macaque_samples)
-	output:
-		v = "vcf/macaques.hg38.gatk.{sampling}.raw.vcf"
-	params:
-		temp_dir = temp_directory,
-		gatk_path = gatk
-	threads: 4
-	run:
-		variant_files = []
-		for i in input.gvcfs:
-			variant_files.append("--variant " + i)
-		variant_files = " ".join(variant_files)
-		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
-
-rule platypus_variant_calling_pcoq:
-	input:
-		ref = config["genome_paths"]["pcoq"],
-		bams = expand(
-			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam",
-			sample=sifaka_samples),
-		bais = expand(
-			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=sifaka_samples),
-		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/sifakas.pcoq.platypus.{sampling}.raw.vcf"
-	params:
-		platypus = platypus_path,
-		logfile = "logfiles/sifakas.pcoq.{sampling}.logfile"
-	threads: 4
-	run:
-		bam_files = ",".join(input.bams)
-		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
-
-rule platypus_variant_calling_mmul:
-	input:
-		ref = config["genome_paths"]["mmul"],
-		bams = expand(
-			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam",
-			sample=macaque_samples),
-		bais = expand(
-			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=macaque_samples),
-		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/macaques.mmul.platypus.{sampling}.raw.vcf"
-	params:
-		platypus = platypus_path,
-		logfile = "logfiles/sifakas.pcoq.{sampling}.logfile"
-	threads: 4
-	run:
-		bam_files = ",".join(input.bams)
-		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
-
-rule platypus_variant_calling_rhemac2:
-	input:
-		ref = config["genome_paths"]["rhemac2"],
-		bams = expand(
-			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam",
-			sample=macaque_samples),
-		bais = expand(
-			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=macaque_samples),
-		callable = "callable_sites/combined.rhemac2.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/macaques.rhemac2.platypus.{sampling}.raw.vcf"
-	params:
-		platypus = platypus_path,
-		logfile = "logfiles/sifakas.pcoq.{sampling}.logfile"
-	threads: 4
-	run:
-		bam_files = ",".join(input.bams)
-		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
-
-rule platypus_variant_calling_hg38_sifakas:
-	input:
-		ref = config["genome_paths"]["hg38"],
-		bams = expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
-			sample=sifaka_samples),
-		bais = expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=sifaka_samples),
-		callable = "callable_sites/combined.sifaka.hg38.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/sifakas.hg38.platypus.{sampling}.raw.vcf"
-	params:
-		platypus = platypus_path,
-		logfile = "logfiles/sifakas.hg38.{sampling}.logfile"
-	threads: 4
-	run:
-		bam_files = ",".join(input.bams)
-		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
-
-rule platypus_variant_calling_hg38_macaque:
-	input:
-		ref = config["genome_paths"]["hg38"],
-		bams = expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
-			sample=macaque_samples),
-		bais = expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=macaque_samples),
-		callable = "callable_sites/combined.macaque.hg38.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/macaques.hg38.platypus.{sampling}.raw.vcf"
-	params:
-		platypus = platypus_path,
-		logfile = "logfiles/macaques.hg38.{sampling}.logfile"
-	threads: 4
-	run:
-		bam_files = ",".join(input.bams)
-		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
-
-rule freebayes_pcoq:
-	input:
-		ref = config["genome_paths"]["pcoq"],
-		bams = expand(
-			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam",
-			sample=sifaka_samples),
-		bais = expand(
-			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=sifaka_samples),
-		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/sifakas.pcoq.freebayes.{sampling}.raw.vcf"
-	params:
-		freebayes = freebayes_path
-	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
-
-rule freebayes_mmul:
-	input:
-		ref = config["genome_paths"]["mmul"],
-		bams = expand(
-			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam",
-			sample=macaque_samples),
-		bais = expand(
-			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=macaque_samples),
-		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/macaques.mmul.freebayes.{sampling}.raw.vcf"
-	params:
-		freebayes = freebayes_path
-	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
-
-rule freebayes_rhemac2:
-	input:
-		ref = config["genome_paths"]["rhemac2"],
-		bams = expand(
-			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam",
-			sample=macaque_samples),
-		bais = expand(
-			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=macaque_samples),
-		callable = "callable_sites/combined.rhemac2.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/macaques.rhemac2.freebayes.{sampling}.raw.vcf"
-	params:
-		freebayes = freebayes_path
-	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
-
-rule freebayes_hg38_sifaka:
-	input:
-		ref = config["genome_paths"]["hg38"],
-		bams = expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
-			sample=sifaka_samples),
-		bais = expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=sifaka_samples),
-		callable = "callable_sites/combined.sifaka.hg38.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/sifakas.hg38.freebayes.{sampling}.raw.vcf"
-	params:
-		freebayes = freebayes_path
-	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
-
-rule freebayes_hg38_macaques:
-	input:
-		ref = config["genome_paths"]["hg38"],
-		bams = expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
-			sample=macaque_samples),
-		bais = expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=macaque_samples),
-		callable = "callable_sites/combined.macaque.hg38.COMBINEDcallablesites.{sampling}.bed"
-	output:
-		vcf = "vcf/macaques.hg38.freebayes.{sampling}.raw.vcf"
-	params:
-		freebayes = freebayes_path
-	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
+# rule platypus_variant_calling_pcoq:
+# 	input:
+# 		ref = config["genome_paths"]["pcoq"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam",
+# 			sample=sifaka_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=sifaka_samples),
+# 		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/sifakas.pcoq.platypus.{sampling}.raw.vcf"
+# 	params:
+# 		platypus = platypus_path,
+# 		logfile = "logfiles/sifakas.pcoq.{sampling}.logfile"
+# 	threads: 4
+# 	run:
+# 		bam_files = ",".join(input.bams)
+# 		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
+#
+# rule platypus_variant_calling_mmul:
+# 	input:
+# 		ref = config["genome_paths"]["mmul"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam",
+# 			sample=macaque_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=macaque_samples),
+# 		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/macaques.mmul.platypus.{sampling}.raw.vcf"
+# 	params:
+# 		platypus = platypus_path,
+# 		logfile = "logfiles/sifakas.pcoq.{sampling}.logfile"
+# 	threads: 4
+# 	run:
+# 		bam_files = ",".join(input.bams)
+# 		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
+#
+# rule platypus_variant_calling_rhemac2:
+# 	input:
+# 		ref = config["genome_paths"]["rhemac2"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam",
+# 			sample=macaque_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=macaque_samples),
+# 		callable = "callable_sites/combined.rhemac2.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/macaques.rhemac2.platypus.{sampling}.raw.vcf"
+# 	params:
+# 		platypus = platypus_path,
+# 		logfile = "logfiles/sifakas.pcoq.{sampling}.logfile"
+# 	threads: 4
+# 	run:
+# 		bam_files = ",".join(input.bams)
+# 		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
+#
+# rule platypus_variant_calling_hg38_sifakas:
+# 	input:
+# 		ref = config["genome_paths"]["hg38"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
+# 			sample=sifaka_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=sifaka_samples),
+# 		callable = "callable_sites/combined.sifaka.hg38.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/sifakas.hg38.platypus.{sampling}.raw.vcf"
+# 	params:
+# 		platypus = platypus_path,
+# 		logfile = "logfiles/sifakas.hg38.{sampling}.logfile"
+# 	threads: 4
+# 	run:
+# 		bam_files = ",".join(input.bams)
+# 		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
+#
+# rule platypus_variant_calling_hg38_macaque:
+# 	input:
+# 		ref = config["genome_paths"]["hg38"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
+# 			sample=macaque_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=macaque_samples),
+# 		callable = "callable_sites/combined.macaque.hg38.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/macaques.hg38.platypus.{sampling}.raw.vcf"
+# 	params:
+# 		platypus = platypus_path,
+# 		logfile = "logfiles/macaques.hg38.{sampling}.logfile"
+# 	threads: 4
+# 	run:
+# 		bam_files = ",".join(input.bams)
+# 		shell("source activate sifaka_platypus && {params.platypus} callVariants --output {output.vcf} --logFileName {params.logfile} --refFile {input.ref} --bamFiles {bam_files} --nCPU {threads} --regions {input.callable} --assemble=1 --outputRefCalls=1")
+#
+# rule freebayes_pcoq:
+# 	input:
+# 		ref = config["genome_paths"]["pcoq"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam",
+# 			sample=sifaka_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=sifaka_samples),
+# 		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/sifakas.pcoq.freebayes.{sampling}.raw.vcf"
+# 	params:
+# 		freebayes = freebayes_path
+# 	shell:
+# 		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
+#
+# rule freebayes_mmul:
+# 	input:
+# 		ref = config["genome_paths"]["mmul"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam",
+# 			sample=macaque_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=macaque_samples),
+# 		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/macaques.mmul.freebayes.{sampling}.raw.vcf"
+# 	params:
+# 		freebayes = freebayes_path
+# 	shell:
+# 		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
+#
+# rule freebayes_rhemac2:
+# 	input:
+# 		ref = config["genome_paths"]["rhemac2"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam",
+# 			sample=macaque_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.rhemac2.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=macaque_samples),
+# 		callable = "callable_sites/combined.rhemac2.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/macaques.rhemac2.freebayes.{sampling}.raw.vcf"
+# 	params:
+# 		freebayes = freebayes_path
+# 	shell:
+# 		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
+#
+# rule freebayes_hg38_sifaka:
+# 	input:
+# 		ref = config["genome_paths"]["hg38"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
+# 			sample=sifaka_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=sifaka_samples),
+# 		callable = "callable_sites/combined.sifaka.hg38.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/sifakas.hg38.freebayes.{sampling}.raw.vcf"
+# 	params:
+# 		freebayes = freebayes_path
+# 	shell:
+# 		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
+#
+# rule freebayes_hg38_macaques:
+# 	input:
+# 		ref = config["genome_paths"]["hg38"],
+# 		bams = expand(
+# 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
+# 			sample=macaque_samples),
+# 		bais = expand(
+# 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
+# 			sample=macaque_samples),
+# 		callable = "callable_sites/combined.macaque.hg38.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		vcf = "vcf/macaques.hg38.freebayes.{sampling}.raw.vcf"
+# 	params:
+# 		freebayes = freebayes_path
+# 	shell:
+# 		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
 
 rule zip_vcf:
 	input:
