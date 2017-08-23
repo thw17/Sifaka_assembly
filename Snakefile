@@ -126,13 +126,27 @@ rule all:
 			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
-			sample=sifaka_samples, chrom=config["hg38_chroms"],
-			sampling=["downsampled", "unsampled"]),
+			"vcf/{sample}.sifaka.hg38.{chrom}.unsampled.g.vcf.gz",
+			sample=sifaka_samples, chrom=config["hg38_chroms"]),
 		expand(
-			"vcf/{sample}.macaques.hg38.{chrom}.{sampling}.g.vcf.gz",
-			sample=macaque_samples, chrom=config["hg38_chroms"],
-			sampling=["downsampled", "unsampled"])
+			"vcf/{sample}.sifaka.hg38.{chrom}.downsampled.g.vcf.gz",
+			sample=sifaka_samples, chrom=config["hg38_chroms"]),
+		expand(
+			"vcf/{sample}.macaque.hg38.{chrom}.unsampled.g.vcf.gz",
+			sample=macaque_samples, chrom=config["hg38_chroms"]),
+		expand(
+			"vcf/{sample}.macaque.hg38.{chrom}.downsampled.g.vcf.gz",
+			sample=macaque_samples, chrom=config["hg38_chroms"])
+
+
+		# expand(
+		# 	"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
+		# 	sample=sifaka_samples, chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/{sample}.macaques.hg38.{chrom}.{sampling}.g.vcf.gz",
+		# 	sample=macaque_samples, chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"])
 
 		# expand(
 		# 	"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
@@ -427,14 +441,59 @@ rule mapq_check:
 	shell:
 		"scripts/mapqs -infile {input.bam} -outfile {output} -threads {threads}"
 
-rule gatk_gvcf:
+# rule gatk_gvcf:
+# 	input:
+# 		ref = lambda wildcards: config["genome_paths"][wildcards.genome],
+# 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
+# 		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai",
+# 		callable = "callable_sites/combined.{genome}.COMBINEDcallablesites.{sampling}.bed"
+# 	output:
+# 		"vcf/{sample}.{genome}.{sampling}.g.vcf.gz"
+# 	params:
+# 		temp_dir = temp_directory,
+# 		gatk_path = gatk
+# 	threads: 4
+# 	shell:
+# 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+
+rule gatk_gvcf_pcoq:
 	input:
-		ref = lambda wildcards: config["genome_paths"][wildcards.genome],
-		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
-		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai",
-		callable = "callable_sites/combined.{genome}.COMBINEDcallablesites.{sampling}.bed"
+		ref = config["genome_paths"]["pcoq"],
+		bam = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam.bai",
+		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
 	output:
-		"vcf/{sample}.{genome}.{sampling}.g.vcf.gz"
+		"vcf/{sample}.pcoq.{sampling}.g.vcf.gz"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	shell:
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+
+rule gatk_gvcf_rhemac2:
+	input:
+		ref = config["genome_paths"]["rhemac2"],
+		bam = "processed_bams/{sample}.rhemac2.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.rhemac2.sorted.mkdup.{sampling}.bam.bai",
+		callable = "callable_sites/combined.rhemac2.COMBINEDcallablesites.{sampling}.bed"
+	output:
+		"vcf/{sample}.rhemac2.{sampling}.g.vcf.gz"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	shell:
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+
+rule gatk_gvcf_mmul:
+	input:
+		ref = config["genome_paths"]["mmul"],
+		bam = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam.bai",
+		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
+	output:
+		"vcf/{sample}.mmul.{sampling}.g.vcf.gz"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk
