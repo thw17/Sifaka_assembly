@@ -309,7 +309,7 @@ rule downsample_bams:
 		samtools = samtools_path,
 		downsample_fraction = lambda wildcards: config[wildcards.genome][wildcards.sample]
 	shell:
-		"{params.samtools} view -f 1024 -s 0.{params.downsample_fraction} -b {input} > {output}"
+		"{params.samtools} view -F 1024 -s 0.{params.downsample_fraction} -b {input} > {output}"
 
 rule index_bam:
 	input:
