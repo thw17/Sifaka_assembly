@@ -515,8 +515,7 @@ rule gatk_gvcf_hg38_sifaka_unsampled:
 	input:
 		ref = config["genome_paths"]["hg38"],
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam",
-		bai = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam.bai",
-		callable = "callable_sites/combined.sifaka.hg38.{chrom}.CHROMcallablesites.unsampled.bed"
+		bai = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam.bai"
 	output:
 		"vcf/{sample}.sifaka.hg38.{chrom}.unsampled.g.vcf.gz"
 	params:
@@ -525,14 +524,13 @@ rule gatk_gvcf_hg38_sifaka_unsampled:
 		chromosome = "{chrom}"
 	threads: 4
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {params.chrom} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_gvcf_hg38_sifaka_downsampled:
 	input:
 		ref = config["genome_paths"]["hg38"],
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam",
-		bai = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam.bai",
-		callable = "callable_sites/combined.sifaka.hg38.{chrom}.CHROMcallablesites.downsampled.bed"
+		bai = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam.bai"
 	output:
 		"vcf/{sample}.sifaka.hg38.{chrom}.downsampled.g.vcf.gz"
 	params:
@@ -541,14 +539,13 @@ rule gatk_gvcf_hg38_sifaka_downsampled:
 		chromosome = "{chrom}"
 	threads: 4
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {params.chrom} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_gvcf_hg38_macaque_unsampled:
 	input:
 		ref = config["genome_paths"]["hg38"],
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam",
-		bai = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam.bai",
-		callable = "callable_sites/combined.macaque.hg38.{chrom}.CHROMcallablesites.unsampled.bed"
+		bai = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam.bai"
 	output:
 		"vcf/{sample}.macaque.hg38.{chrom}.unsampled.g.vcf.gz"
 	params:
@@ -557,14 +554,13 @@ rule gatk_gvcf_hg38_macaque_unsampled:
 		chromosome = "{chrom}"
 	threads: 4
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {params.chrom} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_gvcf_hg38_macaque_downsampled:
 	input:
 		ref = config["genome_paths"]["hg38"],
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam",
-		bai = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam.bai",
-		callable = "callable_sites/combined.macaque.hg38.{chrom}.CHROMcallablesites.downsampled.bed"
+		bai = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam.bai"
 	output:
 		"vcf/{sample}.macaque.hg38.{chrom}.downsampled.g.vcf.gz"
 	params:
@@ -573,7 +569,71 @@ rule gatk_gvcf_hg38_macaque_downsampled:
 		chromosome = "{chrom}"
 	threads: 4
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {params.chrom} --emitRefConfidence GVCF -o {output}"
+
+# rule gatk_gvcf_hg38_sifaka_unsampled:
+# 	input:
+# 		ref = config["genome_paths"]["hg38"],
+# 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam",
+# 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam.bai",
+# 		callable = "callable_sites/combined.sifaka.hg38.{chrom}.CHROMcallablesites.unsampled.bed"
+# 	output:
+# 		"vcf/{sample}.sifaka.hg38.{chrom}.unsampled.g.vcf.gz"
+# 	params:
+# 		temp_dir = temp_directory,
+# 		gatk_path = gatk,
+# 		chromosome = "{chrom}"
+# 	threads: 4
+# 	shell:
+# 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+#
+# rule gatk_gvcf_hg38_sifaka_downsampled:
+# 	input:
+# 		ref = config["genome_paths"]["hg38"],
+# 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam",
+# 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam.bai",
+# 		callable = "callable_sites/combined.sifaka.hg38.{chrom}.CHROMcallablesites.downsampled.bed"
+# 	output:
+# 		"vcf/{sample}.sifaka.hg38.{chrom}.downsampled.g.vcf.gz"
+# 	params:
+# 		temp_dir = temp_directory,
+# 		gatk_path = gatk,
+# 		chromosome = "{chrom}"
+# 	threads: 4
+# 	shell:
+# 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+#
+# rule gatk_gvcf_hg38_macaque_unsampled:
+# 	input:
+# 		ref = config["genome_paths"]["hg38"],
+# 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam",
+# 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.unsampled.bam.bai",
+# 		callable = "callable_sites/combined.macaque.hg38.{chrom}.CHROMcallablesites.unsampled.bed"
+# 	output:
+# 		"vcf/{sample}.macaque.hg38.{chrom}.unsampled.g.vcf.gz"
+# 	params:
+# 		temp_dir = temp_directory,
+# 		gatk_path = gatk,
+# 		chromosome = "{chrom}"
+# 	threads: 4
+# 	shell:
+# 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+#
+# rule gatk_gvcf_hg38_macaque_downsampled:
+# 	input:
+# 		ref = config["genome_paths"]["hg38"],
+# 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam",
+# 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.downsampled.bam.bai",
+# 		callable = "callable_sites/combined.macaque.hg38.{chrom}.CHROMcallablesites.downsampled.bed"
+# 	output:
+# 		"vcf/{sample}.macaque.hg38.{chrom}.downsampled.g.vcf.gz"
+# 	params:
+# 		temp_dir = temp_directory,
+# 		gatk_path = gatk,
+# 		chromosome = "{chrom}"
+# 	threads: 4
+# 	shell:
+# 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_cat_variants_hg38:
 	input:
