@@ -148,6 +148,16 @@ rule all:
 		# 	sample=macaque_samples, chrom=config["hg38_chroms"],
 		# 	sampling=["downsampled", "unsampled"])
 
+
+		# expand(
+		# 	"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
+		# 	sample=sifaka_samples, chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/{sample}.macaques.hg38.{chrom}.{sampling}.g.vcf.gz",
+		# 	sample=macaque_samples, chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"])
+
 		# expand(
 		# 	"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
 		# 	sampling=["downsampled", "unsampled"])
