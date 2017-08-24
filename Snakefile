@@ -52,16 +52,16 @@ rule all:
 			"stats/{sample}.rhemac2.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
+			"stats/{sample}.pcoq.sorted.mkdup.{sampling}.stats",
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
+			"stats/{sample}.mmul.sorted.mkdup.{sampling}.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"processed_bams/{sample}.rhemac2.sorted.mkdup.{sampling}.bam",
+			"stats/{sample}.rhemac2.sorted.mkdup.{sampling}.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
+			"stats/{sample}.hg38.sorted.mkdup.{sampling}.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
