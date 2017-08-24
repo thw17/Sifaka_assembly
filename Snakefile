@@ -367,13 +367,13 @@ rule combine_callable_sites_hg38_macaques:
 	shell:
 		"cat {input} | sort -k1,1 -k2,2n | {params.bedtools} merge -i stdin > {output}"
 
-# rule split_hg38_callable_bed_by_chrom:
-# 	input:
-# 		callable = "callable_sites/combined.{species}.hg38.COMBINEDcallablesites.{sampling}.bed"
-# 	output:
-# 		"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed"
-# 	shell:
-# 		"""awk '$1=="{wildcards.chrom}"' {input.callable} > {output}"""
+rule split_hg38_callable_bed_by_chrom:
+	input:
+		callable = "callable_sites/combined.{species}.hg38.COMBINEDcallablesites.{sampling}.bed"
+	output:
+		"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed"
+	shell:
+		"""awk '$1=="{wildcards.chrom}"' {input.callable} > {output}"""
 
 rule mapq_check:
 	input:
