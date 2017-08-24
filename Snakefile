@@ -76,12 +76,6 @@ rule all:
 		expand(
 			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/{sample}.macaque.hg38.{sampling}.g.vcf.gz",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/{sample}.sifaka.hg38.{sampling}.g.vcf.gz",
-		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
 			sample=macaque_samples, chrom=config["hg38_chroms"],
@@ -89,15 +83,6 @@ rule all:
 		expand(
 			"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
 			sample=sifaka_samples, chrom=config["hg38_chroms"],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.rhemac2.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"])
 
 		# expand(
