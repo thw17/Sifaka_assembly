@@ -36,6 +36,47 @@ macaque_samples = config["macaque_males"] + config["macaque_females"]
 rule all:
 	input:
 		expand(
+			"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
+		expand(
+			"adapters/{sample}.adapters.fa", sample=all_samples),
+		expand(
+			"stats/{sample}.pcoq.{sampling}.mapq.stats",
+			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.hg38.{sampling}.mapq.stats",
+			sample=all_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.mmul.{sampling}.mapq.stats",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.rhemac2.{sampling}.mapq.stats",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.pcoq.{sampling}.mapq.stats",
+			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.hg38.{sampling}.mapq.stats",
+			sample=all_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.mmul.{sampling}.mapq.stats",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.rhemac2.{sampling}.mapq.stats",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
+			species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.rhemac2.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"]),
+		expand(
 			"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
 			sample=macaque_samples, chrom=config["hg38_chroms"],
 			sampling=["downsampled", "unsampled"]),
