@@ -319,6 +319,18 @@ rule extract_callable_sites:
 	shell:
 		"sed -e '/CALLABLE/!d' {input} > {output}"
 
+rule combine_callable_sites_mmul:
+	input:
+		expand(
+			"callable_sites/{sample}.mmul.ONLYcallablesites.{{sampling}}.bed",
+			sample=macaque_samples)
+	output:
+		"callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
+	params:
+		bedtools = bedtools_path
+	shell:
+		"cat {input} | sort -k1,1 -k2,2n | {params.bedtools} merge -i stdin > {output}"
+
 rule combine_callable_sites_rhemac2:
 	input:
 		expand(
