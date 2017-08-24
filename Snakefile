@@ -77,19 +77,26 @@ rule all:
 			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
-			sample=macaque_samples, chrom=config["hg38_chroms"],
+			"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
-			sample=sifaka_samples, chrom=config["hg38_chroms"],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf",
-			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf",
-			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
+			"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"])
+
+		# expand(
+		# 	"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
+		# 	sample=macaque_samples, chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
+		# 	sample=sifaka_samples, chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf",
+		# 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf",
+		# 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
 
 		# expand(
 		# 	"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
@@ -487,7 +494,7 @@ rule genotype_gvcfs_hg38_sifaka:
 		ref = config["genome_paths"]["hg38"],
 		gvcfs = expand("vcf/{sample}.sifaka.hg38.{{chrom}}.{{sampling}}.g.vcf.gz", sample=sifaka_samples)
 	output:
-		v = "vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf"
+		v = "vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk
@@ -504,7 +511,7 @@ rule genotype_gvcfs_hg38_macaque:
 		ref = config["genome_paths"]["hg38"],
 		gvcfs = expand("vcf/{sample}.macaque.hg38.{{chrom}}.{{sampling}}.g.vcf.gz", sample=macaque_samples)
 	output:
-		v = "vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf"
+		v = "vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk
@@ -518,11 +525,11 @@ rule genotype_gvcfs_hg38_macaque:
 
 rule gatk_cat_variants_hg38:
 	input:
-		ref = hg38_path,
+		ref = config["genome_paths"]["hg38"],
 		gvcfs = expand(
-			"vcf/{{sample}}.{{species}}.hg38.{chrom}.g.vcf.gz", chrom=config["hg38_chroms"])
+			"vcf/{{species}}.hg38.gatk.{chrom}.{{sampling}}.raw.vcf.gz", chrom=config["hg38_chroms"])
 	output:
-		"vcf/{sample}.{species}.hg38.g.vcf.gz"
+		"vcf/{species}.hg38.gatk.{sampling}.raw.vcf"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk
