@@ -83,7 +83,13 @@ rule all:
 		expand(
 			"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
 			sample=sifaka_samples, chrom=config["hg38_chroms"],
-			sampling=["downsampled", "unsampled"])
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
+			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaquess.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
+			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
 
 		# expand(
 		# 	"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
@@ -476,6 +482,40 @@ rule gatk_gvcf_hg38_macaque:
 	shell:
 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} -L {params.chromosome} --emitRefConfidence GVCF -o {output}"
 
+rule genotype_gvcfs_hg38_sifaka:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		gvcfs = expand("vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz", sample=sifaka_samples)
+	output:
+		v = "vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
+rule genotype_gvcfs_hg38_macaque:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		gvcfs = expand("vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz", sample=macaque_samples)
+	output:
+		v = "vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
 rule gatk_cat_variants_hg38:
 	input:
 		ref = hg38_path,
@@ -550,39 +590,39 @@ rule genotype_gvcfs_rhemac2:
 		variant_files = " ".join(variant_files)
 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
 
-rule genotype_gvcfs_hg38_sifaka:
-	input:
-		ref = hg38_path,
-		gvcfs = expand("vcf/{sample}.sifaka.hg38.g.vcf.gz", sample=sifaka_samples)
-	output:
-		v = "vcf/sifakas.hg38.gatk.raw.vcf.gz"
-	params:
-		temp_dir = temp_directory,
-		gatk_path = gatk
-	threads: 4
-	run:
-		variant_files = []
-		for i in input.gvcfs:
-			variant_files.append("--variant " + i)
-		variant_files = " ".join(variant_files)
-		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
-
-rule genotype_gvcfs_hg38_macaque:
-	input:
-		ref = hg38_path,
-		gvcfs = expand("vcf/{sample}.macaque.hg38.g.vcf.gz", sample=macaque_samples)
-	output:
-		v = "vcf/macaques.hg38.gatk.raw.vcf.gz"
-	params:
-		temp_dir = temp_directory,
-		gatk_path = gatk
-	threads: 4
-	run:
-		variant_files = []
-		for i in input.gvcfs:
-			variant_files.append("--variant " + i)
-		variant_files = " ".join(variant_files)
-		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+# rule genotype_gvcfs_hg38_sifaka:
+# 	input:
+# 		ref = hg38_path,
+# 		gvcfs = expand("vcf/{sample}.sifaka.hg38.g.vcf.gz", sample=sifaka_samples)
+# 	output:
+# 		v = "vcf/sifakas.hg38.gatk.raw.vcf.gz"
+# 	params:
+# 		temp_dir = temp_directory,
+# 		gatk_path = gatk
+# 	threads: 4
+# 	run:
+# 		variant_files = []
+# 		for i in input.gvcfs:
+# 			variant_files.append("--variant " + i)
+# 		variant_files = " ".join(variant_files)
+# 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+#
+# rule genotype_gvcfs_hg38_macaque:
+# 	input:
+# 		ref = hg38_path,
+# 		gvcfs = expand("vcf/{sample}.macaque.hg38.g.vcf.gz", sample=macaque_samples)
+# 	output:
+# 		v = "vcf/macaques.hg38.gatk.raw.vcf.gz"
+# 	params:
+# 		temp_dir = temp_directory,
+# 		gatk_path = gatk
+# 	threads: 4
+# 	run:
+# 		variant_files = []
+# 		for i in input.gvcfs:
+# 			variant_files.append("--variant " + i)
+# 		variant_files = " ".join(variant_files)
+# 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
 
 rule zip_vcf:
 	input:
