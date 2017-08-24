@@ -36,11 +36,13 @@ macaque_samples = config["macaque_males"] + config["macaque_females"]
 rule all:
 	input:
 		expand(
-			"vcf/{sample}.macaque.hg38.{sampling}.g.vcf.gz",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+			"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
+			sample=macaque_samples, chrom=config["hg38_chroms"],
+			sampling=["downsampled", "unsampled"]),
 		expand(
 			"vcf/{sample}.sifaka.hg38.{sampling}.g.vcf.gz",
-			sample=sifaka_samples, sampling=["downsampled", "unsampled"])
+			sample=sifaka_samples, chrom=config["hg38_chroms"],
+			sampling=["downsampled", "unsampled"])
 
 		# expand(
 		# 	"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
@@ -396,7 +398,7 @@ rule gatk_gvcf_hg38_sifaka:
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.sifaka.hg38.ONLYcallablesites.bed"
 	output:
-		"vcf/{sample}.sifaka.hg38.{sampling}.g.vcf.gz"
+		"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk,
@@ -412,7 +414,7 @@ rule gatk_gvcf_hg38_macaque:
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.macaque.hg38.ONLYcallablesites.bed"
 	output:
-		"vcf/{sample}.macaque.hg38.{sampling}.g.vcf.gz"
+		"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz"
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk,
