@@ -88,7 +88,7 @@ rule all:
 			"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf",
 			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/macaquess.hg38.gatk.{chrom}.{sampling}.raw.vcf",
+			"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf",
 			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
 
 		# expand(
