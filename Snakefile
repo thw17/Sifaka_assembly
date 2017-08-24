@@ -485,7 +485,7 @@ rule gatk_gvcf_hg38_macaque:
 rule genotype_gvcfs_hg38_sifaka:
 	input:
 		ref = config["genome_paths"]["hg38"],
-		gvcfs = expand("vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz", sample=sifaka_samples)
+		gvcfs = expand("vcf/{sample}.sifaka.hg38.{{chrom}}.{{sampling}}.g.vcf.gz", sample=sifaka_samples)
 	output:
 		v = "vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz"
 	params:
@@ -502,7 +502,7 @@ rule genotype_gvcfs_hg38_sifaka:
 rule genotype_gvcfs_hg38_macaque:
 	input:
 		ref = config["genome_paths"]["hg38"],
-		gvcfs = expand("vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz", sample=macaque_samples)
+		gvcfs = expand("vcf/{sample}.macaque.hg38.{{chrom}}.{{sampling}}.g.vcf.gz", sample=macaque_samples)
 	output:
 		v = "vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz"
 	params:
