@@ -52,16 +52,16 @@ rule all:
 			"stats/{sample}.rhemac2.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"stats/{sample}.pcoq.{sampling}.mapq.stats",
+			"processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"stats/{sample}.hg38.{sampling}.mapq.stats",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.mmul.{sampling}.mapq.stats",
+			"processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"stats/{sample}.rhemac2.{sampling}.mapq.stats",
+			"processed_bams/{sample}.rhemac2.sorted.mkdup.{sampling}.bam",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
@@ -76,27 +76,27 @@ rule all:
 		expand(
 			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"])
+
 		expand(
-			"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
+			"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
+			sample=macaque_samples, chrom=config["hg38_chroms"],
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"])
-
-		# expand(
-		# 	"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
-		# 	sample=macaque_samples, chrom=config["hg38_chroms"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
-		# 	sample=sifaka_samples, chrom=config["hg38_chroms"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf",
-		# 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf",
-		# 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
+			"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
+			sample=sifaka_samples, chrom=config["hg38_chroms"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf",
+			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf",
+			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
 
 		# expand(
 		# 	"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
