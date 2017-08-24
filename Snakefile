@@ -549,21 +549,21 @@ rule genotype_gvcfs_hg38_macaque:
 		variant_files = " ".join(variant_files)
 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
 
-# rule zip_vcf:
-# 	input:
-# 		vcf = "vcf/{species}.{genome}.{caller}.raw.vcf"
-# 	output:
-# 		"vcf/{species}.{genome}.{caller}.raw.vcf.gz"
-# 	params:
-# 		bgzip = bgzip_path
-# 	shell:
-# 		"{params.bgzip} {input.vcf}"
+rule zip_vcf:
+	input:
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.raw.vcf"
+	output:
+		"vcf/{species}.{genome}.{caller}.{sampling}.raw.vcf.gz"
+	params:
+		bgzip = bgzip_path
+	shell:
+		"{params.bgzip} {input.vcf}"
 
 rule index_zipped_vcf:
 	input:
-		vcf = "vcf/{species}.{genome}.{caller}.raw.vcf.gz"
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.raw.vcf.gz"
 	output:
-		"vcf/{species}.{genome}.{caller}.raw.vcf.gz.tbi"
+		"vcf/{species}.{genome}.{caller}.{sampling}.raw.vcf.gz.tbi"
 	params:
 		tabix = tabix_path
 	shell:
