@@ -45,18 +45,18 @@ rule all:
 		expand(
 			"stats/{sample}.hg38.{sampling}.mapq.stats",
 			sample=all_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.mmul.{sampling}.mapq.stats",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.mmul.{sampling}.mapq.stats",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.rhemac2.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.rhemac2.sorted.mkdup.bam.{sampling}.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
@@ -73,9 +73,9 @@ rule all:
 		expand(
 			"vcf/macaques.rhemac2.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"]),
 		# expand(
 		# 	"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
 		# 	sampling=["downsampled", "unsampled"]),
@@ -243,7 +243,7 @@ rule trim_adapters_paired_bbduk:
 	params:
 		bbduksh = bbduksh_path
 	shell:
-		"{params.bbduksh} -Xmx3g in1={input.fq1} in2={input.fq2} out1={output.out_fq1} out2={output.out_fq2} ref=misc/adapter_sequence.fa ktrim=r k=21 mink=11 hdist=2 tbo tbe qtrim=rl trimq=10"
+		"{params.bbduksh} -Xmx3g in1={input.fq1} in2={input.fq2} out1={output.out_fq1} out2={output.out_fq2} ref=misc/adapter_sequence.fa ktrim=r k=21 mink=11 hdist=2 tbo tpe qtrim=rl trimq=10"
 
 rule fastqc_analysis_trimmed_paired:
 	input:
