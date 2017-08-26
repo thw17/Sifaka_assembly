@@ -45,18 +45,18 @@ rule all:
 		expand(
 			"stats/{sample}.hg38.{sampling}.mapq.stats",
 			sample=all_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.mmul.{sampling}.mapq.stats",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.mmul.{sampling}.mapq.stats",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.rhemac2.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.rhemac2.sorted.mkdup.bam.{sampling}.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
@@ -70,12 +70,13 @@ rule all:
 		expand(
 			"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.rhemac2.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
 		# expand(
-		# 	"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	"vcf/macaques.rhemac2.gatk.{sampling}.raw.vcf.gz.tbi",
 		# 	sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"]),
+
 		# expand(
 		# 	"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
 		# 	sampling=["downsampled", "unsampled"]),
