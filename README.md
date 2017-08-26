@@ -38,32 +38,33 @@ The assembly/analysis pipeline is written in Snakemake.  It handles running a va
 
  * Download [GATK](https://software.broadinstitute.org/gatk/download/) (we used version 3.7)
 
- * Check ```scripts/mapqs```
-
- `mapqs` should work on most systems.  You can check this by changing to the `scripts` directory and entering the command:
-
-	 ```
-	 ./mapqs -h
-	 ```
- If you get something that looks like:
-
-	 ```
-	 Usage of ./mapqs:
-	   -help
-	     	display help
-	   -infile string
-	     	input bam file
-	   -outfile string
-	     	output file for stats
-	   -threads int
-	     	number of threads to use (0 = auto)
-	 ```
- then you should be fine.  On the other hand, if you get an error, then you'll need to compile mapqs.go. To do this:
+ * Build ```scripts/mapqs```
 
 1. Check to see if Go is installed on your system: ```go version```
 	* If not, download and install Go ([instructions here](https://golang.org/doc/install))
 2. Get the required go packages: ```go get github.com/biogo/hts/...```
-3. Change to the scripts directory and compile: ```go build mapq.go```
+3. Change to the scripts directory and compile: ```go build mapqs.go```
+
+You can check ```mapqs``` by changing to the `scripts` directory and entering the command:
+
+	```
+	./mapqs -h
+	```
+If you get something that looks like:
+
+	```
+	Usage of ./mapqs:
+	  -help
+		   display help
+	  -infile string
+		   input bam file
+	  -outfile string
+		   output file for stats
+	  -threads int
+		   number of threads to use (0 = auto)
+	```
+
+You're all set.
 
 ## Running the pipeline
 * First, load the main anaconda environment:
