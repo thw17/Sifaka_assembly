@@ -5,13 +5,6 @@ configfile: "sifaka_config.json"
 fastq_directory = "/home/thwebste/Data/sifaka"
 temp_directory = "temp/"
 
-mmul_path = "reference/GCF_000772875.2_Mmul_8.0.1_genomic.fna"
-mmul_prefix = "reference/GCF_000772875.2_Mmul_8.0.1_genomic"
-pcoq_1_path = "reference/GCF_000956105.1_Pcoq_1.0_genomic.fna"
-pcoq_1_prefix = "reference/GCF_000956105.1_Pcoq_1.0_genomic"
-hg38_path = "reference/Homo_sapiens_assembly38.fasta"
-hg38_prefix = "reference/Homo_sapiens_assembly38"
-
 platypus_environment = "sifaka_platypus" # conda environment - platypus needs python 2.7
 
 bbduksh_path = "bbduk.sh"
@@ -68,14 +61,28 @@ rule all:
 			species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
+			"vcf/sifakas.pcoq.freebayes.{sampling}.raw.vcf",
 			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.mmul.freebayes.{sampling}.raw.vcf",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
+			chrom=config["hg38_chroms"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
+			chrom=config["hg38_chroms"],
+			sampling=["downsampled", "unsampled"])
+		# expand(
+		# 	"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"]),
 		# expand(
 		# 	"vcf/macaques.rhemac2.gatk.{sampling}.raw.vcf.gz.tbi",
 		# 	sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
+		# 	sampling=["downsampled", "unsampled"]),
 
 		# expand(
 		# 	"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
@@ -84,20 +91,20 @@ rule all:
 		# 	"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
 		# 	sampling=["downsampled", "unsampled"])
 
-		expand(
-			"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
-			sample=macaque_samples, chrom=config["hg38_chroms"],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
-			sample=sifaka_samples, chrom=config["hg38_chroms"],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
-			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
-			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
+		# expand(
+		# 	"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
+		# 	sample=macaque_samples, chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
+		# 	sample=sifaka_samples, chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
+		# 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
+		# 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
 
 		# expand(
 		# 	"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
@@ -597,6 +604,72 @@ rule genotype_gvcfs_rhemac2:
 			variant_files.append("--variant " + i)
 		variant_files = " ".join(variant_files)
 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
+rule freebayes_call_mmul:
+	input:
+		ref = config["genome_paths"]["mmul"],
+		bams = expand(
+			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam",
+			sample=macaque_samples),
+		bais = expand(
+			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam.bai",
+			sample=macaque_samples)
+	output:
+		vcf = "vcf/macaques.mmul.freebayes.{sampling}.raw.vcf"
+	params:
+		freebayes = freebayes_path
+	shell:
+		"{params.freebayes} -f {input.ref} -v {output} {input.bams}"
+
+rule freebayes_call_pcoq:
+	input:
+		ref = config["genome_paths"]["pcoq"],
+		bams = expand(
+			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam",
+			sample=sifaka_samples),
+		bais = expand(
+			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam.bai",
+			sample=sifaka_samples)
+	output:
+		vcf = "vcf/sifakas.pcoq.freebayes.{sampling}.raw.vcf"
+	params:
+		freebayes = freebayes_path
+	shell:
+		"{params.freebayes} -f {input.ref} -v {output} {input.bams}"
+
+rule freebayes_call_single_chrom_hg38_macaques:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		bams = expand(
+			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
+			sample=macaque_samples),
+		bais = expand(
+			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
+			sample=macaque_samples),
+	output:
+		vcf = "vcf/macaques.hg38.freebayes.{chrom}.{sampling}.raw.vcf"
+	params:
+		chrom = "{chrom}",
+		freebayes = freebayes_path
+	shell:
+		"{params.freebayes} -f {input.ref} -v {output} --region {params.chrom} {input.bams}"
+
+rule freebayes_call_single_chrom_hg38_sifakas:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		bams = expand(
+			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
+			sample=sifaka_samples),
+		bais = expand(
+			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
+			sample=sifaka_samples),
+	output:
+		vcf = "vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf"
+	params:
+		chrom = "{chrom}",
+		freebayes = freebayes_path
+	shell:
+		"{params.freebayes} -f {input.ref} -v {output} --region {params.chrom} {input.bams}"
 
 # rule genotype_gvcfs_hg38_sifaka:
 # 	input:
