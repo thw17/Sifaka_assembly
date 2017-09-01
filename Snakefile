@@ -48,18 +48,18 @@ rule all:
 		expand(
 			"stats/{sample}.mmul.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.rhemac2.{sampling}.mapq.stats",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.rhemac2.{sampling}.mapq.stats",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		expand(
-			"stats/{sample}.rhemac2.sorted.mkdup.bam.{sampling}.stats",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"stats/{sample}.rhemac2.sorted.mkdup.bam.{sampling}.stats",
+		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
