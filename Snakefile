@@ -653,7 +653,7 @@ rule freebayes_call_hg38_sifakas:
 			sample=sifaka_samples),
 		bais = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=sifaka_samples)
+			sample=sifaka_samples),
 		callable = "callable_sites/combined.sifaka.hg38.COMBINEDcallablesites.{sampling}.bed"
 	output:
 		vcf = "vcf/sifakas.hg38.freebayes.{sampling}.raw.vcf"
@@ -670,7 +670,7 @@ rule freebayes_call_hg38_macaques:
 			sample=macaque_samples),
 		bais = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=macaque_samples)
+			sample=macaque_samples),
 		callable = "callable_sites/combined.macaque.hg38.COMBINEDcallablesites.{sampling}.bed"
 	output:
 		vcf = "vcf/macaques.hg38.freebayes.{sampling}.raw.vcf"
