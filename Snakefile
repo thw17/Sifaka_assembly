@@ -92,12 +92,12 @@ rule all:
 			"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
 			sample=sifaka_samples, chrom=config["hg38_chroms"],
 			sampling=["downsampled", "unsampled"])
-		# expand(
-		# 	"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf",
-		# 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf",
-		# 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
+		expand(
+			"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
+			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
+			chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
 
 		# expand(
 		# 	"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
