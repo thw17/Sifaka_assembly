@@ -56,24 +56,30 @@ rule all:
 		expand(
 			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
+		# 	species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
 		expand(
-			"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
-			species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
+			"vcf/sifakas.pcoq.freebayes.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/sifakas.pcoq.freebayes.{sampling}.raw.vcf",
+			"vcf/macaques.mmul.freebayes.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/macaques.mmul.freebayes.{sampling}.raw.vcf",
+			"vcf/sifakas.hg38.freebayes.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
-			chrom=config["hg38_chroms"],
+			"vcf/macaques.hg38.freebayes.{sampling}.raw.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
-		expand(
-			"vcf/macaques.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
-			chrom=config["hg38_chroms"],
-			sampling=["downsampled", "unsampled"])
+		# expand(
+		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
+		# 	chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"vcf/macaques.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
+		# 	chrom=config["hg38_chroms"],
+		# 	sampling=["downsampled", "unsampled"]),
 		# expand(
 		# 	"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
 		# 	sampling=["downsampled", "unsampled"]),
@@ -531,22 +537,22 @@ rule genotype_gvcfs_hg38_macaque:
 		variant_files = " ".join(variant_files)
 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
 
-rule gatk_cat_variants_hg38:
-	input:
-		ref = config["genome_paths"]["hg38"],
-		gvcfs = expand(
-			"vcf/{{species}}.hg38.gatk.{chrom}.{{sampling}}.raw.vcf.gz", chrom=config["hg38_chroms"])
-	output:
-		"vcf/{species}.hg38.gatk.{sampling}.raw.vcf"
-	params:
-		temp_dir = temp_directory,
-		gatk_path = gatk
-	run:
-		variant_files = []
-		for i in input.gvcfs:
-			variant_files.append("-V " + i)
-		variant_files = " ".join(variant_files)
-		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -cp {params.gatk_path} org.broadinstitute.gatk.tools.CatVariants -R {input.ref} -o {output}")
+# rule gatk_cat_variants_hg38:
+# 	input:
+# 		ref = config["genome_paths"]["hg38"],
+# 		gvcfs = expand(
+# 			"vcf/{{species}}.hg38.gatk.{chrom}.{{sampling}}.raw.vcf.gz", chrom=config["hg38_chroms"])
+# 	output:
+# 		"vcf/{species}.hg38.gatk.{sampling}.raw.vcf"
+# 	params:
+# 		temp_dir = temp_directory,
+# 		gatk_path = gatk
+# 	run:
+# 		variant_files = []
+# 		for i in input.gvcfs:
+# 			variant_files.append("-V " + i)
+# 		variant_files = " ".join(variant_files)
+# 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -cp {params.gatk_path} org.broadinstitute.gatk.tools.CatVariants -R {input.ref} -o {output}")
 
 rule genotype_gvcfs_pcoq:
 	input:
@@ -613,13 +619,14 @@ rule freebayes_call_mmul:
 			sample=macaque_samples),
 		bais = expand(
 			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=macaque_samples)
+			sample=macaque_samples),
+		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
 	output:
 		vcf = "vcf/macaques.mmul.freebayes.{sampling}.raw.vcf"
 	params:
 		freebayes = freebayes_path
 	shell:
-		"{params.freebayes} -f {input.ref} -v {output} {input.bams}"
+		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
 
 rule freebayes_call_pcoq:
 	input:
@@ -629,13 +636,14 @@ rule freebayes_call_pcoq:
 			sample=sifaka_samples),
 		bais = expand(
 			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam.bai",
-			sample=sifaka_samples)
+			sample=sifaka_samples),
+		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
 	output:
 		vcf = "vcf/sifakas.pcoq.freebayes.{sampling}.raw.vcf"
 	params:
 		freebayes = freebayes_path
 	shell:
-		"{params.freebayes} -f {input.ref} -v {output} {input.bams}"
+		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
 
 rule freebayes_call_single_chrom_hg38_macaques:
 	input:
@@ -670,6 +678,23 @@ rule freebayes_call_single_chrom_hg38_sifakas:
 		freebayes = freebayes_path
 	shell:
 		"{params.freebayes} -f {input.ref} -v {output} --region {params.chrom} {input.bams}"
+
+rule gatk_cat_variants_hg38:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		gvcfs = expand(
+			"vcf/{{species}}.hg38.freebayes.{chrom}.{{sampling}}.raw.vcf", chrom=config["hg38_chroms"])
+	output:
+		"vcf/{species}.hg38.freebayes.{sampling}.raw.vcf"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("-V " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -cp {params.gatk_path} org.broadinstitute.gatk.tools.CatVariants -R {input.ref} -o {output}")
 
 # rule genotype_gvcfs_hg38_sifaka:
 # 	input:
