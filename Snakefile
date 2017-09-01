@@ -5,8 +5,6 @@ configfile: "sifaka_config.json"
 fastq_directory = "/home/thwebste/Data/sifaka"
 temp_directory = "temp/"
 
-platypus_environment = "sifaka_platypus" # conda environment - platypus needs python 2.7
-
 bbduksh_path = "bbduk.sh"
 bbmerge_sh_path = "bbmerge.sh"
 bedtools_path = "bedtools"
