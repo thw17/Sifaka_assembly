@@ -29,7 +29,7 @@ The assembly/analysis pipeline is written in Snakemake.  It handles running a va
 * Create the environments we'll be working in and install required packages with the commands:
 
 	```
-	conda create --name Sifaka_snakemake python=3.6 bbmap bedtools htslib bwa fastqc freebayes samblaster samtools snpeff
+	conda create --name Sifaka_snakemake python=3.6 bbmap bedtools htslib bwa fastqc freebayes samblaster samtools ensembl-vep
 
 	conda create --name sifaka_platypus platypus-variant
 	```
