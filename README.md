@@ -29,14 +29,11 @@ The assembly/analysis pipeline is written in Snakemake.  It handles running a va
 * Create the environments we'll be working in and install required packages with the commands:
 
 	```
-	conda create --name Sifaka_snakemake python=3.6 bbmap bedtools htslib bwa fastqc freebayes samblaster samtools ensembl-vep
+	conda create --name Sifaka_snakemake python=3.6 bbmap bedtools htslib bwa fastqc freebayes samblaster samtools bedops cyvcf2 ensembl-vep
 
-	conda create --name sifaka_platypus platypus-variant
 	```
 
- These two commands will create two separate environments, one (Sifaka_snakemake) that will be used for the main pipeline and most commands and a second for Platypus variant calling because Platypus requires a different version of Python.
-
- * Download [GATK](https://software.broadinstitute.org/gatk/download/) (we used version 3.7)
+ This command will create an environment (Sifaka_snakemake) that will contain all programs (except mapqs - see below) required for the pipeline.
 
  * Build ```scripts/mapqs```
 
