@@ -876,7 +876,7 @@ rule intersect_callable_sites_mmul_analysis:
 			"callable_sites/{sample}.mmul.ONLYcallablesitesFORANALYSIS.{{sampling}}.bedopssorted.bed",
 			sample=macaque_samples)
 	output:
-		"callable_sites/combined.mmul.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
+		"callable_sites/combined.macaque.mmul.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
 	params:
 		bedops = bedops_path
 	shell:
@@ -888,7 +888,7 @@ rule intersect_callable_sites_pcoq_analysis:
 			"callable_sites/{sample}.pqoc.ONLYcallablesitesFORANALYSIS.{{sampling}}.bedopssorted.bed",
 			sample=sifaka_samples)
 	output:
-		"callable_sites/combined.pcoq.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
+		"callable_sites/combined.sifaka.pcoq.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
 	params:
 		bedops = bedops_path
 	shell:
