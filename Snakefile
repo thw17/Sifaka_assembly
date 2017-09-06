@@ -17,6 +17,7 @@ gatk = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
 platypus_path = "platypus"
 samblaster_path = "samblaster"
 samtools_path = "samtools"
+sort_bed_path = "sort-bed"
 tabix_path = "tabix"
 # xyalign_path =
 
