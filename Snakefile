@@ -873,7 +873,7 @@ rule bedops_sort_callable:
 rule intersect_callable_sites_mmul_analysis:
 	input:
 		expand(
-			"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
+			"callable_sites/{sample}.mmul.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
 			sample=macaque_samples)
 	output:
 		"callable_sites/combined.mmul.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
@@ -885,7 +885,7 @@ rule intersect_callable_sites_mmul_analysis:
 rule intersect_callable_sites_pcoq_analysis:
 	input:
 		expand(
-			"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
+			"callable_sites/{sample}.pqoc.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
 			sample=sifaka_samples)
 	output:
 		"callable_sites/combined.pcoq.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
@@ -897,7 +897,7 @@ rule intersect_callable_sites_pcoq_analysis:
 rule intersect_callable_sites_hg38_sifakas_analysis:
 	input:
 		expand(
-			"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
+			"callable_sites/{sample}.hg38.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
 			sample=sifaka_samples)
 	output:
 		"callable_sites/combined.sifaka.hg38.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
@@ -909,7 +909,7 @@ rule intersect_callable_sites_hg38_sifakas_analysis:
 rule intersect_callable_sites_hg38_macaques_analysis:
 	input:
 		expand(
-			"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
+			"callable_sites/{sample}.hg38.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
 			sample=macaque_samples)
 	output:
 		"callable_sites/combined.macaque.hg38.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
