@@ -80,7 +80,21 @@ rule all:
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"results/{sample}.hg38.{sampling}.mapq20_noDup.genome_cov"
-			sample=all_samples, sampling=["downsampled", "unsampled"])
+			sample=all_samples, sampling=["downsampled", "unsampled"]),
+
+		expand(
+			"callable_sites/combined.macaque.mmul.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"callable_sites/combined.sifaka.pcoq.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"callable_sites/combined.macaque.hg38.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"callable_sites/combined.sifaka.hg38.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
+			sampling=["downsampled", "unsampled"])
+
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
 		# 	chrom=config["hg38_chroms"],
@@ -845,13 +859,23 @@ rule extract_callable_sites_analysis:
 	shell:
 		"sed -e '/CALLABLE/!d' {input} > {output}"
 
+rule bedops_sort_callable:
+	input:
+		"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bed"
+	output:
+		"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed"
+	params:
+		sort_bed = sort_bed_path
+	shell:
+		"zcat {input} | {params.sort_bed} - > {output}"
+
 rule intersect_callable_sites_mmul_analysis:
 	input:
 		expand(
-			"callable_sites/{sample}.mmul.ONLYcallablesitesFORANALYSIS.{{sampling}}.bed",
+			"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
 			sample=macaque_samples)
 	output:
-		"callable_sites/combined.mmul.INTERSECTIONcallablesites.{sampling}.bed"
+		"callable_sites/combined.mmul.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
 	params:
 		bedops = bedops_path
 	shell:
@@ -860,10 +884,10 @@ rule intersect_callable_sites_mmul_analysis:
 rule intersect_callable_sites_pcoq_analysis:
 	input:
 		expand(
-			"callable_sites/{sample}.pcoq.ONLYcallablesitesFORANALYSIS.{{sampling}}.bed",
+			"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
 			sample=sifaka_samples)
 	output:
-		"callable_sites/combined.pcoq.INTERSECTIONcallablesites.{sampling}.bed"
+		"callable_sites/combined.pcoq.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
 	params:
 		bedops = bedops_path
 	shell:
@@ -872,10 +896,10 @@ rule intersect_callable_sites_pcoq_analysis:
 rule intersect_callable_sites_hg38_sifakas_analysis:
 	input:
 		expand(
-			"callable_sites/{sample}.hg38.ONLYcallablesitesFORANALYSIS.{{sampling}}.bed",
+			"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
 			sample=sifaka_samples)
 	output:
-		"callable_sites/combined.sifaka.hg38.INTERSECTIONcallablesites.{sampling}.bed"
+		"callable_sites/combined.sifaka.hg38.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
 	params:
 		bedops = bedops_path
 	shell:
@@ -884,14 +908,22 @@ rule intersect_callable_sites_hg38_sifakas_analysis:
 rule intersect_callable_sites_hg38_macaques_analysis:
 	input:
 		expand(
-			"callable_sites/{sample}.hg38.ONLYcallablesitesFORANALYSIS.{{sampling}}.bed",
+			"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed",
 			sample=macaque_samples)
 	output:
-		"callable_sites/combined.macaque.hg38.INTERSECTIONcallablesites.{sampling}.bed"
+		"callable_sites/combined.macaque.hg38.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
 	params:
 		bedops = bedops_path
 	shell:
 		"bedops -i {input} | bedops --merge - > {output}"
+
+rule sort_chrom_ascend_intersection:
+	input:
+		"callable_sites/combined.{species}.{genome}.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
+	output:
+		"callable_sites/combined.{species}.{genome}.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed"
+	shell:
+		"sort -k1,1V -k2,2n {input} > {output}"
 
 rule make_bedtools_genome_file:
 	input:
