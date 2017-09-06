@@ -885,7 +885,7 @@ rule intersect_callable_sites_mmul_analysis:
 rule intersect_callable_sites_pcoq_analysis:
 	input:
 		expand(
-			"callable_sites/{sample}.pqoc.ONLYcallablesitesFORANALYSIS.{{sampling}}.bedopssorted.bed",
+			"callable_sites/{sample}.pcoq.ONLYcallablesitesFORANALYSIS.{{sampling}}.bedopssorted.bed",
 			sample=sifaka_samples)
 	output:
 		"callable_sites/combined.sifaka.pcoq.INTERSECTIONcallablesites.{sampling}.bedopssorted.bed"
