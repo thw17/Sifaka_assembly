@@ -7,6 +7,7 @@ temp_directory = "temp/"
 
 bbduksh_path = "bbduk.sh"
 bbmerge_sh_path = "bbmerge.sh"
+bedops_path = "bedops"
 bedtools_path = "bedtools"
 bgzip_path = "bgzip"
 bwa_path = "bwa"
@@ -59,17 +60,27 @@ rule all:
 		# 	species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
 		# 	sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/sifakas.pcoq.freebayes.{sampling}.raw.vcf.gz.tbi",
+			"vcf/sifakas.pcoq.freebayes.{sampling}.filtered.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/macaques.mmul.freebayes.{sampling}.raw.vcf.gz.tbi",
+			"vcf/macaques.mmul.freebayes.{sampling}.filtered.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/sifakas.hg38.freebayes.{sampling}.raw.vcf.gz.tbi",
+			"vcf/sifakas.hg38.freebayes.{sampling}.filtered.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/macaques.hg38.freebayes.{sampling}.raw.vcf.gz.tbi",
+			"vcf/macaques.hg38.freebayes.{sampling}.filtered.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
+
+		expand(
+			"results/{sample}.mmul.{sampling}.mapq20.genome_cov"
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/{sample}.pcoq.{sampling}.mapq20.genome_cov"
+			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/{sample}.hg38.{sampling}.mapq20.genome_cov"
+			sample=all_samples, sampling=["downsampled", "unsampled"])
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
 		# 	chrom=config["hg38_chroms"],
@@ -783,3 +794,123 @@ rule index_zipped_vcf:
 		tabix = tabix_path
 	shell:
 		"{params.tabix} -p vcf {input}"
+
+rule filter_vcfs:
+	input:
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.raw.vcf.gz",
+		tbi = "vcf/{species}.{genome}.{caller}.{sampling}.raw.vcf.gz.tbi"
+	output:
+		"vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf"
+	params:
+		filter_script = "scripts/Filter_vcf.py",
+		num_samples = 4
+	shell:
+		"python {params.filter_script} --vcf {input.vcf} --output_vcf {output} --QUAL 30 --sample_depth 8 --min_samples {params.num_samples} --min_support 3 --genotype_quality 30"
+
+rule zip_filtered_vcfs:
+	input:
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf"
+	output:
+		"vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz"
+	shell:
+		"bgzip {input.vcf}"
+
+rule index_zipped_filtered_vcfs:
+	input:
+		"vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz"
+	output:
+		"vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz.tbi"
+	shell:
+		"tabix -p vcf {input}"
+
+rule generate_callable_sites_analysis:
+	input:
+		ref = lambda wildcards: config["genome_paths"][wildcards.genome],
+		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
+	output:
+		"callable_sites/{sample}.{genome}.{sampling}.callablesitesFORANALYSIS"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk,
+		summary = "stats/{sample}.{genome}.{sampling}.callableFORANALYSIS.summary"
+	shell:
+		"java -Xmx12g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T CallableLoci -R {input.ref} -I {input.bam} --minDepth 8 --summary {params.summary} -o {output}"
+
+rule extract_callable_sites_analysis:
+	input:
+		"callable_sites/{sample}.{genome}.{sampling}.callablesitesFORANALYSIS"
+	output:
+		"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bed"
+	shell:
+		"sed -e '/CALLABLE/!d' {input} > {output}"
+
+rule intersect_callable_sites_mmul_analysis:
+	input:
+		expand(
+			"callable_sites/{sample}.mmul.ONLYcallablesitesFORANALYSIS.{{sampling}}.bed",
+			sample=macaque_samples)
+	output:
+		"callable_sites/combined.mmul.INTERSECTIONcallablesites.{sampling}.bed"
+	params:
+		bedops = bedops_path
+	shell:
+		"bedops -i {input} | bedops --merge - > {output}"
+
+rule intersect_callable_sites_pcoq_analysis:
+	input:
+		expand(
+			"callable_sites/{sample}.pcoq.ONLYcallablesitesFORANALYSIS.{{sampling}}.bed",
+			sample=sifaka_samples)
+	output:
+		"callable_sites/combined.pcoq.INTERSECTIONcallablesites.{sampling}.bed"
+	params:
+		bedops = bedops_path
+	shell:
+		"bedops -i {input} | bedops --merge - > {output}"
+
+rule intersect_callable_sites_hg38_sifakas_analysis:
+	input:
+		expand(
+			"callable_sites/{sample}.hg38.ONLYcallablesitesFORANALYSIS.{{sampling}}.bed",
+			sample=sifaka_samples)
+	output:
+		"callable_sites/combined.sifaka.hg38.INTERSECTIONcallablesites.{sampling}.bed"
+	params:
+		bedops = bedops_path
+	shell:
+		"bedops -i {input} | bedops --merge - > {output}"
+
+rule intersect_callable_sites_hg38_macaques_analysis:
+	input:
+		expand(
+			"callable_sites/{sample}.hg38.ONLYcallablesitesFORANALYSIS.{{sampling}}.bed",
+			sample=macaque_samples)
+	output:
+		"callable_sites/combined.macaque.hg38.INTERSECTIONcallablesites.{sampling}.bed"
+	params:
+		bedops = bedops_path
+	shell:
+		"bedops -i {input} | bedops --merge - > {output}"
+
+rule make_bedtools_genome_file:
+	input:
+		fai = lambda wildcards: config["genome_paths"][wildcards.genome] + ".fai"
+	output:
+		"reference/{genome}.genome"
+	shell:
+		"awk -v OFS='\t' {{'print $1,$2'}} {input.fai} > {output}"
+
+rule genome_cov:
+	input:
+		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
+		idx = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai",
+		genome = "reference/{genome}.genome"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20.genome_cov"
+	params:
+		samtools = samtools_path,
+		bedtools = bedtools_path
+	shell:
+		"{params.samtools} view {input.bam} -b -q 20 | "
+		"{params.bedtools} genomecov -bg -ibam stdin -g {input.genome} > {output}"
