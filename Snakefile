@@ -73,13 +73,13 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 
 		expand(
-			"results/{sample}.mmul.{sampling}.mapq20.genome_cov"
+			"results/{sample}.mmul.{sampling}.mapq20_noDup.genome_cov"
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"results/{sample}.pcoq.{sampling}.mapq20.genome_cov"
+			"results/{sample}.pcoq.{sampling}.mapq20_noDup.genome_cov"
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"results/{sample}.hg38.{sampling}.mapq20.genome_cov"
+			"results/{sample}.hg38.{sampling}.mapq20_noDup.genome_cov"
 			sample=all_samples, sampling=["downsampled", "unsampled"])
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
@@ -907,10 +907,10 @@ rule genome_cov:
 		idx = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai",
 		genome = "reference/{genome}.genome"
 	output:
-		"results/{sample}.{genome}.{sampling}.mapq20.genome_cov"
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov"
 	params:
 		samtools = samtools_path,
 		bedtools = bedtools_path
 	shell:
-		"{params.samtools} view {input.bam} -b -q 20 | "
+		"{params.samtools} view {input.bam} -b -F 1024 -q 20 | "
 		"{params.bedtools} genomecov -bg -ibam stdin -g {input.genome} > {output}"
