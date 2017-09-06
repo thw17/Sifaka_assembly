@@ -856,13 +856,13 @@ rule extract_callable_sites_analysis:
 	input:
 		"callable_sites/{sample}.{genome}.{sampling}.callablesitesFORANALYSIS"
 	output:
-		"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bed"
+		"callable_sites/{sample}.{genome}.{sampling}.ONLYcallablesitesFORANALYSIS.bed"
 	shell:
 		"sed -e '/CALLABLE/!d' {input} > {output}"
 
 rule bedops_sort_callable:
 	input:
-		"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bed"
+		"callable_sites/{sample}.{genome}.{sampling}.ONLYcallablesitesFORANALYSIS.bed"
 	output:
 		"callable_sites/{sample}.{genome}.ONLYcallablesitesFORANALYSIS.{sampling}.bedopssorted.bed"
 	params:
