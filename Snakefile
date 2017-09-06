@@ -73,13 +73,13 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 
 		expand(
-			"results/{sample}.mmul.{sampling}.mapq20_noDup.genome_cov"
+			"results/{sample}.mmul.{sampling}.mapq20_noDup.genome_cov",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"results/{sample}.pcoq.{sampling}.mapq20_noDup.genome_cov"
+			"results/{sample}.pcoq.{sampling}.mapq20_noDup.genome_cov",
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"results/{sample}.hg38.{sampling}.mapq20_noDup.genome_cov"
+			"results/{sample}.hg38.{sampling}.mapq20_noDup.genome_cov",
 			sample=all_samples, sampling=["downsampled", "unsampled"]),
 
 		expand(
