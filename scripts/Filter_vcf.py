@@ -90,7 +90,7 @@ def main():
 	for variant in vcf:
 		if variant.QUAL < args.QUAL:
 			continue
-		if variant.INFO.get("DP") < args.min_samples * args.sample_depth:
+		if variant.INFO.get("DP") < (args.min_samples * args.sample_depth):
 			continue
 		if args.var_type != "ALL":
 			var_type = variant.INFO.get("type")
@@ -102,11 +102,17 @@ def main():
 				if var_type != args.var_type.lower():
 					continue
 		dp = variant.format('DP')
-		dp = dp[np.where(dp >= args.sample_depth)]
+		try:
+			dp = dp[np.where(dp >= args.sample_depth)]
+		except TypeError:
+			pass
 		if len(dp) < args.min_samples:
 			continue
 		gq = variant.format('GQ')
-		gq = gq[np.where(gq >= args.genotype_quality)]
+		try:
+			gq = gq[np.where(gq >= args.genotype_quality)]
+		except TypeError:
+			continue
 		if len(gq) < args.min_samples:
 			continue
 		gt = variant.gt_types

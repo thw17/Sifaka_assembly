@@ -94,7 +94,11 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 		expand(
 			"callable_sites/combined.sifaka.hg38.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
-			sampling=["downsampled", "unsampled"])
+			sampling=["downsampled", "unsampled"]),
+
+		expand(
+			"reference/{genome}.gff",
+			genome=["mmul", "pcoq", "hg38"])
 
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
@@ -249,6 +253,16 @@ rule prepare_reference_rhemac2:
 		shell("{params.samtools} dict -o {output.dict} {input}")
 		# bwa
 		shell("{params.bwa} index {input}")
+
+rule get_annotation:
+	output:
+		"reference/{genome}.gff"
+	params:
+		web_address = lambda wildcards: config["annotation_address"][wildcards.genome],
+		initial_output = "reference/{genome}.gff.gz"
+	run:
+		shell("wget {params.web_address} -O {params.initial_output}")
+		shell("gunzip {params.initial_output}")
 
 rule fastqc_analysis:
 	input:
