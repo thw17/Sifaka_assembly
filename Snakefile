@@ -664,7 +664,7 @@ rule freebayes_call_mmul:
 	params:
 		freebayes = freebayes_path
 	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
+		"{params.freebayes} -f {input.ref} -v {output} --genotype-qualities --targets {input.callable} {input.bams}"
 
 rule freebayes_call_pcoq:
 	input:
@@ -681,7 +681,7 @@ rule freebayes_call_pcoq:
 	params:
 		freebayes = freebayes_path
 	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
+		"{params.freebayes} -f {input.ref} -v {output} --genotype-qualities --targets {input.callable} {input.bams}"
 
 rule freebayes_call_hg38_sifakas:
 	input:
@@ -698,7 +698,7 @@ rule freebayes_call_hg38_sifakas:
 	params:
 		freebayes = freebayes_path
 	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
+		"{params.freebayes} -f {input.ref} -v {output} --genotype-qualities --targets {input.callable} {input.bams}"
 
 rule freebayes_call_hg38_macaques:
 	input:
@@ -715,7 +715,7 @@ rule freebayes_call_hg38_macaques:
 	params:
 		freebayes = freebayes_path
 	shell:
-		"{params.freebayes} -f {input.ref} -v {output} --targets {input.callable} {input.bams}"
+		"{params.freebayes} -f {input.ref} -v {output} --genotype-qualities --targets {input.callable} {input.bams}"
 
 # rule freebayes_call_single_chrom_hg38_macaques:
 # 	input:
