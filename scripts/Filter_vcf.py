@@ -109,10 +109,7 @@ def main():
 		if len(dp) < args.min_samples:
 			continue
 		gq = variant.format('GQ')
-		try:
-			gq = gq[np.where(gq >= args.genotype_quality)]
-		except TypeError:
-			continue
+		gq = gq[np.where(gq >= args.genotype_quality)]
 		if len(gq) < args.min_samples:
 			continue
 		gt = variant.gt_types
