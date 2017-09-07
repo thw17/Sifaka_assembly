@@ -882,7 +882,7 @@ rule bedops_sort_callable:
 	params:
 		sort_bed = sort_bed_path
 	shell:
-		"zcat {input} | {params.sort_bed} - > {output}"
+		"{params.sort_bed} {input} > {output}"
 
 rule intersect_callable_sites_mmul_analysis:
 	input:
