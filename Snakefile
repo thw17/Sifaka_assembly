@@ -60,6 +60,20 @@ rule all:
 		# 	"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
 		# 	species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
 		# 	sampling=["downsampled", "unsampled"]),
+
+		expand(
+			"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
+			sampling=["downsampled", "unsampled"]),
+
 		expand(
 			"vcf/sifakas.pcoq.freebayes.{sampling}.filtered.vcf.gz.tbi",
 			sampling=["downsampled", "unsampled"]),
@@ -458,25 +472,59 @@ rule mapq_check:
 		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
 	output:
 		"stats/{sample}.{genome}.{sampling}.mapq.stats"
-	threads: 4
+	threads:
+		4
 	shell:
 		"scripts/mapqs -infile {input.bam} -outfile {output} -threads {threads}"
-#
-# rule gatk_gvcf_pcoq:
-# 	input:
-# 		ref = config["genome_paths"]["pcoq"],
-# 		bam = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
-# 		bai = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam.bai",
-# 		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
-# 	output:
-# 		"vcf/{sample}.pcoq.{sampling}.g.vcf.gz"
-# 	params:
-# 		temp_dir = temp_directory,
-# 		gatk_path = gatk
-# 	threads: 4
-# 	shell:
-# 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
-#
+
+rule gatk_gvcf_hg38_sifaka:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		bam = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
+		callable = "callable_sites/combined.sifaka.hg38.COMBINEDcallablesites.{sampling}.bed"
+	output:
+		"vcf/{sample}.sifaka.hg38.{sampling}.g.vcf.gz"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads:
+		4
+	shell:
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+
+rule gatk_gvcf_hg38_macaques:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		bam = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
+		callable = "callable_sites/combined.macaque.hg38.COMBINEDcallablesites.{sampling}.bed"
+	output:
+		"vcf/{sample}.macaque.hg38.{sampling}.g.vcf.gz"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads:
+		4
+	shell:
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+
+rule gatk_gvcf_pcoq:
+	input:
+		ref = config["genome_paths"]["pcoq"],
+		bam = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam.bai",
+		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
+	output:
+		"vcf/{sample}.pcoq.{sampling}.g.vcf.gz"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads:
+		4
+	shell:
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+
 # rule gatk_gvcf_rhemac2:
 # 	input:
 # 		ref = config["genome_paths"]["rhemac2"],
@@ -488,24 +536,25 @@ rule mapq_check:
 # 	params:
 # 		temp_dir = temp_directory,
 # 		gatk_path = gatk
-# 	threads: 4
+# 	threads:
+# 		4
 # 	shell:
 # 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 #
-# rule gatk_gvcf_mmul:
-# 	input:
-# 		ref = config["genome_paths"]["mmul"],
-# 		bam = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
-# 		bai = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam.bai",
-# 		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
-# 	output:
-# 		"vcf/{sample}.mmul.{sampling}.g.vcf.gz"
-# 	params:
-# 		temp_dir = temp_directory,
-# 		gatk_path = gatk
-# 	threads: 4
-# 	shell:
-# 		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+rule gatk_gvcf_mmul:
+	input:
+		ref = config["genome_paths"]["mmul"],
+		bam = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam.bai",
+		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
+	output:
+		"vcf/{sample}.mmul.{sampling}.g.vcf.gz"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads: 4
+	shell:
+		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 
 #########################
 #
@@ -592,43 +641,86 @@ rule mapq_check:
 # 		variant_files = " ".join(variant_files)
 # 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -cp {params.gatk_path} org.broadinstitute.gatk.tools.CatVariants -R {input.ref} -o {output}")
 #
-# rule genotype_gvcfs_pcoq:
-# 	input:
-# 		ref = config["genome_paths"]["pcoq"],
-# 		gvcfs = expand(
-# 			"vcf/{sample}.pcoq.{{sampling}}.g.vcf.gz",
-# 			sample=sifaka_samples)
-# 	output:
-# 		v = "vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf"
-# 	params:
-# 		temp_dir = temp_directory,
-# 		gatk_path = gatk
-# 	threads: 4
-# 	run:
-# 		variant_files = []
-# 		for i in input.gvcfs:
-# 			variant_files.append("--variant " + i)
-# 		variant_files = " ".join(variant_files)
-# 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
-#
-# rule genotype_gvcfs_mmul:
-# 	input:
-# 		ref = config["genome_paths"]["mmul"],
-# 		gvcfs = expand(
-# 			"vcf/{sample}.mmul.{{sampling}}.g.vcf.gz",
-# 			sample=macaque_samples)
-# 	output:
-# 		v = "vcf/macaques.mmul.gatk.{sampling}.raw.vcf"
-# 	params:
-# 		temp_dir = temp_directory,
-# 		gatk_path = gatk
-# 	threads: 4
-# 	run:
-# 		variant_files = []
-# 		for i in input.gvcfs:
-# 			variant_files.append("--variant " + i)
-# 		variant_files = " ".join(variant_files)
-# 		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
+rule genotype_gvcfs_hg38_sifaka:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		gvcfs = expand(
+			"vcf/{sample}.sifaka.hg38.{{sampling}}.g.vcf.gz",
+			sample=sifaka_samples)
+	output:
+		v = "vcf/macaques.hg38.gatk.{sampling}.raw.vcf"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads:
+		4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
+rule genotype_gvcfs_hg38_macaque:
+	input:
+		ref = config["genome_paths"]["hg38"],
+		gvcfs = expand(
+			"vcf/{sample}.macaque.hg38.{{sampling}}.g.vcf.gz",
+			sample=macaque_samples)
+	output:
+		v = "vcf/sifakas.hg38.gatk.{sampling}.raw.vcf"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads:
+		4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
+rule genotype_gvcfs_pcoq:
+	input:
+		ref = config["genome_paths"]["pcoq"],
+		gvcfs = expand(
+			"vcf/{sample}.pcoq.{{sampling}}.g.vcf.gz",
+			sample=sifaka_samples)
+	output:
+		v = "vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads:
+		4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+
+rule genotype_gvcfs_mmul:
+	input:
+		ref = config["genome_paths"]["mmul"],
+		gvcfs = expand(
+			"vcf/{sample}.mmul.{{sampling}}.g.vcf.gz",
+			sample=macaque_samples)
+	output:
+		v = "vcf/macaques.mmul.gatk.{sampling}.raw.vcf"
+	params:
+		temp_dir = temp_directory,
+		gatk_path = gatk
+	threads:
+		4
+	run:
+		variant_files = []
+		for i in input.gvcfs:
+			variant_files.append("--variant " + i)
+		variant_files = " ".join(variant_files)
+		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
 #
 # rule genotype_gvcfs_rhemac2:
 # 	input:
