@@ -24,6 +24,7 @@ def parse_args():
 		"regions for population (to accurately calculate pi).")
 
 	args = parser.parse_args()
+	return args
 
 
 def calc_callable_seq(callable_regions_bed):
@@ -40,3 +41,4 @@ def calc_callable_seq(callable_regions_bed):
 def main():
 	args = parse_args()
 	vcf = cyvcf2.VCF(args.vcf)
+	
