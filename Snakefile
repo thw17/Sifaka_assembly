@@ -50,11 +50,20 @@ rule all:
 		expand(
 			"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
+			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		# expand(
 		# 	"stats/{sample}.rhemac2.sorted.mkdup.bam.{sampling}.stats",
 		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
+			sample=all_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
 			sample=all_samples, sampling=["downsampled", "unsampled"]),
 		# expand(
 		# 	"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
@@ -375,6 +384,14 @@ rule bam_stats:
 		"stats/{sample}.{genome}.sorted.mkdup.bam.{sampling}.stats"
 	shell:
 		"samtools stats {input} | grep ^SN | cut -f 2- > {output}"
+
+rule bam_stats_on_passing_reads:
+	input:
+		"processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam"
+	output:
+		"stats/{sample}.{genome}.sorted.mkdup.bam.{sampling}.nodup.properpair.stats"
+	shell:
+		"{params.samtools} view -F 1024 -f 2 -b {input} | grep ^SN | cut -f 2- > {output}"
 
 rule generate_callable_sites:
 	input:
