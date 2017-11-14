@@ -374,16 +374,20 @@ rule index_bam:
 		"processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam"
 	output:
 		"processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
+	params:
+		samtools = samtools_path
 	shell:
-		"samtools index {input}"
+		"{params.samtools} index {input}"
 
 rule bam_stats:
 	input:
 		"processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam"
 	output:
 		"stats/{sample}.{genome}.sorted.mkdup.bam.{sampling}.stats"
+	params:
+		samtools = samtools_path
 	shell:
-		"samtools stats {input} | grep ^SN | cut -f 2- > {output}"
+		"{params.samtools} stats {input} | grep ^SN | cut -f 2- > {output}"
 
 rule bam_stats_on_passing_reads:
 	input:
