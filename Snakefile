@@ -397,7 +397,7 @@ rule bam_stats_on_passing_reads:
 	params:
 		samtools = samtools_path
 	shell:
-		"{params.samtools} view -F 1024 -f 2 -b {input} | grep ^SN | cut -f 2- > {output}"
+		"{params.samtools} view -F 1024 -f 2 -b {input} | {params.samtools} stats - | grep ^SN | cut -f 2- > {output}"
 
 rule generate_callable_sites:
 	input:
