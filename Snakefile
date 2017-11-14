@@ -394,6 +394,8 @@ rule bam_stats_on_passing_reads:
 		"processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam"
 	output:
 		"stats/{sample}.{genome}.sorted.mkdup.bam.{sampling}.nodup.properpair.stats"
+	params:
+		samtools = samtools_path
 	shell:
 		"{params.samtools} view -F 1024 -f 2 -b {input} | grep ^SN | cut -f 2- > {output}"
 
