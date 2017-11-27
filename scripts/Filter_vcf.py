@@ -20,9 +20,10 @@ def parse_args():
 
 	parser.add_argument(
 		"--variant_caller", type=str.lower,
-		default="freebayes", choices=["freebayes"],
-		help="Variant caller used.  Currently only supports freebayes.  Default "
-		"is freebayes.")
+		default="freebayes", choices=["freebayes", "gatk"],
+		help="Variant caller used.  Currently only supports freebayes and GATK. "
+		"Has only been tested on Freebayes version 1.1.0 and GATK version 3.7. "
+		"Default is freebayes.")
 
 	parser.add_argument(
 		"--QUAL", type=int, default=0,
@@ -38,7 +39,9 @@ def parse_args():
 		choices=["ALL", "SNP", "INDEL", "MNP", "COMPLEX", "INS", "DEL"],
 		help="Type of variant to retain. Default is to retain all.  Choices "
 		"include (can be either all uppcase or all lower case): all, snp, "
-		"indel, mnp.  Multiple options can be selected, e.g. '--type snp indel'")
+		"indel, mnp.  Multiple options can be selected, e.g. '--type snp indel'. "
+		"ALL, SNP, INDEL, INS, and DEL supported for both GATK and Freebayes. "
+		"All other options supported for Freebayes only.")
 
 	parser.add_argument(
 		"--min_samples", type=int, default=0,
@@ -87,52 +90,104 @@ def main():
 
 	out_vcf = cyvcf2.Writer(args.output_vcf, vcf)
 
-	for variant in vcf:
-		if variant.QUAL < args.QUAL:
-			continue
-		if variant.INFO.get("DP") < (args.min_samples * args.sample_depth):
-			continue
-		if args.var_type != "ALL":
-			var_type = variant.INFO.get("type")
-			if args.var_type == "INDEL":
-				if var_type != "ins":
-					if var_type != "del":
-						continue
-			else:
-				if var_type != args.var_type.lower():
-					continue
-		dp = variant.format('DP')
-		try:
-			dp = dp[np.where(dp >= args.sample_depth)]
-		except TypeError:
-			pass
-		if len(dp) < args.min_samples:
-			continue
-		gq = variant.format('GQ')
-		gq = gq[np.where(gq >= args.genotype_quality)]
-		if len(gq) < args.min_samples:
-			continue
-		gt = variant.gt_types
-		gt_ref = variant.gt_ref_depths
-		gt_alt = variant.gt_alt_depths
-		if args.min_support > 0:
-			passing = 0
-			for idx, i in enumerate(gt):
-				if i == 0:
-					if gt_ref[idx] >= args.min_support:
-						passing += 1
-				elif i == 1:
-					if gt_ref[idx] >= args.min_support and gt_alt[idx] >= args.min_support:
-						passing += 1
-				elif i == 2:
-					if gt_alt[idx] >= args.min_support:
-						passing += 1
-			if passing < args.min_samples:
+	if args.variant_caller == "freebayes":
+		for variant in vcf:
+			if variant.QUAL < args.QUAL:
 				continue
-		out_vcf.write_record(variant)
+			if variant.INFO.get("DP") < (args.min_samples * args.sample_depth):
+				continue
+			if "ALL" not in args.var_type:
+				var_type = variant.INFO.get("type")
+				if "INDEL" in args.var_type:
+					if var_type != "ins":
+						if var_type != "del":
+							continue
+				else:
+					if var_type not in [x.lower() for x in args.var_type]:
+						continue
+			dp = variant.format('DP')
+			try:
+				dp = dp[np.where(dp >= args.sample_depth)]
+			except TypeError:
+				pass
+			if len(dp) < args.min_samples:
+				continue
+			gq = variant.format('GQ')
+			gq = gq[np.where(gq >= args.genotype_quality)]
+			if len(gq) < args.min_samples:
+				continue
+			gt = variant.gt_types
+			gt_ref = variant.gt_ref_depths
+			gt_alt = variant.gt_alt_depths
+			if args.min_support > 0:
+				passing = 0
+				for idx, i in enumerate(gt):
+					if i == 0:
+						if gt_ref[idx] >= args.min_support:
+							passing += 1
+					elif i == 1:
+						if gt_ref[idx] >= args.min_support and gt_alt[idx] >= args.min_support:
+							passing += 1
+					elif i == 2:
+						if gt_alt[idx] >= args.min_support:
+							passing += 1
+				if passing < args.min_samples:
+					continue
+			out_vcf.write_record(variant)
+
+	elif args.variant_caller == "gatk":
+		for variant in vcf:
+			if variant.QUAL < args.QUAL:
+				continue
+			if variant.INFO.get("DP") < (args.min_samples * args.sample_depth):
+				continue
+			if "ALL" not in args.var_type:
+				if variant.is_snp is True:
+					if "snp" not in args.var_type:
+						continue
+					elif variant.is_indel is True:
+						if "INDEL" not in args.var_type:
+							if variant.is_deletion is True:
+								if "DEL" not in args.var_type:
+									continue
+							elif len(variant.ALT) != 1:
+								continue
+							else:
+								if "INS" not in args.var_type:
+									continue
+			dp = variant.format('DP')
+			try:
+				dp = dp[np.where(dp >= args.sample_depth)]
+			except TypeError:
+				pass
+			if len(dp) < args.min_samples:
+				continue
+			gq = variant.format('GQ')
+			gq = gq[np.where(gq >= args.genotype_quality)]
+			if len(gq) < args.min_samples:
+				continue
+			gt = variant.gt_types
+			gt_ref = variant.gt_ref_depths
+			gt_alt = variant.gt_alt_depths
+			if args.min_support > 0:
+				passing = 0
+				for idx, i in enumerate(gt):
+					if i == 0:
+						if gt_ref[idx] >= args.min_support:
+							passing += 1
+					elif i == 1:
+						if gt_ref[idx] >= args.min_support and gt_alt[idx] >= args.min_support:
+							passing += 1
+					elif i == 2:
+						if gt_alt[idx] >= args.min_support:
+							passing += 1
+				if passing < args.min_samples:
+					continue
+			out_vcf.write_record(variant)
 
 	out_vcf.close()
 	# vcf.close()
+
 
 if __name__ == "__main__":
 	main()

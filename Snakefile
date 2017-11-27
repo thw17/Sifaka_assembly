@@ -84,17 +84,17 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 
 		expand(
-			"vcf/sifakas.pcoq.freebayes.{sampling}.filtered.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
+			"vcf/sifakas.pcoq.{caller}.{sampling}.filtered.vcf.gz.tbi",
+			caller=["gatk", "freebayes"], sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/macaques.mmul.freebayes.{sampling}.filtered.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
+			"vcf/macaques.mmul.{caller}.{sampling}.filtered.vcf.gz.tbi",
+			caller=["gatk", "freebayes"], sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/sifakas.hg38.freebayes.{sampling}.filtered.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
+			"vcf/sifakas.hg38.{caller}.{sampling}.filtered.vcf.gz.tbi",
+			caller=["gatk", "freebayes"], sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/macaques.hg38.freebayes.{sampling}.filtered.vcf.gz.tbi",
-			sampling=["downsampled", "unsampled"]),
+			"vcf/macaques.hg38.{caller}.{sampling}.filtered.vcf.gz.tbi",
+			caller=["gatk", "freebayes"], sampling=["downsampled", "unsampled"]),
 
 		expand(
 			"results/{sample}.mmul.{sampling}.mapq20_noDup.genome_cov",
@@ -947,9 +947,10 @@ rule filter_vcfs:
 		"vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf"
 	params:
 		filter_script = "scripts/Filter_vcf.py",
-		num_samples = 4
+		num_samples = 4,
+		variant_caller = "{caller}"
 	shell:
-		"python {params.filter_script} --vcf {input.vcf} --output_vcf {output} --QUAL 30 --sample_depth 8 --min_samples {params.num_samples} --min_support 3 --genotype_quality 30"
+		"python {params.filter_script} --vcf {input.vcf} --output_vcf {output} --variant_caller {params.variant_caller} --QUAL 30 --sample_depth 8 --min_samples {params.num_samples} --min_support 3 --genotype_quality 30"
 
 rule zip_filtered_vcfs:
 	input:
