@@ -163,6 +163,8 @@ def main():
 			if len(dp) < args.min_samples:
 				continue
 			gq = variant.format('GQ')
+			if gq is None:
+				continue
 			gq = gq[np.where(gq >= args.genotype_quality)]
 			if len(gq) < args.min_samples:
 				continue
