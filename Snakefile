@@ -123,7 +123,7 @@ rule all:
 			"reference/{genome}.gff",
 			genome=["mmul", "pcoq", "hg38"]),
 		expand(
-			"reference/{genome}.{region}.gff",
+			"regions/{genome}.{region}.gff",
 			genome=["mmul", "pcoq", "hg38"], region=["CDS", "exon", "gene"])
 
 		# expand(
@@ -294,7 +294,7 @@ rule extract_regions_from_gff:
 	input:
 		"reference/{genome}.gff"
 	output:
-		"reference/{genome}.{region}.gff"
+		"regions/{genome}.{region}.gff"
 	params:
 		region = "{region}"
 	shell:
