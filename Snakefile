@@ -121,7 +121,7 @@ rule all:
 
 		expand(
 			"reference/{genome}.gff",
-			genome=["mmul", "pcoq", "hg38"])
+			genome=["mmul", "pcoq", "hg38"]),
 		expand(
 			"reference/{genome}.{region}.gff",
 			genome=["mmul", "pcoq", "hg38"], region=["CDS", "exon", "gene"])
