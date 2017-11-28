@@ -122,6 +122,9 @@ rule all:
 		expand(
 			"reference/{genome}.gff",
 			genome=["mmul", "pcoq", "hg38"])
+		expand(
+			"reference/{genome}.{region}.gff",
+			genome=["mmul", "pcoq", "hg38"], region=["CDS", "exon", "gene"])
 
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
@@ -286,6 +289,16 @@ rule get_annotation:
 	run:
 		shell("wget {params.web_address} -O {params.initial_output}")
 		shell("gunzip {params.initial_output}")
+
+rule extract_regions_from_gff:
+	input:
+		"reference/{genome}.gff"
+	output:
+		"reference/{genome}.{region}.gff"
+	params:
+		region = "{region}"
+	shell:
+		"""awk '($3 == "{params.region}")' {input} > {output}"""
 
 rule fastqc_analysis:
 	input:
