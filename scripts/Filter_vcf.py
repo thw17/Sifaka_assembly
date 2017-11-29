@@ -137,7 +137,11 @@ def main():
 
 	elif args.variant_caller == "gatk":
 		for variant in vcf:
+			if variant.QUAL is None:
+				continue
 			if variant.QUAL < args.QUAL:
+				continue
+			if variant.INFO.get("DP") is None:
 				continue
 			if variant.INFO.get("DP") < (args.min_samples * args.sample_depth):
 				continue
