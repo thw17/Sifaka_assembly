@@ -290,15 +290,47 @@ rule get_annotation:
 		shell("wget {params.web_address} -O {params.initial_output}")
 		shell("gunzip {params.initial_output}")
 
-rule extract_regions_from_gff:
+rule extract_exons_from_gff:
 	input:
 		"reference/{genome}.gff"
 	output:
-		"regions/{genome}.{region}.gff"
-	params:
-		region = "{region}"
+		"regions/{genome}.exon.gff"
 	shell:
-		"""awk '($3 == "{params.region}")' {input} > {output}"""
+		"""awk '($3 == "exon")' {input} > {output}"""
+
+rule extract_genes_from_gff:
+	input:
+		"reference/{genome}.gff"
+	output:
+		"regions/{genome}.gene.gff"
+	shell:
+		"""awk '($3 == "gene")' {input} > {output}"""
+
+rule extract_cds_from_gff:
+	input:
+		"reference/{genome}.gff"
+	output:
+		"regions/{genome}.cds.gff"
+	shell:
+		"""awk '($3 == "CDS")' {input} > {output}"""
+
+rule create_introns:
+	input:
+		exon = "regions/{genome}.exon.gff",
+		gene = "regions/{genome}.gene.gff"
+	output:
+		"regions/{genome}.intron.gff"
+	shell:
+		"bedtools subtract -a {input.gene} -b {input.exon} > {output}"
+
+rule create_utr:
+	input:
+		exon = "regions/{genome}.exon.gff",
+		cds = "regions/{genome}.cds.gff"
+	output:
+		"regions/{genome}.utr.gff"
+	shell:
+		"bedtools subtract -a {input.exon} -b {input.cds} > {output}"
 
 rule fastqc_analysis:
 	input:
