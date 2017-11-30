@@ -125,7 +125,16 @@ rule all:
 		expand(
 			"regions/{genome}.{region}.gff",
 			genome=["mmul", "pcoq", "hg38"],
-			region=["cds", "exon", "gene", "utr", "intron"])
+			region=["cds", "exon", "gene", "utr", "intron"]),
+		expand(
+			"coverage/{sample}.hg38.{sampling}.hist.txt",
+			sample=all_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"coverage/{sample}.pcoq.{sampling}.hist.txt",
+			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"coverage/{sample}.mmul.{sampling}.hist.txt",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"])
 
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
@@ -332,6 +341,19 @@ rule create_utr:
 		"regions/{genome}.utr.gff"
 	shell:
 		"bedtools subtract -a {input.exon} -b {input.cds} > {output}"
+
+rule convert_gff_coordinates:
+	input:
+		"regions/{genome}.{region}.gff"
+	output:
+		"regions/{genome}.{region}.converted.gff"
+	run:
+		if wildcards.genome == "hg38":
+			shell(
+				"python scripts/Convert_hg38_names.py --gff {input} --outfile {output}")
+		else:
+			shell(
+				"ln -s ../{} {{output}} && touch -h {{output}}".format(input))
 
 rule fastqc_analysis:
 	input:
@@ -545,6 +567,18 @@ rule mapq_check:
 		4
 	shell:
 		"scripts/mapqs -infile {input.bam} -outfile {output} -threads {threads}"
+
+rule create_coverage_histograms:
+	input:
+		regions = "regions/{genome}.{region}.converted.gff",
+		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
+	output:
+		"coverage/{sample}.{genome}.{sampling}.hist.txt"
+	params:
+		bedtools = bedtools_path
+	shell:
+		"{params.bedtools} coverage -hist -abam {input.bam} -b {input.regions} | grep ^all > {output}"
 
 rule gatk_gvcf_hg38_sifaka:
 	input:
