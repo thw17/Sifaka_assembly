@@ -128,10 +128,12 @@ rule all:
 			region=["cds", "exon", "gene", "utr", "intron"]),
 		expand(
 			"coverage/{sample}.hg38.{sampling}.{region}.hist.txt",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
+			sample=all_samples, sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron"]),
 		expand(
 			"coverage/{sample}.pcoq.{sampling}.{region}.hist.txt",
-			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+			sample=sifaka_samples, sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron"]),
 		expand(
 			"coverage/{sample}.mmul.{sampling}.{region}.hist.txt",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"],
