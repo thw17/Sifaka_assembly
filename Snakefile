@@ -127,14 +127,15 @@ rule all:
 			genome=["mmul", "pcoq", "hg38"],
 			region=["cds", "exon", "gene", "utr", "intron"]),
 		expand(
-			"coverage/{sample}.hg38.{sampling}.hist.txt",
+			"coverage/{sample}.hg38.{sampling}.{region}.hist.txt",
 			sample=all_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"coverage/{sample}.pcoq.{sampling}.hist.txt",
+			"coverage/{sample}.pcoq.{sampling}.{region}.hist.txt",
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
-			"coverage/{sample}.mmul.{sampling}.hist.txt",
-			sample=macaque_samples, sampling=["downsampled", "unsampled"])
+			"coverage/{sample}.mmul.{sampling}.{region}.hist.txt",
+			sample=macaque_samples, sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron"])
 
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
