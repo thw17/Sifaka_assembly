@@ -125,7 +125,7 @@ rule all:
 		expand(
 			"regions/{genome}.{region}.gff",
 			genome=["mmul", "pcoq", "hg38"],
-			region=["CDS", "exon", "gene", "utr", "intron"])
+			region=["cds", "exon", "gene", "utr", "intron"])
 
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
@@ -311,7 +311,7 @@ rule extract_cds_from_gff:
 	input:
 		"reference/{genome}.gff"
 	output:
-		"regions/{genome}.CDS.gff"
+		"regions/{genome}.cds.gff"
 	shell:
 		"""awk '($3 == "CDS")' {input} > {output}"""
 
