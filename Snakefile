@@ -574,7 +574,7 @@ rule create_coverage_histograms:
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
 	output:
-		"coverage/{sample}.{genome}.{sampling}.hist.txt"
+		"coverage/{sample}.{genome}.{sampling}.{region}.hist.txt"
 	params:
 		bedtools = bedtools_path
 	shell:
