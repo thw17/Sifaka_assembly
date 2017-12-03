@@ -120,6 +120,56 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 
 		expand(
+			"results/pairwise.{pair}.mmul.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			pair=["WI055.WI059", "WI055.WI056", "WI055.WI057", "WI056.WI059", "WI057.WI059", "WI056.WI057"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/threeway.{trio}.mmul.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			trio=["WI055.WI056.WI057", "WI055.WI056.WI059", "WI056.WI057.WI059"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/fourway.{quad}.mmul.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			pair=["WI055.WI056.WI057.WI059"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/pairwise.{pair}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			pair=["WI055.WI059", "WI055.WI056", "WI055.WI057", "WI056.WI059", "WI057.WI059", "WI056.WI057"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/threeway.{trio}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			trio=["WI055.WI056.WI057", "WI055.WI056.WI059", "WI056.WI057.WI059"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/fourway.{quad}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			pair=["WI055.WI056.WI057.WI059"],
+			sampling=["downsampled", "unsampled"]),
+
+		expand(
+			"results/pairwise.{pair}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			pair=[],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/threeway.{trio}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			trio=[],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/fourway.{quad}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			pair=[],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/pairwise.{pair}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			pair=[],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/threeway.{trio}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			trio=[],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/fourway.{quad}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			pair=[],
+			sampling=["downsampled", "unsampled"]),
+
+		expand(
 			"reference/{genome}.gff",
 			genome=["mmul", "pcoq", "hg38"]),
 		expand(
@@ -1160,3 +1210,52 @@ rule genome_cov:
 	shell:
 		"{params.samtools} view {input.bam} -b -F 1024 -q 20 | "
 		"{params.bedtools} genomecov -bg -ibam stdin -g {input.genome} > {output}"
+
+rule bedops_sort_genome_cov:
+	input:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed"
+	params:
+		sort_bed = sort_bed_path
+	shell:
+		"{params.sort_bed} {input} > {output}"
+
+rule pairwise_intersect:
+	input:
+		bed1 = "results/{sample1}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		bed2 = "results/{sample2}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed"
+
+	output:
+		"results/pairwise.{sample1}.{sample2}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed"
+	params:
+		bedops = bedops_path
+	shell:
+		"bedops -i {input.bed1} {input.bed2} | bedops --merge - > {output}"
+
+rule threeway_intersect:
+	input:
+		bed1 = "results/{sample1}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		bed2 = "results/{sample2}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		bed3 = "results/{sample3}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed"
+
+	output:
+		"results/threeway.{sample1}.{sample2}.{sample3}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed"
+	params:
+		bedops = bedops_path
+	shell:
+		"bedops -i {input.bed1} {input.bed2} {input.bed3} | bedops --merge - > {output}"
+
+rule fourway_intersect:
+	input:
+		bed1 = "results/{sample1}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		bed2 = "results/{sample2}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		bed3 = "results/{sample3}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		bed4 = "results/{sample4}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed"
+
+	output:
+		"results/fourway.{sample1}.{sample2}.{sample3}.{sample4}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed"
+	params:
+		bedops = bedops_path
+	shell:
+		"bedops -i {input.bed1} {input.bed2} {input.bed3} {input.bed4} | bedops --merge - > {output}"
