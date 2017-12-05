@@ -120,53 +120,47 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 
 		expand(
-			"results/pairwise.{pair}.mmul.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			"results/pairwise.{pair}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
 			pair=["WI055.WI059", "WI055.WI056", "WI055.WI057", "WI056.WI059", "WI057.WI059", "WI056.WI057"],
+			genome=["hg38", "mmul"],
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"results/threeway.{trio}.mmul.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			"results/threeway.{trio}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
 			trio=["WI055.WI056.WI057", "WI055.WI056.WI059", "WI056.WI057.WI059"],
+			genome=["hg38", "mmul"],
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"results/fourway.{quad}.mmul.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			pair=["WI055.WI056.WI057.WI059"],
+			"results/fourway.{quad}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			quad=["WI055.WI056.WI057.WI059"],
+			genome=["hg38", "mmul"],
 			sampling=["downsampled", "unsampled"]),
-		expand(
-			"results/pairwise.{pair}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			pair=["WI055.WI059", "WI055.WI056", "WI055.WI057", "WI056.WI059", "WI057.WI059", "WI056.WI057"],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"results/threeway.{trio}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			trio=["WI055.WI056.WI057", "WI055.WI056.WI059", "WI056.WI057.WI059"],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"results/fourway.{quad}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			pair=["WI055.WI056.WI057.WI059"],
-			sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"results/pairwise.{pair}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+		# 	pair=["WI055.WI059", "WI055.WI056", "WI055.WI057", "WI056.WI059", "WI057.WI059", "WI056.WI057"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"results/threeway.{trio}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+		# 	trio=["WI055.WI056.WI057", "WI055.WI056.WI059", "WI056.WI057.WI059"],
+		# 	sampling=["downsampled", "unsampled"]),
+		# expand(
+		# 	"results/fourway.{quad}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+		# 	pair=["WI055.WI056.WI057.WI059"],
+		# 	sampling=["downsampled", "unsampled"]),
 
 		expand(
-			"results/pairwise.{pair}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			pair=[],
+			"results/pairwise.{pair}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			pair=["F249.F406", "F249.M288", "F249.M418", "F406.M288", "F406.M418", "M288.M418"],
+			genome=["hg38", "pcoq"],
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"results/threeway.{trio}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			trio=[],
+			"results/threeway.{trio}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			trio=["F249.F406.M288", "F249.F406.M418", "F249.M288.M418", "F406.M288.M418"],
+			genome=["hg38", "pcoq"],
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"results/fourway.{quad}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			pair=[],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"results/pairwise.{pair}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			pair=[],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"results/threeway.{trio}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			trio=[],
-			sampling=["downsampled", "unsampled"]),
-		expand(
-			"results/fourway.{quad}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			pair=[],
+			"results/fourway.{quad}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
+			quad=["F249.F406.M288.418"],
+			genome=["hg38", "pcoq"],
 			sampling=["downsampled", "unsampled"]),
 
 		expand(
