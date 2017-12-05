@@ -159,7 +159,7 @@ rule all:
 			sampling=["downsampled", "unsampled"]),
 		expand(
 			"results/fourway.{quad}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-			quad=["F249.F406.M288.418"],
+			quad=["F249.F406.M288.M418"],
 			genome=["hg38", "pcoq"],
 			sampling=["downsampled", "unsampled"]),
 
