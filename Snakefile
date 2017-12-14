@@ -14,6 +14,7 @@ bwa_path = "bwa"
 fastqc_path = "fastqc"
 freebayes_path = "freebayes"
 gatk = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
+gff2bed_path = "gff2bed"
 platypus_path = "platypus"
 samblaster_path = "samblaster"
 samtools_path = "samtools"
@@ -181,6 +182,18 @@ rule all:
 		expand(
 			"coverage/{sample}.mmul.{sampling}.{region}.hist.txt",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron"])
+
+		expand(
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
+			sample=macaque_samples, genome=["hg38", "mmul"],
+			sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron"])
+
+		expand(
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
+			sample=sifaka_samples, genome=["hg38", "pcoq"],
+			sampling=["downsampled", "unsampled"],
 			region=["cds", "exon", "gene", "utr", "intron"])
 
 		# expand(
@@ -1225,7 +1238,7 @@ rule pairwise_intersect:
 	params:
 		bedops = bedops_path
 	shell:
-		"bedops -i {input.bed1} {input.bed2} | bedops --merge - > {output}"
+		"{params.bedops} -i {input.bed1} {input.bed2} | {params.bedops} --merge - > {output}"
 
 rule threeway_intersect:
 	input:
@@ -1238,7 +1251,7 @@ rule threeway_intersect:
 	params:
 		bedops = bedops_path
 	shell:
-		"bedops -i {input.bed1} {input.bed2} {input.bed3} | bedops --merge - > {output}"
+		"{params.bedops} -i {input.bed1} {input.bed2} {input.bed3} | {params.bedops} --merge - > {output}"
 
 rule fourway_intersect:
 	input:
@@ -1253,3 +1266,32 @@ rule fourway_intersect:
 		bedops = bedops_path
 	shell:
 		"bedops -i {input.bed1} {input.bed2} {input.bed3} {input.bed4} | bedops --merge - > {output}"
+
+rule gff2bed:
+	input:
+		"regions/{genome}.{region}.converted.gff"
+	output:
+		"regions/{genome}.{region}.converted.bedopssorted.bed"
+	params:
+		gff2bed = gff2bed_path
+	shell:
+		"cat {input} | {params.gff2bed} > {output}"
+
+rule bedops_intersect_regions:
+	input:
+		sample = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		region = "regions/{genome}.{region}.converted.bedopssorted.bed"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.{region}.INTERSECTION.bed"
+	params:
+		bedops = bedops_path
+	shell:
+		"{params.bedops} -i {input.sample} {input.region} > {output}"
+
+rule compute_histogram_from_bed:
+	input:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.{region}.INTERSECTION.bed"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist"
+	shell:
+		"python scripts/Compute_histogram_from_bed.py --bed {input} --outputfile {output}"
