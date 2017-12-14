@@ -182,13 +182,13 @@ rule all:
 		expand(
 			"coverage/{sample}.mmul.{sampling}.{region}.hist.txt",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"],
-			region=["cds", "exon", "gene", "utr", "intron"])
+			region=["cds", "exon", "gene", "utr", "intron"]),
 
 		expand(
 			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
 			sample=macaque_samples, genome=["hg38", "mmul"],
 			sampling=["downsampled", "unsampled"],
-			region=["cds", "exon", "gene", "utr", "intron"])
+			region=["cds", "exon", "gene", "utr", "intron"]),
 
 		expand(
 			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
