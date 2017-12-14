@@ -1294,4 +1294,4 @@ rule compute_histogram_from_bed:
 	output:
 		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist"
 	shell:
-		"python scripts/Compute_histogram_from_bed.py --bed {input} --outputfile {output}"
+		"python scripts/Compute_histogram_from_bed.py --bed {input} --outfile {output}"
