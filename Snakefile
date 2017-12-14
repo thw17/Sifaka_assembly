@@ -1277,16 +1277,27 @@ rule gff2bed:
 	shell:
 		"cat {input} | {params.gff2bed} > {output}"
 
-rule bedops_intersect_regions:
+# rule bedops_intersect_regions:
+# 	input:
+# 		sample = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+# 		region = "regions/{genome}.{region}.converted.bedopssorted.bed"
+# 	output:
+# 		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.{region}.INTERSECTION.bed"
+# 	params:
+# 		bedops = bedops_path
+# 	shell:
+# 		"{params.bedops} -i {input.sample} {input.region} | {params.bedmap} --echo --echo-map-id --delim '\t' - {input.sample} > {output}"
+
+rule bedtools_intersect_regions:
 	input:
 		sample = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
 		region = "regions/{genome}.{region}.converted.bedopssorted.bed"
 	output:
 		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.{region}.INTERSECTION.bed"
 	params:
-		bedops = bedops_path
+		bedtools = bedtools_path
 	shell:
-		"{params.bedops} -i {input.sample} {input.region} > {output}"
+		"{params.bedtools} intersect -a {input.sample} -b {input.region} > {output}"
 
 rule compute_histogram_from_bed:
 	input:
