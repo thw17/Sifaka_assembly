@@ -8,11 +8,11 @@ def parse_args():
 
 	parser.add_argument(
 		"--bed", required=True,
-		help="Input hg38 gff file.")
+		help="Input bed file.")
 
 	parser.add_argument(
 		"--outfile", required=True,
-		help="Output gff file.")
+		help="Output file containing histogram.")
 
 	args = parser.parse_args()
 
