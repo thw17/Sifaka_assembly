@@ -188,13 +188,13 @@ rule all:
 			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
 			sample=macaque_samples, genome=["hg38", "mmul"],
 			sampling=["downsampled", "unsampled"],
-			region=["cds", "exon", "gene", "utr", "intron"]),
+			region=["cds", "exon", "gene", "utr", "intron", "intergenic"]),
 
 		expand(
 			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
 			sample=sifaka_samples, genome=["hg38", "pcoq"],
 			sampling=["downsampled", "unsampled"],
-			region=["cds", "exon", "gene", "utr", "intron"])
+			region=["cds", "exon", "gene", "utr", "intron", "intergenic"])
 
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
@@ -1299,10 +1299,29 @@ rule bedtools_intersect_regions:
 	shell:
 		"{params.bedtools} intersect -a {input.sample} -b {input.region} > {output}"
 
+rule bedtools_find_intergenic:
+	input:
+		sample = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		region = "regions/{genome}.gene.converted.bedopssorted.bed"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.intergenic.SUBTRACTION.bed"
+	params:
+		bedtools = bedtools_path
+	shell:
+		"{params.bedtools} subtract -a {input.sample} -b {input.region} > {output}"
+
 rule compute_histogram_from_bed:
 	input:
 		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.{region}.INTERSECTION.bed"
 	output:
 		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist"
+	shell:
+		"python scripts/Compute_histogram_from_bed.py --bed {input} --outfile {output}"
+
+rule compute_histogram_from_bed_intergenic:
+	input:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.intergenic.SUBTRACTION.bed"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.intergenic.hist"
 	shell:
 		"python scripts/Compute_histogram_from_bed.py --bed {input} --outfile {output}"
