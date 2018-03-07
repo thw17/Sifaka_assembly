@@ -31,6 +31,7 @@ rule all:
 	input:
 		expand(
 			"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
+		multiqc/multiqc_report.html,
 		expand(
 			"adapters/{sample}.adapters.fa", sample=all_samples),
 		expand(
@@ -424,6 +425,17 @@ rule fastqc_analysis:
 		fastqc = fastqc_path
 	shell:
 		"{params.fastqc} -o fastqc {input}"
+
+rule multiqc_analysis:
+	input:
+		expand("fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes)
+	output:
+		"multiqc/multiqc_report.html"
+	params:
+		multiqc = multiqc_path
+	shell:
+		"export LC_ALL=en_US.UTF-8 && export LANG=en_US.UTF-8 && "
+		"{params.multiqc} -o multiqc fastqc"
 
 rule adapter_discovery:
 	input:
