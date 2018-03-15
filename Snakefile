@@ -15,6 +15,7 @@ fastqc_path = "fastqc"
 freebayes_path = "freebayes"
 gatk = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
 gff2bed_path = "gff2bed"
+multiqc_path = "multiqc"
 platypus_path = "platypus"
 samblaster_path = "samblaster"
 samtools_path = "samtools"
@@ -23,23 +24,53 @@ tabix_path = "tabix"
 # xyalign_path =
 
 all_fastq_prefixes = config["sifaka_fastq_prefixes"] + config["macaque_fastq_prefixes"]
-all_samples = config["sifaka_males"] + config["sifaka_females"] + config["macaque_males"] + config["macaque_females"]
+all_samples_main = config["sifaka_males"] + config["sifaka_females"] + config["macaque_males"] + config["macaque_females"]
 sifaka_samples = config["sifaka_males"] + config["sifaka_females"]
 macaque_samples = config["macaque_males"] + config["macaque_females"]
 
+# Added second set of sifakas for capture kit comparison
+secondary_sifaka_samples = config["secondary_sifakas"]
+combined_sifaka_samples = sifaka_samples + secondary_sifaka_samples
+all_samples_both_sifakas = all_samples_main + secondary_sifaka_samples
+
 rule all:
 	input:
+		"multiqc/multiqc_report.html",
 		expand(
-			"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
-		multiqc/multiqc_report.html,
+			"adapters/{sample}.adapters.fa", sample=all_samples_both_sifakas),
+		"multiqc_trimmed/multiqc_report.html",
+
+		# Moved some of the sifaka-specific rules up top to add the four
+		# comparison samples
 		expand(
-			"adapters/{sample}.adapters.fa", sample=all_samples),
+			"processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
+			sample=combined_sifaka_samples,
+			sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.pcoq.{sampling}.mapq.stats",
-			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
+			sample=combined_sifaka_samples,
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
+			sample=combined_sifaka_samples,
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.hg38.unsampled.mapq.stats",
+			sample=secondary_sifaka_samples),
+		expand(
+			"stats/{sample}.hg38.sorted.mkdup.bam.unsampled.stats",
+			sample=secondary_sifaka_samples),
+		expand(
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
+			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron", "intergenic"]),
+
+
 		expand(
 			"stats/{sample}.hg38.{sampling}.mapq.stats",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
+			sample=all_samples_both_sifakas,
+			sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.mmul.{sampling}.mapq.stats",
 			sample=macaque_samples, sampling=["downsampled", "unsampled"]),
@@ -63,10 +94,10 @@ rule all:
 		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
+			sample=all_samples_main, sampling=["downsampled", "unsampled"]),
 		expand(
 			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
+			sample=all_samples_main, sampling=["downsampled", "unsampled"]),
 		# expand(
 		# 	"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
 		# 	species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
@@ -106,7 +137,7 @@ rule all:
 			sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"results/{sample}.hg38.{sampling}.mapq20_noDup.genome_cov",
-			sample=all_samples, sampling=["downsampled", "unsampled"]),
+			sample=all_samples_main, sampling=["downsampled", "unsampled"]),
 
 		expand(
 			"callable_sites/combined.macaque.mmul.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
@@ -174,7 +205,7 @@ rule all:
 			region=["cds", "exon", "gene", "utr", "intron"]),
 		expand(
 			"coverage/{sample}.hg38.{sampling}.{region}.hist.txt",
-			sample=all_samples, sampling=["downsampled", "unsampled"],
+			sample=all_samples_main, sampling=["downsampled", "unsampled"],
 			region=["cds", "exon", "gene", "utr", "intron"]),
 		expand(
 			"coverage/{sample}.pcoq.{sampling}.{region}.hist.txt",
@@ -189,13 +220,14 @@ rule all:
 			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
 			sample=macaque_samples, genome=["hg38", "mmul"],
 			sampling=["downsampled", "unsampled"],
-			region=["cds", "exon", "gene", "utr", "intron", "intergenic"]),
-
-		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
-			sample=sifaka_samples, genome=["hg38", "pcoq"],
-			sampling=["downsampled", "unsampled"],
 			region=["cds", "exon", "gene", "utr", "intron", "intergenic"])
+
+		# Moved this rule up top
+		# expand(
+		# 	"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
+		# 	sample=sifaka_samples, genome=["hg38", "pcoq"],
+		# 	sampling=["downsampled", "unsampled"],
+		# 	region=["cds", "exon", "gene", "utr", "intron", "intergenic"])
 
 		# expand(
 		# 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
@@ -465,12 +497,25 @@ rule fastqc_analysis_trimmed_paired:
 		fq1 = "trimmed_fastqs/{sample}_trimmed_read1.fastq.gz",
 		fq2 = "trimmed_fastqs/{sample}_trimmed_read2.fastq.gz"
 	output:
-		html1 = "fastqc/{sample}_trimmed_read1_fastqc.html",
-		html2 = "fastqc/{sample}_trimmed_read2_fastqc.html"
+		html1 = "fastqc_trimmed/{sample}_trimmed_read1_fastqc.html",
+		html2 = "fastqc_trimmed/{sample}_trimmed_read2_fastqc.html"
 	params:
 		fastqc = fastqc_path
 	shell:
-		"{params.fastqc} -o fastqc {input.fq1} {input.fq2}"
+		"{params.fastqc} -o fastqc_trimmed {input.fq1} {input.fq2}"
+
+rule trimmed_multiqc_analysis:
+	input:
+		expand(
+			"fastqc_trimmed/{sample}_trimmed_{read}_fastqc.html",
+			sample=all_samples_both_sifakas, read=["read1", "read2"])
+	output:
+		"multiqc_trimmed/multiqc_report.html"
+	params:
+		multiqc = multiqc_path
+	shell:
+		"export LC_ALL=en_US.UTF-8 && export LANG=en_US.UTF-8 && "
+		"{params.multiqc} -o multiqc_trimmed fastqc_trimmed"
 
 rule map_and_process_trimmed_reads:
 	input:
