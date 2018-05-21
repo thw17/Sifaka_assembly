@@ -55,11 +55,19 @@ rule all:
 			sample=combined_sifaka_samples,
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"stats/{sample}.hg38.unsampled.mapq.stats",
-			sample=secondary_sifaka_samples),
+			"stats/{sample}.hg38.{sampling}.mapq.stats",
+			sample=secondary_sifaka_samples,
+			sampling=["downsampled", "unsampled"]),
 		expand(
-			"stats/{sample}.hg38.sorted.mkdup.bam.unsampled.stats",
-			sample=secondary_sifaka_samples),
+			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
+			sample=secondary_sifaka_samples,
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
+			sample=secondary_sifaka_samples, sampling=["downsampled", "unsampled"]),
+		expand(
+			"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
+			sample=secondary_sifaka_samples, sampling=["downsampled", "unsampled"]),
 		expand(
 			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
 			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
