@@ -534,8 +534,8 @@ rule map_and_process_trimmed_reads:
 	input:
 		fq1 = "trimmed_fastqs/{sample}_trimmed_read1.fastq.gz",
 		fq2 = "trimmed_fastqs/{sample}_trimmed_read2.fastq.gz",
-		fai = lambda wildcards: config["genome_paths"][wildcards.genome] + ".fai",
-		ref = lambda wildcards: config["genome_paths"][wildcards.genome]
+		fai = "reference/{genome}.fasta.fai",
+		ref = "reference/{genome}.fasta"
 	output:
 		"processed_bams/{sample}.{genome}.sorted.mkdup.unsampled.bam"
 	params:
@@ -610,7 +610,7 @@ rule mapq_check:
 
 rule make_bedtools_genome_file:
 	input:
-		fai = lambda wildcards: config["genome_paths"][wildcards.genome] + ".fai"
+		fai = "reference/{assembly}.fasta.fai"
 	output:
 		"reference/{genome}.genome"
 	shell:
@@ -690,7 +690,7 @@ rule compute_histogram_from_bed_intergenic:
 
 rule generate_callable_sites:
 	input:
-		ref = lambda wildcards: config["genome_paths"][wildcards.genome],
+		ref = "reference/{genome}.fasta",
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
 	output:
@@ -772,7 +772,7 @@ rule combine_callable_sites_hg38_macaques:
 
 rule gatk_gvcf_hg38_sifaka:
 	input:
-		ref = config["genome_paths"]["hg38"],
+		ref = "reference/hg38.fasta",
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.sifaka.hg38.COMBINEDcallablesites.{sampling}.bed"
@@ -788,7 +788,7 @@ rule gatk_gvcf_hg38_sifaka:
 
 rule gatk_gvcf_hg38_macaques:
 	input:
-		ref = config["genome_paths"]["hg38"],
+		ref = "reference/hg38.fasta",
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.macaque.hg38.COMBINEDcallablesites.{sampling}.bed"
@@ -804,7 +804,7 @@ rule gatk_gvcf_hg38_macaques:
 
 rule gatk_gvcf_pcoq:
 	input:
-		ref = config["genome_paths"]["pcoq"],
+		ref = "reference/pcoq.fasta",
 		bam = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
@@ -820,7 +820,7 @@ rule gatk_gvcf_pcoq:
 
 rule gatk_gvcf_mmul:
 	input:
-		ref = config["genome_paths"]["mmul"],
+		ref = "reference/mmul.fasta",
 		bam = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
@@ -835,7 +835,7 @@ rule gatk_gvcf_mmul:
 
 rule genotype_gvcfs_hg38_sifaka:
 	input:
-		ref = config["genome_paths"]["hg38"],
+		ref = "reference/hg38.fasta",
 		gvcfs = expand(
 			"vcf/{sample}.sifaka.hg38.{{sampling}}.g.vcf.gz",
 			sample=sifaka_samples)
@@ -855,7 +855,7 @@ rule genotype_gvcfs_hg38_sifaka:
 
 rule genotype_gvcfs_hg38_macaque:
 	input:
-		ref = config["genome_paths"]["hg38"],
+		ref = "reference/hg38.fasta",
 		gvcfs = expand(
 			"vcf/{sample}.macaque.hg38.{{sampling}}.g.vcf.gz",
 			sample=macaque_samples)
@@ -875,7 +875,7 @@ rule genotype_gvcfs_hg38_macaque:
 
 rule genotype_gvcfs_pcoq:
 	input:
-		ref = config["genome_paths"]["pcoq"],
+		ref = "reference/pcoq.fasta",
 		gvcfs = expand(
 			"vcf/{sample}.pcoq.{{sampling}}.g.vcf.gz",
 			sample=sifaka_samples)
@@ -895,7 +895,7 @@ rule genotype_gvcfs_pcoq:
 
 rule genotype_gvcfs_mmul:
 	input:
-		ref = config["genome_paths"]["mmul"],
+		ref = "reference/mmul.fasta",
 		gvcfs = expand(
 			"vcf/{sample}.mmul.{{sampling}}.g.vcf.gz",
 			sample=macaque_samples)
@@ -915,7 +915,7 @@ rule genotype_gvcfs_mmul:
 
 rule freebayes_call_mmul:
 	input:
-		ref = config["genome_paths"]["mmul"],
+		ref = "reference/mmul.fasta",
 		bams = expand(
 			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
@@ -932,7 +932,7 @@ rule freebayes_call_mmul:
 
 rule freebayes_call_pcoq:
 	input:
-		ref = config["genome_paths"]["pcoq"],
+		ref = "reference/pcoq.fasta",
 		bams = expand(
 			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam",
 			sample=sifaka_samples),
@@ -949,7 +949,7 @@ rule freebayes_call_pcoq:
 
 rule freebayes_call_hg38_sifakas:
 	input:
-		ref = config["genome_paths"]["hg38"],
+		ref = "reference/hg38.fasta",
 		bams = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
 			sample=sifaka_samples),
@@ -966,7 +966,7 @@ rule freebayes_call_hg38_sifakas:
 
 rule freebayes_call_hg38_macaques:
 	input:
-		ref = config["genome_paths"]["hg38"],
+		ref = "reference/hg38.fasta",
 		bams = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
@@ -1044,7 +1044,7 @@ rule create_coverage_histograms:
 
 rule generate_callable_sites_analysis:
 	input:
-		ref = lambda wildcards: config["genome_paths"][wildcards.genome],
+		ref = "reference/{genome}.fasta",
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
 	output:

@@ -6,13 +6,6 @@
 		"rhemac2": "reference/rhemac2.fa"
 	},
 
-	"genome_prefixes": {
-		"mmul": "reference/GCF_000772875.2_Mmul_8.0.1_genomic",
-		"pcoq": "reference/GCF_000956105.1_Pcoq_1.0_genomic",
-		"hg38": "reference/Homo_sapiens_assembly38",
-		"rhemac2": "reference/rhemac2"
-	},
-
 	"annotation_address": {
 		"mmul": "ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/772/875/GCF_000772875.2_Mmul_8.0.1/GCF_000772875.2_Mmul_8.0.1_genomic.gff.gz",
 		"pcoq": "ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/956/105/GCF_000956105.1_Pcoq_1.0/GCF_000956105.1_Pcoq_1.0_genomic.gff.gz",
