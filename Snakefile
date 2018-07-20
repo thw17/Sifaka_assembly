@@ -610,7 +610,7 @@ rule mapq_check:
 
 rule make_bedtools_genome_file:
 	input:
-		fai = "reference/{assembly}.fasta.fai"
+		fai = "reference/{genome}.fasta.fai"
 	output:
 		"reference/{genome}.genome"
 	shell:
