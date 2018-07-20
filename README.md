@@ -107,7 +107,7 @@ Before running the pipeline, we prepared conda environments (see above) and down
 Note also that the config file contains data for rhemac2, a previous version of the rhesus reference genome that we used in early stages of analysis. However, as we did not use this genome in our final analyses, we removed it from ``rule all`` in ``Snakefile``.
 
 ### Step 2: Prepare reference genomes
-In the first rule, ``rule prepare_reference``, we first create a symbolic link, which provides a naming pattern that's much easier to work with in Snakemake. Note: as it is written, it didn't clash with the names of any files that we downloaded (see ``sifaka_config.json``). However, if the name of the symbolic link exactly matches your reference genome file, it will be best to move the reference genome files to a separate directory and update the config.
+In the first rule, ``rule prepare_reference``, we first create a symbolic link, which provides a naming pattern that's much easier to work with in Snakemake. We write everything to a new directory ``new_reference`` to ensure that there aren't name clashes with the original reference genomes.
 
 This rule then creates fasta indices (.fai), sequence dictionaries (.dict), and BWA indices (variety of extensions) that are needed for tools downstream.
 

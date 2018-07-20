@@ -93,293 +93,14 @@ rule all:
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled", "unsampled"])
 
-
-		# # Moved some of the sifaka-specific rules up top to add the four
-		# # comparison samples
-		# expand(
-		# 	"processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
-		# 	sample=combined_sifaka_samples,
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.pcoq.{sampling}.mapq.stats",
-		# 	sample=combined_sifaka_samples,
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
-		# 	sample=combined_sifaka_samples,
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.hg38.{sampling}.mapq.stats",
-		# 	sample=secondary_sifaka_samples,
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
-		# 	sample=secondary_sifaka_samples,
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
-		# 	sample=secondary_sifaka_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
-		# 	sample=secondary_sifaka_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
-		# 	sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
-		# 	sampling=["downsampled", "unsampled"],
-		# 	region=["cds", "exon", "gene", "utr", "intron", "intergenic"]),
-		#
-		#
-		# expand(
-		# 	"stats/{sample}.hg38.{sampling}.mapq.stats",
-		# 	sample=all_samples_both_sifakas,
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.mmul.{sampling}.mapq.stats",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"stats/{sample}.rhemac2.{sampling}.mapq.stats",
-		# # 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.stats",
-		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.stats",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.mmul.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.pcoq.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
-		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"stats/{sample}.rhemac2.sorted.mkdup.bam.{sampling}.stats",
-		# # 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.stats",
-		# 	sample=all_samples_main, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"stats/{sample}.hg38.sorted.mkdup.bam.{sampling}.nodup.properpair.stats",
-		# 	sample=all_samples_main, sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"callable_sites/combined.{species}.hg38.{chrom}.CHROMcallablesites.{sampling}.bed",
-		# # 	species=["macaque", "sifaka"], chrom=config["hg38_chroms"],
-		# # 	sampling=["downsampled", "unsampled"]),
-		#
-		# expand(
-		# 	"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
-		# 	sampling=["downsampled", "unsampled"]),
-		#
-		# expand(
-		# 	"vcf/sifakas.pcoq.{caller}.{sampling}.filtered.vcf.gz.tbi",
-		# 	caller=["gatk", "freebayes"], sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/macaques.mmul.{caller}.{sampling}.filtered.vcf.gz.tbi",
-		# 	caller=["gatk", "freebayes"], sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/sifakas.hg38.{caller}.{sampling}.filtered.vcf.gz.tbi",
-		# 	caller=["gatk", "freebayes"], sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"vcf/macaques.hg38.{caller}.{sampling}.filtered.vcf.gz.tbi",
-		# 	caller=["gatk", "freebayes"], sampling=["downsampled", "unsampled"]),
-		#
-		# expand(
-		# 	"results/{sample}.mmul.{sampling}.mapq20_noDup.genome_cov",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"results/{sample}.pcoq.{sampling}.mapq20_noDup.genome_cov",
-		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"results/{sample}.hg38.{sampling}.mapq20_noDup.genome_cov",
-		# 	sample=all_samples_main, sampling=["downsampled", "unsampled"]),
-		#
-		# expand(
-		# 	"callable_sites/combined.macaque.mmul.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"callable_sites/combined.sifaka.pcoq.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"callable_sites/combined.macaque.hg38.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"callable_sites/combined.sifaka.hg38.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed",
-		# 	sampling=["downsampled", "unsampled"]),
-		#
-		# expand(
-		# 	"results/pairwise.{pair}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-		# 	pair=["WI055.WI059", "WI055.WI056", "WI055.WI057", "WI056.WI059", "WI057.WI059", "WI056.WI057"],
-		# 	genome=["hg38", "mmul"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"results/threeway.{trio}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-		# 	trio=["WI055.WI056.WI057", "WI055.WI056.WI059", "WI056.WI057.WI059"],
-		# 	genome=["hg38", "mmul"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"results/fourway.{quad}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-		# 	quad=["WI055.WI056.WI057.WI059"],
-		# 	genome=["hg38", "mmul"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"results/pairwise.{pair}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-		# # 	pair=["WI055.WI059", "WI055.WI056", "WI055.WI057", "WI056.WI059", "WI057.WI059", "WI056.WI057"],
-		# # 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"results/threeway.{trio}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-		# # 	trio=["WI055.WI056.WI057", "WI055.WI056.WI059", "WI056.WI057.WI059"],
-		# # 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"results/fourway.{quad}.hg38.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-		# # 	pair=["WI055.WI056.WI057.WI059"],
-		# # 	sampling=["downsampled", "unsampled"]),
-		#
-		# expand(
-		# 	"results/pairwise.{pair}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-		# 	pair=["F249.F406", "F249.M288", "F249.M418", "F406.M288", "F406.M418", "M288.M418"],
-		# 	genome=["hg38", "pcoq"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"results/threeway.{trio}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-		# 	trio=["F249.F406.M288", "F249.F406.M418", "F249.M288.M418", "F406.M288.M418"],
-		# 	genome=["hg38", "pcoq"],
-		# 	sampling=["downsampled", "unsampled"]),
-		# expand(
-		# 	"results/fourway.{quad}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.INTERSECTION.bed",
-		# 	quad=["F249.F406.M288.M418"],
-		# 	genome=["hg38", "pcoq"],
-		# 	sampling=["downsampled", "unsampled"]),
-		#
-		# expand(
-		# 	"reference/{genome}.gff",
-		# 	genome=["mmul", "pcoq", "hg38"]),
-		# expand(
-		# 	"regions/{genome}.{region}.gff",
-		# 	genome=["mmul", "pcoq", "hg38"],
-		# 	region=["cds", "exon", "gene", "utr", "intron"]),
-		# expand(
-		# 	"coverage/{sample}.hg38.{sampling}.{region}.hist.txt",
-		# 	sample=all_samples_main, sampling=["downsampled", "unsampled"],
-		# 	region=["cds", "exon", "gene", "utr", "intron"]),
-		# expand(
-		# 	"coverage/{sample}.pcoq.{sampling}.{region}.hist.txt",
-		# 	sample=sifaka_samples, sampling=["downsampled", "unsampled"],
-		# 	region=["cds", "exon", "gene", "utr", "intron"]),
-		# expand(
-		# 	"coverage/{sample}.mmul.{sampling}.{region}.hist.txt",
-		# 	sample=macaque_samples, sampling=["downsampled", "unsampled"],
-		# 	region=["cds", "exon", "gene", "utr", "intron"]),
-		#
-		# expand(
-		# 	"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
-		# 	sample=macaque_samples, genome=["hg38", "mmul"],
-		# 	sampling=["downsampled", "unsampled"],
-		# 	region=["cds", "exon", "gene", "utr", "intron", "intergenic"])
-		#
-		# # Moved this rule up top
-		# # expand(
-		# # 	"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
-		# # 	sample=sifaka_samples, genome=["hg38", "pcoq"],
-		# # 	sampling=["downsampled", "unsampled"],
-		# # 	region=["cds", "exon", "gene", "utr", "intron", "intergenic"])
-		#
-		# # expand(
-		# # 	"vcf/sifakas.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
-		# # 	chrom=config["hg38_chroms"],
-		# # 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"vcf/macaques.hg38.freebayes.{chrom}.{sampling}.raw.vcf",
-		# # 	chrom=config["hg38_chroms"],
-		# # 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"vcf/sifakas.pcoq.gatk.{sampling}.raw.vcf.gz.tbi",
-		# # 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"vcf/macaques.rhemac2.gatk.{sampling}.raw.vcf.gz.tbi",
-		# # 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"vcf/macaques.mmul.gatk.{sampling}.raw.vcf.gz.tbi",
-		# # 	sampling=["downsampled", "unsampled"]),
-		#
-		# # expand(
-		# # 	"vcf/macaques.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
-		# # 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"vcf/sifakas.hg38.gatk.{sampling}.raw.vcf.gz.tbi",
-		# # 	sampling=["downsampled", "unsampled"])
-		#
-		# # expand(
-		# # 	"vcf/{sample}.macaque.hg38.{chrom}.{sampling}.g.vcf.gz",
-		# # 	sample=macaque_samples, chrom=config["hg38_chroms"],
-		# # 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"vcf/{sample}.sifaka.hg38.{chrom}.{sampling}.g.vcf.gz",
-		# # 	sample=sifaka_samples, chrom=config["hg38_chroms"],
-		# # 	sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"vcf/sifakas.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
-		# # 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"]),
-		# # expand(
-		# # 	"vcf/macaques.hg38.gatk.{chrom}.{sampling}.raw.vcf.gz",
-		# # 	chrom=config["hg38_chroms"], sampling=["downsampled", "unsampled"])
-		#
-		# # expand(
-		# # 	"fastqc/{fq_prefix}_fastqc.html", fq_prefix=all_fastq_prefixes),
-		# # expand(
-		# # 	"adapters/{sample}.adapters.fa", sample=all_samples),
-		# # expand(
-		# # 	"processed_bams/{sample}.hg38.sorted.mkdup.bam", sample=all_samples),
-		# # expand(
-		# # 	"processed_bams/{sample}.pcoq.sorted.mkdup.bam", sample=sifaka_samples),
-		# # expand(
-		# # 	"processed_bams/{sample}.mmul.sorted.mkdup.bam", sample=macaque_samples),
-		# # expand(
-		# # 	"stats/{sample}.pcoq.sorted.mkdup.bam.stats", sample=sifaka_samples),
-		# # expand(
-		# # 	"stats/{sample}.mmul.sorted.mkdup.bam.stats", sample=macaque_samples),
-		# # expand(
-		# # 	"stats/{sample}.hg38.sorted.mkdup.bam.stats", sample=all_samples),
-		# # expand(
-		# # 	"callable_sites/{sample}.hg38.ONLYcallablesites.bed", sample=all_samples),
-		# # expand(
-		# # 	"callable_sites/{sample}.pcoq.ONLYcallablesites.bed", sample=sifaka_samples),
-		# # expand(
-		# # 	"callable_sites/{sample}.mmul.ONLYcallablesites.bed", sample=macaque_samples),
-		# # expand(
-		# # 	"stats/{sample}.pcoq.mapq.stats", sample=sifaka_samples),
-		# # expand(
-		# # 	"stats/{sample}.hg38.mapq.stats", sample=all_samples),
-		# # expand(
-		# # 	"stats/{sample}.mmul.mapq.stats", sample=macaque_samples),
-		# # expand(
-		# # 	"vcf/sifakas.pcoq.{caller}.raw.vcf.gz.tbi",
-		# # 	caller=["freebayes", "platypus", "gatk"]),
-		# # expand(
-		# # 	"vcf/macaques.mmul.{caller}.raw.vcf.gz.tbi",
-		# # 	caller=["freebayes", "platypus", "gatk"]),
-		# # expand(
-		# # 	"vcf/sifakas.hg38.{caller}.raw.vcf.gz.tbi",
-		# # 	caller=["freebayes", "platypus", "gatk"]),
-		# # expand(
-		# # 	"vcf/macaques.hg38.{caller}.raw.vcf.gz.tbi",
-		# # 	caller=["freebayes", "platypus", "gatk"])
-
 rule prepare_reference:
 	input:
 		ref = lambda wildcards: config["genome_paths"][wildcards.assembly]
 	output:
-		new = "reference/{assembly}.fasta",
-		fai = "reference/{assembly}.fasta.fai",
-		amb = "reference/{assembly}.fasta.amb",
-		dict = "reference/{assembly}.dict"
+		new = "new_reference/{assembly}.fasta",
+		fai = "new_reference/{assembly}.fasta.fai",
+		amb = "new_reference/{assembly}.fasta.amb",
+		dict = "new_reference/{assembly}.dict"
 	params:
 		samtools = samtools_path,
 		bwa = bwa_path
@@ -398,17 +119,17 @@ rule prepare_reference:
 
 rule get_annotation:
 	output:
-		"reference/{genome}.gff"
+		"new_reference/{genome}.gff"
 	params:
 		web_address = lambda wildcards: config["annotation_address"][wildcards.genome],
-		initial_output = "reference/{genome}.gff.gz"
+		initial_output = "new_reference/{genome}.gff.gz"
 	run:
 		shell("wget {params.web_address} -O {params.initial_output}")
 		shell("gunzip {params.initial_output}")
 
 rule extract_exons_from_gff:
 	input:
-		"reference/{genome}.gff"
+		"new_reference/{genome}.gff"
 	output:
 		"regions/{genome}.exon.gff"
 	shell:
@@ -416,7 +137,7 @@ rule extract_exons_from_gff:
 
 rule extract_genes_from_gff:
 	input:
-		"reference/{genome}.gff"
+		"new_reference/{genome}.gff"
 	output:
 		"regions/{genome}.gene.gff"
 	shell:
@@ -424,7 +145,7 @@ rule extract_genes_from_gff:
 
 rule extract_cds_from_gff:
 	input:
-		"reference/{genome}.gff"
+		"new_reference/{genome}.gff"
 	output:
 		"regions/{genome}.cds.gff"
 	shell:
@@ -534,8 +255,8 @@ rule map_and_process_trimmed_reads:
 	input:
 		fq1 = "trimmed_fastqs/{sample}_trimmed_read1.fastq.gz",
 		fq2 = "trimmed_fastqs/{sample}_trimmed_read2.fastq.gz",
-		fai = "reference/{genome}.fasta.fai",
-		ref = "reference/{genome}.fasta"
+		fai = "new_reference/{genome}.fasta.fai",
+		ref = "new_reference/{genome}.fasta"
 	output:
 		"processed_bams/{sample}.{genome}.sorted.mkdup.unsampled.bam"
 	params:
@@ -610,9 +331,9 @@ rule mapq_check:
 
 rule make_bedtools_genome_file:
 	input:
-		fai = "reference/{genome}.fasta.fai"
+		fai = "new_reference/{genome}.fasta.fai"
 	output:
-		"reference/{genome}.genome"
+		"new_reference/{genome}.genome"
 	shell:
 		"awk -v OFS='\t' {{'print $1,$2'}} {input.fai} > {output}"
 
@@ -620,7 +341,7 @@ rule genome_cov:
 	input:
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
 		idx = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai",
-		genome = "reference/{genome}.genome"
+		genome = "new_reference/{genome}.genome"
 	output:
 		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov"
 	params:
@@ -690,7 +411,7 @@ rule compute_histogram_from_bed_intergenic:
 
 rule generate_callable_sites:
 	input:
-		ref = "reference/{genome}.fasta",
+		ref = "new_reference/{genome}.fasta",
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
 	output:
@@ -772,7 +493,7 @@ rule combine_callable_sites_hg38_macaques:
 
 rule gatk_gvcf_hg38_sifaka:
 	input:
-		ref = "reference/hg38.fasta",
+		ref = "new_reference/hg38.fasta",
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.sifaka.hg38.COMBINEDcallablesites.{sampling}.bed"
@@ -788,7 +509,7 @@ rule gatk_gvcf_hg38_sifaka:
 
 rule gatk_gvcf_hg38_macaques:
 	input:
-		ref = "reference/hg38.fasta",
+		ref = "new_reference/hg38.fasta",
 		bam = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.hg38.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.macaque.hg38.COMBINEDcallablesites.{sampling}.bed"
@@ -804,7 +525,7 @@ rule gatk_gvcf_hg38_macaques:
 
 rule gatk_gvcf_pcoq:
 	input:
-		ref = "reference/pcoq.fasta",
+		ref = "new_reference/pcoq.fasta",
 		bam = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.pcoq.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.pcoq.COMBINEDcallablesites.{sampling}.bed"
@@ -820,7 +541,7 @@ rule gatk_gvcf_pcoq:
 
 rule gatk_gvcf_mmul:
 	input:
-		ref = "reference/mmul.fasta",
+		ref = "new_reference/mmul.fasta",
 		bam = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.mmul.sorted.mkdup.{sampling}.bam.bai",
 		callable = "callable_sites/combined.mmul.COMBINEDcallablesites.{sampling}.bed"
@@ -835,7 +556,7 @@ rule gatk_gvcf_mmul:
 
 rule genotype_gvcfs_hg38_sifaka:
 	input:
-		ref = "reference/hg38.fasta",
+		ref = "new_reference/hg38.fasta",
 		gvcfs = expand(
 			"vcf/{sample}.sifaka.hg38.{{sampling}}.g.vcf.gz",
 			sample=sifaka_samples)
@@ -855,7 +576,7 @@ rule genotype_gvcfs_hg38_sifaka:
 
 rule genotype_gvcfs_hg38_macaque:
 	input:
-		ref = "reference/hg38.fasta",
+		ref = "new_reference/hg38.fasta",
 		gvcfs = expand(
 			"vcf/{sample}.macaque.hg38.{{sampling}}.g.vcf.gz",
 			sample=macaque_samples)
@@ -875,7 +596,7 @@ rule genotype_gvcfs_hg38_macaque:
 
 rule genotype_gvcfs_pcoq:
 	input:
-		ref = "reference/pcoq.fasta",
+		ref = "new_reference/pcoq.fasta",
 		gvcfs = expand(
 			"vcf/{sample}.pcoq.{{sampling}}.g.vcf.gz",
 			sample=sifaka_samples)
@@ -895,7 +616,7 @@ rule genotype_gvcfs_pcoq:
 
 rule genotype_gvcfs_mmul:
 	input:
-		ref = "reference/mmul.fasta",
+		ref = "new_reference/mmul.fasta",
 		gvcfs = expand(
 			"vcf/{sample}.mmul.{{sampling}}.g.vcf.gz",
 			sample=macaque_samples)
@@ -915,7 +636,7 @@ rule genotype_gvcfs_mmul:
 
 rule freebayes_call_mmul:
 	input:
-		ref = "reference/mmul.fasta",
+		ref = "new_reference/mmul.fasta",
 		bams = expand(
 			"processed_bams/{sample}.mmul.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
@@ -932,7 +653,7 @@ rule freebayes_call_mmul:
 
 rule freebayes_call_pcoq:
 	input:
-		ref = "reference/pcoq.fasta",
+		ref = "new_reference/pcoq.fasta",
 		bams = expand(
 			"processed_bams/{sample}.pcoq.sorted.mkdup.{{sampling}}.bam",
 			sample=sifaka_samples),
@@ -949,7 +670,7 @@ rule freebayes_call_pcoq:
 
 rule freebayes_call_hg38_sifakas:
 	input:
-		ref = "reference/hg38.fasta",
+		ref = "new_reference/hg38.fasta",
 		bams = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
 			sample=sifaka_samples),
@@ -966,7 +687,7 @@ rule freebayes_call_hg38_sifakas:
 
 rule freebayes_call_hg38_macaques:
 	input:
-		ref = "reference/hg38.fasta",
+		ref = "new_reference/hg38.fasta",
 		bams = expand(
 			"processed_bams/{sample}.hg38.sorted.mkdup.{{sampling}}.bam",
 			sample=macaque_samples),
@@ -1044,7 +765,7 @@ rule create_coverage_histograms:
 
 rule generate_callable_sites_analysis:
 	input:
-		ref = "reference/{genome}.fasta",
+		ref = "new_reference/{genome}.fasta",
 		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
 		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai"
 	output:
