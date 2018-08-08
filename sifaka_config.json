@@ -12,6 +12,10 @@
 		"hg38": "ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.37_GRCh38.p11/GCF_000001405.37_GRCh38.p11_genomic.gff.gz"
 	},
 
+	"vep_address": {
+		"hg38": "ftp://ftp.ensembl.org/pub/release-90/variation/VEP/homo_sapiens_vep_90_GRCh38.tar.gz"
+	},
+
 	"sifaka_males": [
 		"M288",
 		"M418"

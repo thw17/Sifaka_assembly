@@ -200,3 +200,9 @@ We use a custom script, ``Filter_vcf.py``, to filter the compressed and indexed 
 
 ### Step 20: Zip and index filtered VCF files
 Like Step 18, we use bgzip to compress and tabix to index the filtered vcf files.
+
+### Step 21: Download HG38 Cache for VEP
+In ``rule download_hg38_cache``, we download Ensembl's precompiled annotation database for hg38. We'll use gff files for the other two genomes.
+
+### Step 22: Annotate VCFs
+In ``rule vep_annotation`` we use Ensembl's Variant Effect Predictor (VEP) to annotate the VCF files output from Step 20. For hg38, we use the cache downloaded in Step 21, while we use GFFs and FASTA files for the other two genomes (Steps 2 and 3).

@@ -21,6 +21,7 @@ samblaster_path = "samblaster"
 samtools_path = "samtools"
 sort_bed_path = "sort-bed"
 tabix_path = "tabix"
+vep_path = "vep"
 # xyalign_path =
 
 all_fastq_prefixes = config["sifaka_fastq_prefixes"] + config["macaque_fastq_prefixes"]
@@ -77,19 +78,19 @@ rule all:
 			sampling=["downsampled", "unsampled"],
 			region=["cds", "exon", "gene", "utr", "intron", "intergenic"]),
 		expand(
-			"vcf/sifakas.pcoq.{caller}.{sampling}.filtered.vcf.gz.tbi",
+			"vcf/sifakas.pcoq.{caller}.{sampling}.filtered.vep.vcf.gz",
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/macaques.mmul.{caller}.{sampling}.filtered.vcf.gz.tbi",
+			"vcf/macaques.mmul.{caller}.{sampling}.filtered.vcf.gz",
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/sifakas.hg38.{caller}.{sampling}.filtered.vcf.gz.tbi",
+			"vcf/sifakas.hg38.{caller}.{sampling}.filtered.vcf.gz",
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled", "unsampled"]),
 		expand(
-			"vcf/macaques.hg38.{caller}.{sampling}.filtered.vcf.gz.tbi",
+			"vcf/macaques.hg38.{caller}.{sampling}.filtered.vcf.gz",
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled", "unsampled"])
 
@@ -750,6 +751,36 @@ rule index_zipped_filtered_vcfs:
 		"vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz.tbi"
 	shell:
 		"tabix -p vcf {input}"
+
+rule download_hg38_cache:
+	output:
+		directory("new_reference/homo_sapiens")
+	params:
+		web_address = lambda wildcards: config["vep_address"]["hg38"],
+		initial_output = "new_reference/homo_sapiens_vep_90_GRCh38.tar.gz"
+	run:
+		shell("wget {params.web_address} -O {params.initial_output}")
+		shell("tar xzf {params.initial_output}")
+
+rule vep_annotation:
+	input:
+		ref = "new_reference/{assembly}.fasta",
+		gff = "new_reference/{genome}.gff",
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
+		idx = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz.tbi",
+		hg38_cache = "new_reference/homo_sapiens"
+	output:
+		"vcf/{species}.{genome}.{caller}.{sampling}.filtered.vep.vcf.gz"
+	params:
+		vep = vep_path,
+		genome = "{genome}"
+	run:
+		if params.genome == "hg38":
+			run(
+				"{params.vep} -i {input.vcf} --dir_cache {input.hg38_cache} -o {output} --compress_output gzip")
+		else:
+			run(
+				"{params.vep} -i {input.vcf} -gff {input.gff} -fasta {input.ref} -o {output} --compress_output gzip")
 
 rule create_coverage_histograms:
 	input:
