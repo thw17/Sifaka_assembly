@@ -754,7 +754,7 @@ rule index_zipped_filtered_vcfs:
 
 rule download_hg38_cache:
 	output:
-		directory("new_reference/homo_sapiens")
+		"new_reference/homo_sapiens"
 	params:
 		web_address = lambda wildcards: config["vep_address"]["hg38"],
 		initial_output = "new_reference/homo_sapiens_vep_90_GRCh38.tar.gz"
