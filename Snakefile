@@ -764,7 +764,7 @@ rule download_hg38_cache:
 
 rule vep_annotation:
 	input:
-		ref = "new_reference/{assembly}.fasta",
+		ref = "new_reference/{genome}.fasta",
 		gff = "new_reference/{genome}.gff",
 		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
 		idx = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz.tbi",
