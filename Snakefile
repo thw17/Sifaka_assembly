@@ -782,7 +782,7 @@ rule download_hg38_cache:
 		initial_output = "new_reference/homo_sapiens_vep_90_GRCh38.tar.gz"
 	run:
 		shell("wget {params.web_address} -O {params.initial_output}")
-		shell("tar xzf {params.initial_output}")
+		shell("tar xzf {params.initial_output} -C new_reference")
 
 rule vep_annotation:
 	input:
