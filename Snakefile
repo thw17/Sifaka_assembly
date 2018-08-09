@@ -390,7 +390,7 @@ rule cds_target_coverage:
 	params:
 		bedtools = bedtools_path
 	shell:
-		"{params.bedtools} coverage -sorted -a {input.region} -b {input.sample}"
+		"{params.bedtools} coverage -sorted -a {input.region} -b {input.sample} > {output}"
 
 rule bedtools_intersect_regions:
 	input:
