@@ -68,6 +68,14 @@ rule all:
 			sampling=["downsampled", "unsampled"],
 			suffix=["stats", "nodup.properpair.stats"]),
 		expand(
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.cdscoverage.bed",
+			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.cdscoverage.bed",
+			sample=macaque_samples, genome=["hg38", "mmul"],
+			sampling=["downsampled", "unsampled"]),
+		expand(
 			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.{region}.hist",
 			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
 			sampling=["downsampled", "unsampled"],
@@ -368,9 +376,21 @@ rule gff2bed:
 	output:
 		"regions/{genome}.{region}.converted.bedopssorted.bed"
 	params:
-		gff2bed = gff2bed_path
+		gff2bed = gff2bed_path,
+		bedtools = bedtools_path
 	shell:
-		"cat {input} | {params.gff2bed} > {output}"
+		"cat {input} | {params.gff2bed} | {params.bedtools} merge > {output}"
+
+rule cds_target_coverage:
+	input:
+		sample = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		region = "regions/{genome}.cds.converted.bedopssorted.bed"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.cdscoverage.bed"
+	params:
+		bedtools = bedtools_path
+	shell:
+		"{params.bedtools} coverage -sorted -a {input.region} -b {input.sample}"
 
 rule bedtools_intersect_regions:
 	input:
@@ -381,7 +401,8 @@ rule bedtools_intersect_regions:
 	params:
 		bedtools = bedtools_path
 	shell:
-		"{params.bedtools} intersect -a {input.sample} -b {input.region} > {output}"
+		"{params.bedtools} intersect -a {input.sample} -b {input.region} | "
+		"{params.bedtools} merge > {output}"
 
 rule bedtools_find_intergenic:
 	input:
@@ -392,7 +413,8 @@ rule bedtools_find_intergenic:
 	params:
 		bedtools = bedtools_path
 	shell:
-		"{params.bedtools} subtract -a {input.sample} -b {input.region} > {output}"
+		"{params.bedtools} subtract -a {input.sample} -b {input.region} | "
+		"{params.bedtools} merge > {output}"
 
 rule compute_histogram_from_bed:
 	input:
