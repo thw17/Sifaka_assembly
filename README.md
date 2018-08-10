@@ -172,37 +172,40 @@ All output is deposited in ``results``.
 ### Step 13: Compute histograms of coverage per region
 The goal of this step is to output histograms of coverage in various regions of the genome.
 
-In ``rule gff2bed``, we convert the genome annotation GFF files output in Step 3 to BED files using gff2bed, part of the BEDOPS suite.
+In ``rule gff2bed``, we convert the genome annotation GFF files output in Step 3 to BED files using gff2bed, part of the BEDOPS suite. We use ``bedtools merge`` to ensure that regions aren't included multiple times (which commonly is the case in NCBI GFF files).
 
-We then use bedtools to extract the regions from the bedgraphs output in Step 12. For most regions, this involves simply intersecting the bedgraph file with the region's file in ``rule bedtools_intersect_regions``. However, to get intergenic regions, we use bedtools to subtract genes from the bedgraph in ``rule bedtools_find_intergenic``.
+We then use bedtools to extract the regions from the bedgraphs output in Step 12. For most regions, this involves simply intersecting the bedgraph file with the region's file in ``rule bedtools_intersect_regions``. However, to get intergenic regions, we use bedtools to subtract genes from the bedgraph in ``rule bedtools_find_intergenic``. Note that in both cases we use ``bedtools merge`` as well to ensure that regions aren't included multiple times (which commonly is the case in NCBI GFF files).
 
 Finally, we use a custom script, ``Compute_histogram_from_bed.py`` to calculate histograms from the extracted regions of the bedgraph files. The output of this step, in ``rule compute_histogram_from_bed`` and ``rule compute_histograph_from_bed_intergenic``, ends in ``.hist`` and is written to the ``results`` directory. These histograms are input for plotting and analysis (see below).
 
-### Step 14: Find minimally callable sites
+### Step 14: Calculate coverage breadth statistics for CDS
+In ``rule cds_target_coverage``, instead of exploring depth of coverage statistics (like above), we use ``bedtools coverage`` to calculate, among other things, the fraction of each coding sequence (CDS) with at least one read mapped to it. For input, we use the output of ``rule gff2bed`` for CDS (Step 13) and the sorted bedgraph output from Step 12.
+
+### Step 15: Find minimally callable sites
 To speed up downstream variant calling, we first used GATK's CallableLoci tool to output a BED file containing, for each sample, sites classified by callability. This happens in ``rule generate_callable_sites``. We then use sed to extract callable regions from that BED file in ``rule extract_callable_sites``.
 
 Then, in a series of rules beginning with "combine_callable_sites_" in their titles, we combine and merge regions into one BED file per species per reference genome containing every site that was minimally callable in at least one sample.
 
-### Step 15: Generate GVCF files with GATK
+### Step 16: Generate GVCF files with GATK
 Next, we use GATK's HaplotypeCaller to call variants for each sample, for each reference genome. We use the BED files containing minimally callable sites (output of Step 14) to constrain variant calling (for speed), and output a GVCF file that contains information about both variant and invariant sites.
 
-### Step 16: Genotype GVCF files with GATK
+### Step 17: Genotype GVCF files with GATK
 Next, we use GATK's GenotypeGVCFs tool to genotype GVCF files for all samples from a given species, per reference genome. This outputs a raw VCF file per species, per reference genome. We use the flag ``--includeNonVariantSites`` to output records for every callable site in the genome.
 
-### Step 17: Freebayes Variant Calling
+### Step 18: Freebayes Variant Calling
 In addition to GATK, we also used Freebayes to call variants. Again, we use the BED files output in Step 14 to restrict variant calling to regions considered minimally callable (for speed/efficiency). For Freebayes, we used default parameters and only output variant sites.
 
-### Step 18: Zip and index VCF files
+### Step 19: Zip and index VCF files
 In ``rule zip_vcf`` we use bgzip to compress all VCF output from Steps 16 and 17. Next, in ``rule index_zipped_vcf``, we use tabix to index the zipped vcfs files.
 
-### Step 19: Filter VCFs
+### Step 20: Filter VCFs
 We use a custom script, ``Filter_vcf.py``, to filter the compressed and indexed VCF files in ``rule filter_vcfs``. This script is built around the Python package cyvcf2, and we filtered for a minimum site quality of 30, sample depth of 8, and genotype quality of 30. We further required an allele to have at least three reads supporting it, and we only included sites callable in all samples of a given species/genome.
 
-### Step 20: Zip and index filtered VCF files
+### Step 21: Zip and index filtered VCF files
 Like Step 18, we use bgzip to compress and tabix to index the filtered vcf files.
 
-### Step 21: Download HG38 Cache for VEP
+### Step 22: Download HG38 Cache for VEP
 In ``rule download_hg38_cache``, we download Ensembl's precompiled annotation database for hg38. We'll use gff files for the other two genomes.
 
-### Step 22: Annotate VCFs
+### Step 23: Annotate VCFs
 In ``rule vep_annotation`` we use Ensembl's Variant Effect Predictor (VEP) to annotate the VCF files output from Step 20. For hg38, we use the cache downloaded in Step 21, while we use GFFs and FASTA files for the other two genomes (Steps 2 and 3).
