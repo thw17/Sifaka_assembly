@@ -1,0 +1,67 @@
+{
+	"__default__" :
+	{
+		"n": 4
+	},
+
+	"gatk_gvcf_hg38_sifaka" :
+	{
+		"n": 8
+	},
+
+	"gatk_gvcf_hg38_macaques" :
+	{
+		"n": 8
+	},
+
+	"gatk_gvcf_pcoq" :
+	{
+		"n": 8
+	},
+
+	"gatk_gvcf_mmul" :
+	{
+		"n": 8
+	},
+
+	"genotype_gvcfs_hg38_sifaka" :
+	{
+		"n": 8
+	},
+
+	"genotype_gvcfs_hg38_macaque" :
+	{
+		"n": 8
+	},
+
+	"genotype_gvcfs_pcoq" :
+	{
+		"n": 8
+	},
+
+	"genotype_gvcfs_mmul" :
+	{
+		"n": 8
+	},
+
+	"freebayes_call_mmul" :
+	{
+		"n": 8
+	},
+
+	"freebayes_call_pcoq" :
+	{
+		"n": 8
+	},
+
+	"freebayes_call_hg38_sifakas" :
+	{
+		"n": 8
+	},
+
+	"freebayes_call_hg38_macaques" :
+	{
+		"n": 8
+	}
+
+}

@@ -526,9 +526,9 @@ rule gatk_gvcf_hg38_sifaka:
 		temp_dir = temp_directory,
 		gatk_path = gatk
 	threads:
-		4
+		8
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx30g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_gvcf_hg38_macaques:
 	input:
@@ -542,9 +542,9 @@ rule gatk_gvcf_hg38_macaques:
 		temp_dir = temp_directory,
 		gatk_path = gatk
 	threads:
-		4
+		8
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx30g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_gvcf_pcoq:
 	input:
@@ -558,9 +558,9 @@ rule gatk_gvcf_pcoq:
 		temp_dir = temp_directory,
 		gatk_path = gatk
 	threads:
-		4
+		8
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx30g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 
 rule gatk_gvcf_mmul:
 	input:
@@ -573,9 +573,9 @@ rule gatk_gvcf_mmul:
 	params:
 		temp_dir = temp_directory,
 		gatk_path = gatk
-	threads: 4
+	threads: 8
 	shell:
-		"java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
+		"java -Xmx30g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T HaplotypeCaller -R {input.ref} -I {input.bam} -L {input.callable} --emitRefConfidence GVCF -o {output}"
 
 rule genotype_gvcfs_hg38_sifaka:
 	input:
@@ -609,13 +609,13 @@ rule genotype_gvcfs_hg38_macaque:
 		temp_dir = temp_directory,
 		gatk_path = gatk
 	threads:
-		4
+		8
 	run:
 		variant_files = []
 		for i in input.gvcfs:
 			variant_files.append("--variant " + i)
 		variant_files = " ".join(variant_files)
-		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+		shell("java -Xmx30g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
 
 rule genotype_gvcfs_pcoq:
 	input:
@@ -629,13 +629,13 @@ rule genotype_gvcfs_pcoq:
 		temp_dir = temp_directory,
 		gatk_path = gatk
 	threads:
-		4
+		8
 	run:
 		variant_files = []
 		for i in input.gvcfs:
 			variant_files.append("--variant " + i)
 		variant_files = " ".join(variant_files)
-		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+		shell("java -Xmx30g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
 
 rule genotype_gvcfs_mmul:
 	input:
@@ -649,13 +649,13 @@ rule genotype_gvcfs_mmul:
 		temp_dir = temp_directory,
 		gatk_path = gatk
 	threads:
-		4
+		8
 	run:
 		variant_files = []
 		for i in input.gvcfs:
 			variant_files.append("--variant " + i)
 		variant_files = " ".join(variant_files)
-		shell("java -Xmx16g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
+		shell("java -Xmx30g -Djava.io.tmpdir={params.temp_dir} -jar {params.gatk_path} -T GenotypeGVCFs -R {input.ref} {variant_files} -o {output.v} --includeNonVariantSites")
 
 rule freebayes_call_mmul:
 	input:
