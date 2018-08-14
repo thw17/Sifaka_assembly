@@ -88,19 +88,19 @@ rule all:
 		expand(
 			"vcf/sifakas.pcoq.{caller}.{sampling}.filtered.vep.vcf.gz",
 			caller=["gatk", "freebayes"],
-			sampling=["downsampled", "unsampled"]),
+			sampling=["downsampled"]),
 		expand(
 			"vcf/macaques.mmul.{caller}.{sampling}.filtered.vcf.gz",
 			caller=["gatk", "freebayes"],
-			sampling=["downsampled", "unsampled"]),
+			sampling=["downsampled"]),
 		expand(
 			"vcf/sifakas.hg38.{caller}.{sampling}.filtered.vcf.gz",
 			caller=["gatk", "freebayes"],
-			sampling=["downsampled", "unsampled"]),
+			sampling=["downsampled"]),
 		expand(
 			"vcf/macaques.hg38.{caller}.{sampling}.filtered.vcf.gz",
 			caller=["gatk", "freebayes"],
-			sampling=["downsampled", "unsampled"])
+			sampling=["downsampled"])
 
 rule prepare_reference:
 	input:
