@@ -796,10 +796,10 @@ rule vep_annotation:
 		genome = "{genome}"
 	run:
 		if params.genome == "hg38":
-			run(
+			shell(
 				"{params.vep} -i {input.vcf} --dir_cache {input.hg38_cache} -o {output} --compress_output gzip")
 		else:
-			run(
+			shell(
 				"{params.vep} -i {input.vcf} -gff {input.gff} -fasta {input.ref} -o {output} --compress_output gzip")
 
 rule create_coverage_histograms:
