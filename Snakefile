@@ -401,8 +401,7 @@ rule bedtools_intersect_regions:
 	params:
 		bedtools = bedtools_path
 	shell:
-		"{params.bedtools} intersect -a {input.sample} -b {input.region} | "
-		"{params.bedtools} merge > {output}"
+		"{params.bedtools} intersect -a {input.sample} -b {input.region} > {output}"
 
 rule bedtools_find_intergenic:
 	input:
@@ -413,8 +412,7 @@ rule bedtools_find_intergenic:
 	params:
 		bedtools = bedtools_path
 	shell:
-		"{params.bedtools} subtract -a {input.sample} -b {input.region} | "
-		"{params.bedtools} merge > {output}"
+		"{params.bedtools} subtract -a {input.sample} -b {input.region} > {output}"
 
 rule compute_histogram_from_bed:
 	input:
