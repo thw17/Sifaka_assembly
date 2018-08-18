@@ -90,15 +90,15 @@ rule all:
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"]),
 		expand(
-			"vcf/macaques.mmul.{caller}.{sampling}.filtered.vcf.gz",
+			"vcf/macaques.mmul.{caller}.{sampling}.filtered.vep.vcf.gz",
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"]),
 		expand(
-			"vcf/sifakas.hg38.{caller}.{sampling}.filtered.vcf.gz",
+			"vcf/sifakas.hg38.{caller}.{sampling}.filtered.vep.vcf.gz",
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"]),
 		expand(
-			"vcf/macaques.hg38.{caller}.{sampling}.filtered.vcf.gz",
+			"vcf/macaques.hg38.{caller}.{sampling}.filtered.vep.vcf.gz",
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"])
 
