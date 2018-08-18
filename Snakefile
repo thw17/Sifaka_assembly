@@ -782,25 +782,49 @@ rule download_hg38_cache:
 		shell("wget {params.web_address} -O {params.initial_output}")
 		shell("tar xzf {params.initial_output} -C new_reference")
 
+rule bgzip_gff_files:
+	input:
+		"new_reference/{genome}.gff"
+	output:
+		"new_reference/{genome}.gff.bgz"
+	params:
+		bgzip = bgzip_path
+	shell:
+		"{params.bgzip} -c {input} > output"
+
+rule index_bgzipped_gff_files:
+	input:
+		"new_reference/{genome}.gff.bgz"
+	output:
+		"new_reference/{genome}.gff.bgz.tbi"
+	params:
+		tabix = tabix_path
+	shell:
+		"{params.tabix} -p gff {input}"
+
 rule vep_annotation:
 	input:
 		ref = "new_reference/{genome}.fasta",
-		gff = "new_reference/{genome}.gff",
+		gff = "new_reference/{genome}.gff.bgz",
+		gff_idx = "new_reference/{genome}.gff.bgz.tbi",
 		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
 		idx = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz.tbi",
 		hg38_cache = "new_reference/homo_sapiens"
 	output:
-		"vcf/{species}.{genome}.{caller}.{sampling}.filtered.vep.vcf.gz"
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vep.vcf.gz",
+		html = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vep.vcf.gz_summary.html"
 	params:
 		vep = vep_path,
 		genome = "{genome}"
 	run:
 		if params.genome == "hg38":
 			shell(
-				"{params.vep} -i {input.vcf} --dir_cache {input.hg38_cache} -o {output} --compress_output gzip")
+				"{params.vep} -i {input.vcf} --dir_cache {input.hg38_cache} "
+				"-o {output} --compress_output bgzip --cache --offline --cache_version 90")
 		else:
 			shell(
-				"{params.vep} -i {input.vcf} -gff {input.gff} -fasta {input.ref} -o {output} --compress_output gzip")
+				"{params.vep} -i {input.vcf} -gff {input.gff} -fasta {input.ref} "
+				"-o {output} --compress_output bgzip")
 
 rule create_coverage_histograms:
 	input:
