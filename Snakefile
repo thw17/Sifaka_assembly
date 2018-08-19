@@ -816,11 +816,12 @@ rule vep_annotation:
 		html = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vep.vcf.gz_summary.html"
 	params:
 		vep = vep_path,
-		genome = "{genome}"
+		genome = "{genome}",
+		cache_base = "new_reference/"
 	run:
 		if params.genome == "hg38":
 			shell(
-				"{params.vep} -i {input.vcf} --dir_cache {input.hg38_cache} "
+				"{params.vep} -i {input.vcf} --dir_cache {params.cache_base} "
 				"-o {output} --compress_output bgzip --cache --offline --cache_version 90")
 		else:
 			shell(
