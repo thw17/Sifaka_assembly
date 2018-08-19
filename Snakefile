@@ -786,7 +786,7 @@ rule bgzip_gff_files:
 	input:
 		"new_reference/{genome}.gff"
 	output:
-		"new_reference/{genome}.gff.bgz"
+		"new_reference/{genome}.gff.gz"
 	params:
 		bgzip = bgzip_path
 	shell:
@@ -795,9 +795,9 @@ rule bgzip_gff_files:
 
 rule index_bgzipped_gff_files:
 	input:
-		"new_reference/{genome}.gff.bgz"
+		"new_reference/{genome}.gff.gz"
 	output:
-		"new_reference/{genome}.gff.bgz.tbi"
+		"new_reference/{genome}.gff.gz.tbi"
 	params:
 		tabix = tabix_path
 	shell:
@@ -806,8 +806,8 @@ rule index_bgzipped_gff_files:
 rule vep_annotation:
 	input:
 		ref = "new_reference/{genome}.fasta",
-		gff = "new_reference/{genome}.gff.bgz",
-		gff_idx = "new_reference/{genome}.gff.bgz.tbi",
+		gff = "new_reference/{genome}.gff.gz",
+		gff_idx = "new_reference/{genome}.gff.gz.tbi",
 		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
 		idx = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz.tbi",
 		hg38_cache = "new_reference/homo_sapiens"
@@ -822,11 +822,11 @@ rule vep_annotation:
 		if params.genome == "hg38":
 			shell(
 				"{params.vep} -i {input.vcf} --dir_cache {params.cache_base} "
-				"-o {output} --compress_output bgzip --cache --offline --cache_version 90")
+				"-o {output.vcf} --compress_output bgzip --cache --offline --cache_version 90")
 		else:
 			shell(
 				"{params.vep} -i {input.vcf} -gff {input.gff} -fasta {input.ref} "
-				"-o {output} --compress_output bgzip")
+				"-o {output.vcf} --compress_output bgzip")
 
 rule create_coverage_histograms:
 	input:
