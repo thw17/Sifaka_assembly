@@ -790,7 +790,7 @@ rule bgzip_gff_files:
 	params:
 		bgzip = bgzip_path
 	shell:
-		"{params.bgzip} -c {input} > output"
+		"{params.bgzip} -c {input} > {output}"
 
 rule index_bgzipped_gff_files:
 	input:
