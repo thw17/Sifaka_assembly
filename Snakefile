@@ -790,7 +790,8 @@ rule bgzip_gff_files:
 	params:
 		bgzip = bgzip_path
 	shell:
-		"{params.bgzip} -c {input} > {output}"
+		"""grep -v "#" {input} | """
+		"""sort -k1,1 -k4,4n -k5,5n -t$'\t' | {params.bgzip} -c > {output}"""
 
 rule index_bgzipped_gff_files:
 	input:
