@@ -822,11 +822,11 @@ rule vep_annotation:
 		if params.genome == "hg38":
 			shell(
 				"{params.vep} -i {input.vcf} --dir_cache {params.cache_base} "
-				"-o {output.vcf} --compress_output bgzip --cache --offline --cache_version 90")
+				"-o {output.vcf} --compress_output bgzip --cache --offline --cache_version 90 --vcf")
 		else:
 			shell(
 				"{params.vep} -i {input.vcf} -gff {input.gff} -fasta {input.ref} "
-				"-o {output.vcf} --compress_output bgzip")
+				"-o {output.vcf} --compress_output bgzip --vcf")
 
 rule create_coverage_histograms:
 	input:
