@@ -50,7 +50,8 @@ def main():
 					data_dict[id].append(data_split[1])
 				else:
 					data_dict[id] = [data_split[1]]
-
+	for i in data_dict:
+		print(i, len(i))
 	df = pd.DataFrame.from_dict(data_dict)
 	df.to_csv(args.output_file, index=False)
 
