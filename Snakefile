@@ -105,21 +105,25 @@ rule all:
 		expand(
 			"stats/sifakas.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats",
 			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			caller=["gatk", "freebayes"],
 			sampling=["downsampled", "unsampled"],
 			region=["cds", "exon", "gene", "utr", "intron", "intergenic"]),
 		expand(
 			"stats/macaques.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats",
 			sample=macaque_samples, genome=["hg38", "mmul"],
+			caller=["gatk", "freebayes"],
 			sampling=["downsampled", "unsampled"],
 			region=["cds", "exon", "gene", "utr", "intron", "intergenic"]),
 		expand(
 			"stats/sifakas.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats",
 			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			caller=["gatk", "freebayes"],
 			sampling=["downsampled", "unsampled"],
 			region=["cds", "exon", "gene", "utr", "intron"]),
 		expand(
 			"stats/macaques.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats",
 			sample=macaque_samples, genome=["hg38", "mmul"],
+			caller=["gatk", "freebayes"],
 			sampling=["downsampled", "unsampled"],
 			region=["cds", "exon", "gene", "utr", "intron"])
 
