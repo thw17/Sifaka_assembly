@@ -876,7 +876,7 @@ rule vcf_intersect_intergenic:
 		bedtools = bedtools_path,
 		bgzip = bgzip_path
 	shell:
-		"{params.bedtools} subtract -header -a {input.vcf} -b {input.region} "
+		"{params.bedtools} subtract -header -a {input.vcf} -b {input.region} | "
 		"{params.bgzip} > {output}"
 
 rule index_zipped_vcf_by_region:
