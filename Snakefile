@@ -949,7 +949,7 @@ rule compile_vcf_stats:
 	output:
 		"stats/compiled.bcftools_stats.csv"
 	shell:
-		"python scripts/Compile_vcf_stats_output.py --input_files {input} "
+		"python scripts/Compile_bcftools_stats_output.py --input_files {input} "
 		"--output_file {output}"
 
 rule create_coverage_histograms:
