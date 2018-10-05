@@ -7,6 +7,7 @@ temp_directory = "temp/"
 
 bbduksh_path = "bbduk.sh"
 bbmerge_sh_path = "bbmerge.sh"
+bcftools_path = "bcftools"
 bedops_path = "bedops"
 bedtools_path = "bedtools"
 bgzip_path = "bgzip"
@@ -101,6 +102,28 @@ rule all:
 			"vcf/macaques.hg38.{caller}.{sampling}.filtered.vep.vcf.gz",
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"])
+		expand(
+			"stats/sifakas.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats",
+			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron", "intergenic"]),
+		expand(
+			"stats/macaques.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats",
+			sample=macaque_samples, genome=["hg38", "mmul"],
+			sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron", "intergenic"]),
+		expand(
+			"stats/sifakas.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats",
+			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron"]),
+		expand(
+			"stats/macaques.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats",
+			sample=macaque_samples, genome=["hg38", "mmul"],
+			sampling=["downsampled", "unsampled"],
+			region=["cds", "exon", "gene", "utr", "intron"])
+
+
 
 rule prepare_reference:
 	input:
@@ -827,6 +850,32 @@ rule vep_annotation:
 			shell(
 				"{params.vep} -i {input.vcf} -gff {input.gff} -fasta {input.ref} "
 				"-o {output.vcf} --compress_output bgzip --vcf")
+
+rule vcf_stats_by_region:
+	input:
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
+		region = "regions/{genome}.{region}.converted.bedopssorted.bed"
+	output:
+		"stats/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats"
+	params:
+		bedtools = bedtools_path,
+		bcftools = bcftools_path
+	shell:
+		"{params.bedtools} intersect -a {input.vcf} -b {input.region} | "
+		"{params.bcftools} stats > {output}"
+
+rule vcf_stats_intergenic:
+	input:
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
+		region = "regions/{genome}.gene.converted.bedopssorted.bed"
+	output:
+		"stats/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats"
+	params:
+		bedtools = bedtools_path,
+		bcftools = bcftools_path
+	shell:
+		"{params.bedtools} subtract -a {input.sample} -b {input.region} "
+		"{params.bcftools} stats > {output}"
 
 rule create_coverage_histograms:
 	input:
