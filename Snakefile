@@ -876,7 +876,7 @@ rule vcf_stats_intergenic:
 		bedtools = bedtools_path,
 		bcftools = bcftools_path
 	shell:
-		"{params.bedtools} subtract -a {input.sample} -b {input.region} "
+		"{params.bedtools} subtract -a {input.vcf} -b {input.region} "
 		"{params.bcftools} stats > {output}"
 
 rule create_coverage_histograms:
