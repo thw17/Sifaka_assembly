@@ -853,31 +853,73 @@ rule vep_annotation:
 				"{params.vep} -i {input.vcf} -gff {input.gff} -fasta {input.ref} "
 				"-o {output.vcf} --compress_output bgzip --vcf")
 
-rule vcf_stats_by_region:
+rule vcf_intersect_by_region:
 	input:
 		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
 		region = "regions/{genome}.{region}.converted.bedopssorted.bed"
 	output:
-		"stats/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats"
+		"vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz"
 	params:
 		bedtools = bedtools_path,
-		bcftools = bcftools_path
+		bgzip = bgzip_path
 	shell:
-		"{params.bedtools} intersect -a {input.vcf} -b {input.region} | "
-		"{params.bcftools} stats > {output}"
+		"{params.bedtools} intersect -header -a {input.vcf} -b {input.region} | "
+		"{params.bgzip} > {output}"
 
-rule vcf_stats_intergenic:
+rule vcf_intersect_intergenic:
 	input:
 		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
 		region = "regions/{genome}.gene.converted.bedopssorted.bed"
 	output:
-		"stats/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats"
+		"vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz"
 	params:
 		bedtools = bedtools_path,
+		bgzip = bgzip_path
+	shell:
+		"{params.bedtools} subtract -header -a {input.vcf} -b {input.region} "
+		"{params.bgzip} > {output}"
+
+rule index_zipped_vcf_by_region:
+	input:
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz"
+	output:
+		"vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz.tbi"
+	params:
+		tabix = tabix_path
+	shell:
+		"{params.tabix} -p vcf {input}"
+
+rule index_zipped_vcf_intergenic:
+	input:
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz"
+	output:
+		"vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz.tbi"
+	params:
+		tabix = tabix_path
+	shell:
+		"{params.tabix} -p vcf {input}"
+
+rule vcf_stats_by_region:
+	input:
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz",
+		tbi = "vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz.tbi"
+	output:
+		"stats/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats"
+	params:
 		bcftools = bcftools_path
 	shell:
-		"{params.bedtools} subtract -a {input.vcf} -b {input.region} "
-		"{params.bcftools} stats > {output}"
+		"{params.bcftools} stats {input.vcf} | grep ^SN > {output}"
+
+rule vcf_stats_intergenic:
+	input:
+		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz",
+		tbi = "vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz.tbi"
+	output:
+		"stats/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats"
+	params:
+		bcftools = bcftools_path
+	shell:
+		"{params.bcftools} stats {input.vcf} | grep ^SN > {output}"
 
 rule create_coverage_histograms:
 	input:
