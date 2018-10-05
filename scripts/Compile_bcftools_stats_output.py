@@ -32,18 +32,13 @@ def main():
 	data_dict['caller'] = []
 	data_dict['region'] = []
 
-	ex_counter = 0
-	in_counter = 0
 	for i in args.input_files:
-		print(i)
 		base = os.path.basename(i)
 		base_split = base.split(".")
 		data_dict['species'].append(base_split[0])
 		data_dict['assembly'].append(base_split[1])
 		data_dict['caller'].append(base_split[2])
 		data_dict['region'].append(base_split[4])
-		ex_counter += 1
-		print(ex_counter)
 
 		with open(i, "r") as infile:
 			for line in infile:
@@ -55,12 +50,6 @@ def main():
 					data_dict[id].append(data_split[1])
 				else:
 					data_dict[id] = [data_split[1]]
-			in_counter += 1
-			print(in_counter)
-	print(len(args.input_files))
-	for i in data_dict:
-		print(i, len(data_dict[i]))
-	print(data_dict)
 	df = pd.DataFrame.from_dict(data_dict)
 	df.to_csv(args.output_file, index=False)
 
