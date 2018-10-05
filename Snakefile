@@ -926,31 +926,33 @@ rule compile_vcf_stats:
 	input:
 		s_region = expand(
 			"stats/sifakas.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats",
-			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			genome=["hg38", "pcoq"],
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"],
-			region=["cds", "exon", "gene", "utr", "intron"]),
+			region=["cds", "exon", "utr", "intron"]),
 		m_region = expand(
 			"stats/macaques.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats",
-			sample=macaque_samples, genome=["hg38", "mmul"],
+			genome=["hg38", "mmul"],
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"],
-			region=["cds", "exon", "gene", "utr", "intron"]),
+			region=["cds", "exon", "utr", "intron"]),
 		s_inter = expand(
 			"stats/sifakas.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats",
-			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			genome=["hg38", "pcoq"],
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"]),
 		m_inter = expand(
 			"stats/macaques.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats",
-			sample=macaque_samples, genome=["hg38", "mmul"],
+			genome=["hg38", "mmul"],
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"])
 	output:
 		"stats/compiled.bcftools_stats.csv"
-	shell:
-		"python scripts/Compile_bcftools_stats_output.py --input_files {input} "
-		"--output_file {output}"
+	run:
+		file_list = input.s_region + input.m_region + input.s_inter + input.m_inter
+		shell(
+			"python scripts/Compile_bcftools_stats_output.py --input_files {file_list} "
+			"--output_file {output}")
 
 rule create_coverage_histograms:
 	input:
