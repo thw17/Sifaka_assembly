@@ -52,7 +52,7 @@ def main():
 					data_dict[id] = [data_split[1]]
 	print(len(args.input_files))
 	for i in data_dict:
-		print(i, len(i))
+		print(i, len(data_dict[i]))
 	print(data_dict)
 	df = pd.DataFrame.from_dict(data_dict)
 	df.to_csv(args.output_file, index=False)
