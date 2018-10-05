@@ -858,7 +858,7 @@ rule vcf_intersect_by_region:
 		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
 		region = "regions/{genome}.{region}.converted.bedopssorted.bed"
 	output:
-		"vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz"
+		"vcf_regions/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz"
 	params:
 		bedtools = bedtools_path,
 		bgzip = bgzip_path
@@ -871,7 +871,7 @@ rule vcf_intersect_intergenic:
 		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.filtered.vcf.gz",
 		region = "regions/{genome}.gene.converted.bedopssorted.bed"
 	output:
-		"vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz"
+		"vcf_regions/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz"
 	params:
 		bedtools = bedtools_path,
 		bgzip = bgzip_path
@@ -881,9 +881,9 @@ rule vcf_intersect_intergenic:
 
 rule index_zipped_vcf_by_region:
 	input:
-		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz"
+		vcf = "vcf_regions/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz"
 	output:
-		"vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz.tbi"
+		"vcf_regions/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz.tbi"
 	params:
 		tabix = tabix_path
 	shell:
@@ -891,9 +891,9 @@ rule index_zipped_vcf_by_region:
 
 rule index_zipped_vcf_intergenic:
 	input:
-		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz"
+		vcf = "vcf_regions/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz"
 	output:
-		"vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz.tbi"
+		"vcf_regions/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz.tbi"
 	params:
 		tabix = tabix_path
 	shell:
@@ -901,8 +901,8 @@ rule index_zipped_vcf_intergenic:
 
 rule vcf_stats_by_region:
 	input:
-		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz",
-		tbi = "vcf/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz.tbi"
+		vcf = "vcf_regions/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz",
+		tbi = "vcf_regions/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.filtered.vcf.gz.tbi"
 	output:
 		"stats/{species}.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats"
 	params:
@@ -912,8 +912,8 @@ rule vcf_stats_by_region:
 
 rule vcf_stats_intergenic:
 	input:
-		vcf = "vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz",
-		tbi = "vcf/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz.tbi"
+		vcf = "vcf_regions/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz",
+		tbi = "vcf_regions/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.filtered.vcf.gz.tbi"
 	output:
 		"stats/{species}.{genome}.{caller}.{sampling}.intergenic.SUBTRACTION.vcf.stats"
 	params:
