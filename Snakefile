@@ -101,7 +101,7 @@ rule all:
 		expand(
 			"vcf/macaques.hg38.{caller}.{sampling}.filtered.vep.vcf.gz",
 			caller=["gatk", "freebayes"],
-			sampling=["downsampled"])
+			sampling=["downsampled"]),
 		expand(
 			"stats/sifakas.{genome}.{caller}.{sampling}.{region}.INTERSECTION.vcf.stats",
 			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
