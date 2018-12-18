@@ -1,22 +1,25 @@
 # Sifaka_assembly
-This repository contains code to assemble and analyze sifaka exomic data.
+This repository contains code to assemble and analyze sifaka exome data.
 
 For questions, contact:
 Tim Webster
-Arizona State University
+Department of Anthropology, University of Utah
+
+## Citation
+Please cite our preprint:
 
 ## Goals
-The main goal of this project is to explore the success of human exome capture probes in Strepsirrhine primates (with a Catarrhine comparison)
+The main goal of this project is to explore the success of human exome capture probes in strepsirrhine primates (with a catarrhine comparison)
 
 ## Data
 This project uses exome data generated (using human capture probes) from:
 
 *Primary dataset*
-- 4 sifakas (mother-daughter pair, two unrelated males): M288, M418, F249, F406
-- 4 Indian rhesus macaques (2 males, 2 females, all unrelated): WI055, WI059, WI056, WI057
+- 4 sifakas (mother-daughter pair, two unrelated males; dataset Sifaka1 in the paper): M288, M418, F249, F406
+- 4 Indian rhesus macaques (2 males, 2 females, all unrelated; dataset Macaque1 in the paper): WI055, WI059, WI056, WI057
 
 *Secondary dataset*
-- 4 additional sifakas (2 males, 2 females, all unrelated): 137, 161, 184, 252
+- 4 additional sifakas (2 males, 2 females, all unrelated; dataset Sifaka2 in the paper): 137, 161, 184, 252
 
 We used the primary dataset to directly compare exome capture success between rhesus macaques and sifakas. Human exome probes are known to work well in macaques, so they provide an ideal comparison.
 
