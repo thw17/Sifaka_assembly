@@ -8,6 +8,9 @@ Department of Anthropology, University of Utah
 ## Citation
 Please cite our preprint:
 
+Webster TH, Guevara EE, Lawler RR, Bradley BJ. 2018. Successful exome capture and sequencing in lemurs using human baits.
+bioRxiv 490839. doi: https://doi.org/10.1101/490839
+
 ## Goals
 The main goal of this project is to explore the success of human exome capture probes in strepsirrhine primates (with a catarrhine comparison)
 
