@@ -28,6 +28,15 @@ We used the primary dataset to directly compare exome capture success between rh
 
 We used the four additional sifakas in the secondary dataset to understand how exome bait design might affect success. The primary dataset was captured using NimbleGen SeqCap EZ Exome v2 probes, while the secondary dataset was captured using IDT xGen Exome Research Panel probes.
 
+*Reference genomes*
+We downloaded reference genomes to the ``reference`` directory.
+
+We obtained pcoq1 from https://www.ncbi.nlm.nih.gov/genome/24390
+
+We obtained mmul from https://www.ncbi.nlm.nih.gov/genome/215?genome_assembly_id=259055
+
+We obtained hg38 from the Broad Institute's resource bundle: https://console.cloud.google.com/storage/browser/genomics-public-data/resources/broad/hg38/v0?pli=1
+
 ## Setup
 The assembly/analysis pipeline is written in Snakemake.  It handles running a variety of external tools, as well as a few internal programs (e.g., mapqs).  To run analyses, I strongly suggest using Anaconda (with bioconda added as a channel) to manage packages and programs.  When analyses are complete, I will provide an environment.yml file with exact versions of each program.  Until then, use the following commands as a suggestion. *I assume you are working with a Linux operating system.*
 
@@ -78,6 +87,23 @@ If you get something that looks like:
 You're all set.
 
 ## Running the pipeline
+* The pipeline is designed to work with the original fastq file names, not those used by SRA. So, if you're planning on using the fastq files downloaded from SRA make sure filenames are changed to:
+
+| SRA ID | Expected filenames |
+| ------ | ------------------ |
+| SRR6277165 | F249_read1.fastq.gz, F249_read2.fastq.gz |
+| SRR6277166 | F406_read1.fastq.gz, F406_read2.fastq.gz |
+| SRR6277167 | M288_read1.fastq.gz, M288_read2.fastq.gz |
+| SRR6277168 | M418_read1.fastq.gz, M418_read2.fastq.gz |
+| SRR7219233 | 137_read1.fastq.gz, 137_read2.fastq.gz |
+| SRR7219232 | 161_read1.fastq.gz, 161_read2.fastq.gz |
+| SRR7219231 | 184_read1.fastq.gz, 184_read2.fastq.gz |
+| SRR7219230 | 252_read1.fastq.gz, 252_read2.fastq.gz |
+| SRR5085658 | WI055_read1.fastq.gz, WI055_read2.fastq.gz |
+| SRR5085657 | WI056_read1.fastq.gz, WI056_read2.fastq.gz |
+| SRR5085688 | WI057_read1.fastq.gz, WI057_read2.fastq.gz |
+| SRR5085648 | WI059_read1.fastq.gz, WI059_read2.fastq.gz |
+
 * First, load the main anaconda environment:
 ```
 source activate Sifaka_snakemake
@@ -215,3 +241,15 @@ In ``rule download_hg38_cache``, we download Ensembl's precompiled annotation da
 
 ### Step 23: Annotate VCFs
 In ``rule vep_annotation`` we use Ensembl's Variant Effect Predictor (VEP) to annotate the VCF files output from Step 20. For hg38, we use the cache downloaded in Step 21, while we use GFFs and FASTA files for the other two genomes (Steps 2 and 3).
+
+## Manual steps: Plotting
+After the pipeline completed, we used R to manually plot and analyze the results in RStudio.
+
+### Plot MAPQ results
+We used the script ``mapq_figure_Rscript.R`` in the ``scripts`` directory to plot MAPQ results. It requires the packages ``cowplot`` and ``dpylr``. It takes as input a text file that we manually constructed as a part of our quality control checks. You can see the file we used in the ``misc`` directory. It's called ``mapping_results_all_samples.txt``.
+
+### Plot coverage
+We used ``plot_coverage_Rscript.R`` in the ``scripts`` directory for all coverage plots and analyses. It requires ``cowplot`` and ``dplyr``. This script needs to have the directory containing all of the ``.hist`` output files set as its working directory (if following the pipeline, it should be ``results``).
+
+### Compare CDS coverage results
+The ``cds_coverage_Rscript.R`` script in the ``scripts`` directory requires as input the files ending in ``.cdscoverage.bed`` and the working directory should be set to the directory containing these files (if following the pipeline, it should be ``results``). There are no required libraries if only calculating stats.

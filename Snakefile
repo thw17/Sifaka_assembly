@@ -2,9 +2,12 @@ import os
 
 configfile: "sifaka_config.json"
 
-fastq_directory = "/home/thwebste/Data/sifaka"
-temp_directory = "temp/"
+# Update user paths
+fastq_directory = ""
+temp_directory = ""
+gatk = "" # path to jar file for GATK 3.7
 
+# Tool paths -- no need to update if installed with Bioconda
 bbduksh_path = "bbduk.sh"
 bbmerge_sh_path = "bbmerge.sh"
 bcftools_path = "bcftools"
@@ -14,7 +17,6 @@ bgzip_path = "bgzip"
 bwa_path = "bwa"
 fastqc_path = "fastqc"
 freebayes_path = "freebayes"
-gatk = "/home/thwebste/Tools/GenomeAnalysisTK_37.jar"
 gff2bed_path = "gff2bed"
 multiqc_path = "multiqc"
 platypus_path = "platypus"
@@ -23,7 +25,6 @@ samtools_path = "samtools"
 sort_bed_path = "sort-bed"
 tabix_path = "tabix"
 vep_path = "vep"
-# xyalign_path =
 
 all_fastq_prefixes = config["sifaka_fastq_prefixes"] + config["macaque_fastq_prefixes"]
 all_samples_main = config["sifaka_males"] + config["sifaka_females"] + config["macaque_males"] + config["macaque_females"]
