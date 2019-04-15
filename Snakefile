@@ -1054,3 +1054,14 @@ rule sort_chrom_ascend_intersection:
 		"callable_sites/combined.{species}.{genome}.INTERSECTIONcallablesites.{sampling}.CHROMsorted.bed"
 	shell:
 		"sort -k1,1V -k2,2n {input} > {output}"
+
+rule get_maf_files:
+	output:
+		"maf_files/{assembly}.maf"
+	params:
+		web_address = lambda wildcards: config[
+			"maf_address"][wildcards.assembly],
+		initial_output = "maf_files/{assembly}.maf.gz"
+	run:
+		shell("wget {params.web_address} -O {params.initial_output}")
+		shell("gunzip {params.initial_output}")
