@@ -12,6 +12,17 @@ def parse_args():
 		help="REQUIRED. Input BED file containing target regions to include.")
 
 	parser.add_argument(
+		"--species1", required=True,
+		help="REQUIRED. Name of species/assembly (must match exactly) "
+		"in the MAF sequence lines that the BED targets come from).")
+
+	parser.add_argument(
+		"--species2", required=True,
+		help="REQUIRED. Name of second species/assembly (must match exactly) "
+		"in the MAF sequence lines to use (note: this is NOT the species from "
+		"the BED file).")
+
+	parser.add_argument(
 		"--maf", required=True,
 		help="REQUIRED. Input MAF alignment from which to calculate divergence "
 		"and GC content in targets from BED")
@@ -117,9 +128,92 @@ def main():
 			if tmp_idx > 0:
 				tmp_idx = tmp_idx - 1
 
+			max_idx = len(dict_starts[maf_record.chrom]) - 1
+
 			while True:
+				# Check if at end of targets for chromosome
+				if tmp_idx > max_idx:
+					break
+
+				# Get BED coords
 				tmp_bed_start = dict_starts[maf_record.chrom][tmp_idx]
 				tmp_bed_stop = dict_data[(maf_record.chrom, tmp_bed_start)]
+
+				# Case 1: Bed target start and stop are both after the MAF block stop
+				# Break the loop; done with current MAF block
+				# Note with BED records, subtract 1 from stop coordinate (half open)
+				if maf_record.stop <= tmp_bed_start:
+					break
+
+				# Case 2: Bed target stop is before MAF block start
+				# Advance the loop to get the next BED target
+				elif maf_record.start >= tmp_bed_stop:
+					tmp_idx += 1
+					continue
+
+				# Case 3: Targets overlap and MAF start is greater than or equal to
+				# the BED start
+				elif maf_record.start >= tmp_bed_start:
+					# Case 3a: MAF stop less than or equal to BED stop
+					# In this case, the MAF block is completely contained
+					# within the BED target and can be processed as is
+					if maf_record.stop <= tmp_bed_stop:
+						seqs_compared = comp_seq(maf_record.seq1, maf_record.seq2)
+						temp_diffs = [x for x in seqs_compared if x != "x"]
+						seq1_gc = get_gc_count(maf_record.seq1)
+						seq2_gc = get_gc_count(maf_record.seq2)
+						# add sites and differences
+						data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
+						data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
+						# add GC
+						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq1_gc
+						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq2_gc
+						# MAF block done; advance to next block
+						break
+					# Case 3b: MAF stop greater than BED stop
+					# In this case, the MAF block is larger than the BED target
+					# and needs to be subset (from the end, not from the beginning
+					# of the sequence)
+					elif maf_record.stop > tmp_bed_stop:
+						# Adjust sequence (shorten), but take gaps into account
+						# when indexing
+						temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
+						while True:
+							end_seq1 = maf_record.seq1[temp_idx1:]
+							gap_count = 0
+							for x in end_seq1:
+								if x == "-":
+									gap_count += 1
+							if gap_count == 0:
+								break
+							else:
+								temp_idx1 -= gap_count
+						adj_seq1 = maf_record.seq1[:temp_idx1]
+						adj_seq2 = maf_record.seq2[:temp_idx1]
+						# Process adjusted sequences
+						seqs_compared = comp_seq(adj_seq1, adj_seq2)
+						temp_diffs = [x for x in seqs_compared if x != "x"]
+						seq1_gc = get_gc_count(adj_seq1)
+						seq2_gc = get_gc_count(adj_seq2)
+						# add sites and differences
+						data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
+						data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
+						# add GC
+						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq1_gc
+						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq2_gc
+						# MAF record IS NOT done; keep MAF and advance to next BED
+						# target
+						tmp_idx1 += 1
+						continue
+
+				# Case 4: Targets overlap and MAF start is less than BED start
+				elif maf_record.start < tmp_bed_start:
+					# First, adjust sequences' starts
+
+				# Case 5: There's a condition I missed. Throw an error
+				else:
+					raise RuntimeError("Tim missed a condition")
+
 
 
 
