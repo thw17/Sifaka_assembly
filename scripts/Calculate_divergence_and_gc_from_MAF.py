@@ -1,3 +1,5 @@
+# Tim Webster, 2019, University of Utah
+
 from __future__ import print_function
 from __future__ import division
 import argparse
@@ -23,6 +25,16 @@ def parse_args():
 		"the BED file).")
 
 	parser.add_argument(
+		"--include_chrom_species1", nargs="*",
+		help="Names of chromsomes to include from species1. Optional. All chromosmes "
+		"included by default.")
+
+	parser.add_argument(
+		"--include_chrom_species2", nargs="*",
+		help="Names of chromsomes to include from species2. Optional. All chromosmes "
+		"included by default.")
+
+	parser.add_argument(
 		"--maf", required=True,
 		help="REQUIRED. Input MAF alignment from which to calculate divergence "
 		"and GC content in targets from BED")
@@ -35,11 +47,100 @@ def parse_args():
 	return args
 
 
+def mafblock(file, line_num, sp1, sp2):
+	"""Parses MAF blocks and returns data from two target species. Assumes """
+	"""a species.chromosome format for both species"""
+	sp1_chrom = None
+	sp2_chrom = None
+	sp1_start = None
+	sp1_length = None
+	sp1_seq = None
+	sp2_seq = None
+	line_counter = None
+
+	skip_line = True
+	line_counter = line_num - 1
+	while skip_line is True:
+		line = file.readline().strip().split()
+		line_counter += 1
+		# Check for EOF
+		if not line:
+			return "Done"
+		# alignment blocks start with a line that begins with "a"
+		if line[0] != "a"
+			continue
+		else:
+			skip_line = False
+
+	same_block = True
+	while same_block is True:
+		line = file.readline().strip().split()
+		line_counter += 1
+		if line = []:
+			break
+		if line[0] != "s":
+			continue
+
+	if any(x is None for x in [sp1_chrom, sp2_chrom, sp1_start, sp1_length, sp1_seq, sp2_seq]):
+		
+
+	id_line = file.readline().strip().split()
+	if not id_line:
+		return "Done"
+	line_counter = line_num + 1
+	if len(id_line) > 9:
+		raise ValueError(
+			"Length of ID line too short on line {}: {}".format(
+				line_counter, id_line))
+	seq1 = file.readline().strip()
+	line_counter += 1
+	if seq1 == "":
+		raise ValueError(
+			"No sequence 1 present in record on line {}".format(line_couter))
+	seq2 = file.readline().strip()
+	line_counter += 1
+	if seq2 == "":
+		raise ValueError(
+			"No sequence 2 present in record on line {}".format(
+				line_counter))
+	spacer = file.readline().strip()
+	line_counter += 1
+	if spacer != "":
+		raise ValueError("Missing blank line at end of record on line {}".format(
+			line_counter))
+	axt_block = collections.namedtuple(
+		"axt_block",
+		["chrom", "start_conv", "stop_conv", "diffs", "counter"])
+	# print(len(seq1), len(seq2), len(comp_seq(seq1, seq2)))
+	return axt_block(
+		chrom=sp1_chrom,
+		chrom2=sp2_chrom,
+		start=sp1_start,
+		length=sp1_length,
+		seq1=sp1_seq,
+		seq1=sp2_seq,
+		counter=line_counter)
+
+
 def check_nucleotide(letter):
 	if letter not in "aAcCgGtT":
 		return False
 	else:
 		return True
+
+
+def get_gc_count(sequence):
+	gc_count = 0
+	total_count = 0
+	for i in sequence:
+		if check_nucleotide(i) is False:
+			continue
+		if i.lower() in ["g", "c"]:
+			gc_count += 1
+			total_count += 1
+		else:
+			total_count += 1
+	return (gc_count, total_count)
 
 
 def comp_seq(s1, s2):
@@ -86,8 +187,10 @@ def main():
 	dict_starts = {}
 
 	# dictionary to hold (from BED) target specific data
-	# (chrom, start) : [target_len, # sites in MAF, # diffs, % GC sp1, % GC sp2]
-	dict_data = {}
+	# (chrom, start) : [target_len, # sites in MAF, # diffs, sp1 GC count,
+	# sp1 GC number of total sites, sp2 GC count, sp2 GC number of total sites]
+	# use an OrderedDict for writing to output
+	dict_data = collections.OrderedDict()
 
 	# Process bed file
 	with open(args.bed, "r") as f:
@@ -99,6 +202,10 @@ def main():
 			if bed_record[0][0] == "#":
 				continue
 			line_data = parsed_bed(bed_record)
+			# check if chrom is included
+			if args.include_chrom_species1 is not None:
+				if line_data.chrom in args.include_chrom_species1:
+					continue
 			# add start to chrom key in dict_starts
 			if line_data.chrom not in dict_starts:
 				dict_starts[line_data.chrom] = [line_data.start]
@@ -107,36 +214,40 @@ def main():
 
 			# add target to dict_data
 			dict_data[(line_data.chrom, line_data.start)] = [
-				line_data.stop - line_data.start, 0, 0, 0, 0]
+				line_data.stop - line_data.start, 0, 0, 0, 0, 0, 0]
 
 	# Process MAF file
 	with open(args.maf, "r") as maffile:
 		# initialize
 		maf_line_counter = 0
-		maf_record = mafblock(maffile, maf_line_counter)
+		maf_record_counter = 0
+		maf_record = mafblock(maffile, maf_line_counter, args.species1, args.species2)
+		maf_record_counter += 1
 
 		# mafblock returns "Done" when it hits EOF. If this happens before anything
 		# else, the file is empty.
 		if maf_record == "Done":
 			raise ValueError("Empty MAF file")
 
+		maf_line_counter = maf_record.counter
+
 		# Begin looping through MAF file. First record already staged
 		maf_finished = False
-		while True:
+		while maf_finished is False:
 			# get index of first bed start that comes before MAF block start
-			tmp_idx = bisect(dict_starts[maf_record.chrom], maf_record.start)
-			if tmp_idx > 0:
-				tmp_idx = tmp_idx - 1
+			bed_idx = bisect(dict_starts[maf_record.chrom], maf_record.start)
+			if bed_idx > 0:
+				bed_idx = bed_idx - 1
 
 			max_idx = len(dict_starts[maf_record.chrom]) - 1
 
 			while True:
 				# Check if at end of targets for chromosome
-				if tmp_idx > max_idx:
+				if bed_idx > max_idx:
 					break
 
 				# Get BED coords
-				tmp_bed_start = dict_starts[maf_record.chrom][tmp_idx]
+				tmp_bed_start = dict_starts[maf_record.chrom][bed_idx]
 				tmp_bed_stop = dict_data[(maf_record.chrom, tmp_bed_start)]
 
 				# Case 1: Bed target start and stop are both after the MAF block stop
@@ -148,7 +259,7 @@ def main():
 				# Case 2: Bed target stop is before MAF block start
 				# Advance the loop to get the next BED target
 				elif maf_record.start >= tmp_bed_stop:
-					tmp_idx += 1
+					bed_idx += 1
 					continue
 
 				# Case 3: Targets overlap and MAF start is greater than or equal to
@@ -166,8 +277,10 @@ def main():
 						data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
 						data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
 						# add GC
-						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq1_gc
-						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq2_gc
+						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq1_gc[0]
+						data_dict[(maf_record.chrom, tmp_bed_start)][4] += seq1_gc[1]
+						data_dict[(maf_record.chrom, tmp_bed_start)][5] += seq2_gc[0]
+						data_dict[(maf_record.chrom, tmp_bed_start)][6] += seq2_gc[1]
 						# MAF block done; advance to next block
 						break
 					# Case 3b: MAF stop greater than BED stop
@@ -177,6 +290,8 @@ def main():
 					elif maf_record.stop > tmp_bed_stop:
 						# Adjust sequence (shorten), but take gaps into account
 						# when indexing
+						# Here, temp_idx1 will always be used for negative indexing
+						# (i.e., counting from the end)
 						temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
 						while True:
 							end_seq1 = maf_record.seq1[temp_idx1:]
@@ -199,23 +314,157 @@ def main():
 						data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
 						data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
 						# add GC
-						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq1_gc
-						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq2_gc
+						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq1_gc[0]
+						data_dict[(maf_record.chrom, tmp_bed_start)][4] += seq1_gc[1]
+						data_dict[(maf_record.chrom, tmp_bed_start)][5] += seq2_gc[0]
+						data_dict[(maf_record.chrom, tmp_bed_start)][6] += seq2_gc[1]
 						# MAF record IS NOT done; keep MAF and advance to next BED
 						# target
-						tmp_idx1 += 1
+						bed_idx += 1
 						continue
 
 				# Case 4: Targets overlap and MAF start is less than BED start
 				elif maf_record.start < tmp_bed_start:
-					# First, adjust sequences' starts
+					# First, adjust sequences' starts while taking into account gaps
+					# - need to bring MAF start for seq1 up to the beginning of the bed region
+					# temp_idx2 will be used for indexing from the start (positive numbers only)
+					temp_idx2 = tmp_bed_start - maf_record.start
+					while True:
+						beg_seq1 = maf_record.seq1[:temp_idx2]
+						gap_count = 0
+						for x in beg_seq1:
+							if x == "-":
+								gap_count +=1
+						if gap_count == 0:
+							break
+						else:
+							temp_idx2 += gap_count
+					adj_seq1 = maf_record.seq1[:temp_idx2]
+					adj_seq2 = maf_record.seq2[:temp_idx2]
+					# Case 4a: MAF block end is less than or equal to BED end
+					# No further adjustments are necessary for MAF block, calculate stats
+					if maf_record.stop <= tmp_bed_stop:
+						# Process adjusted sequences
+						seqs_compared = comp_seq(adj_seq1, adj_seq2)
+						temp_diffs = [x for x in seqs_compared if x != "x"]
+						seq1_gc = get_gc_count(adj_seq1)
+						seq2_gc = get_gc_count(adj_seq2)
+						# add sites and differences
+						data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
+						data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
+						# add GC
+						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq1_gc[0]
+						data_dict[(maf_record.chrom, tmp_bed_start)][4] += seq1_gc[1]
+						data_dict[(maf_record.chrom, tmp_bed_start)][5] += seq2_gc[0]
+						data_dict[(maf_record.chrom, tmp_bed_start)][6] += seq2_gc[1]
+						# MAF record is done; move to next MAF
+						break
+					# Case 4b: MAF block end is greater than BED; subset MAF before
+					# calculating stats and then advance BED target
+					elif maf_record > tmp_bed_stop:
+						temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
+						while True:
+							end_seq1 = maf_record.seq1[temp_idx1:]
+							gap_count = 0
+							for x in end_seq1:
+								if x == "-":
+									gap_count += 1
+							if gap_count == 0:
+								break
+							else:
+								temp_idx1 -= gap_count
+						# Subset from the *already adjusted sequences*
+						adj_seq1 = adj_seq1[:temp_idx1]
+						adj_seq2 = adj_seq2[:temp_idx1]
+						# Process adjusted sequences
+						seqs_compared = comp_seq(adj_seq1, adj_seq2)
+						temp_diffs = [x for x in seqs_compared if x != "x"]
+						seq1_gc = get_gc_count(adj_seq1)
+						seq2_gc = get_gc_count(adj_seq2)
+						# add sites and differences
+						data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
+						data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
+						# add GC
+						data_dict[(maf_record.chrom, tmp_bed_start)][3] += seq1_gc[0]
+						data_dict[(maf_record.chrom, tmp_bed_start)][4] += seq1_gc[1]
+						data_dict[(maf_record.chrom, tmp_bed_start)][5] += seq2_gc[0]
+						data_dict[(maf_record.chrom, tmp_bed_start)][6] += seq2_gc[1]
+						# MAF record IS NOT done; keep MAF and advance to next BED
+						# target
+						bed_idx += 1
+						continue
 
 				# Case 5: There's a condition I missed. Throw an error
 				else:
 					raise RuntimeError("Tim missed a condition")
 
+			if maf_record_counter % 100 == 0:
+				print("{} MAF records processed...".format(maf_record_counter))
+			# Advance MAF record and end if done
+			# case of considering all chromosomes
+			if args.include_chrom_species1 is None and args.include_chrom_species2 is None:
+				maf_record = mafblock(maffile, maf_line_counter, args.species1, args.species2)
+				if maf_record == "Done":
+					maf_finished = True
+				maf_line_counter = maf_record.counter
+				maf_record_counter
+			elif args.include_chrom_species1 is not None:
+				skip_chrom = True
+				if args.include_chrom_species2 is None:
+					while skip_chrom is True:
+						maf_record = mafblock(maffile, maf_line_counter, args.species1, args.species2)
+						if maf_record == "Done":
+							maf_finished = True
+							break
+						maf_line_counter = maf_record.counter
+						maf_record_counter
+						if maf_record.chrom not in args.include_chrom_species1:
+							continue
+						else:
+							skip_chrom = False
+				else:
+					while skip_chrom is True:
+						maf_record = mafblock(maffile, maf_line_counter, args.species1, args.species2)
+						if maf_record == "Done":
+							maf_finished = True
+							break
+						maf_line_counter = maf_record.counter
+						maf_record_counter
+						if maf_record.chrom not in args.include_chrom_species1:
+							continue
+						else:
+							if maf_record.chrom2 not in args.include_chrom_species2:
+								continue
+							else:
+								skip_chrom = False
+			elif args.include_chrom_species2 is not None:
+				while skip_chrom is True:
+					maf_record = mafblock(maffile, maf_line_counter, args.species1, args.species2)
+					if maf_record == "Done":
+						maf_finished = True
+						break
+					maf_line_counter = maf_record.counter
+					maf_record_counter
+					if maf_record.chrom not in args.include_chrom_species2:
+						continue
+					else:
+						skip_chrom = False
 
-
+	# Output results
+	with open(args.output, "w") as f:
+		f.write("chrom\tstart\tlength\tnum_sites\tdiffs\tp_dist\tJC69\tfrac_gc_sp1\tfrac_gc_sp2\n")
+		for key in data_dict:
+			tmp_list = data_dict[key]
+			f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
+				key[0],
+				key[1],
+				tmp_list[0],
+				tmp_list[1],
+				tmp_list[2],
+				tmp_list[2] / tmp_list[1],
+				jc69(tmp_list[2] / tmp_list[1]),
+				tmp_list[3] / tmp_list[4],
+				tmp_list[5] / tmp_list[6]))
 
 
 if __name__ == "__main__":
