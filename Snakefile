@@ -31,6 +31,8 @@ all_samples_main = config["sifaka_males"] + config["sifaka_females"] + config["m
 sifaka_samples = config["sifaka_males"] + config["sifaka_females"]
 macaque_samples = config["macaque_males"] + config["macaque_females"]
 
+hg38_autosomes = [x for x in config["hg38_chroms"] if x not in ["chrX", "chrY", "chrM"]]
+
 # Added second set of sifakas for capture kit comparison
 secondary_sifaka_samples = config["secondary_sifakas"]
 combined_sifaka_samples = sifaka_samples + secondary_sifaka_samples
@@ -125,9 +127,10 @@ rule all:
 			sample=macaque_samples, genome=["hg38", "mmul"],
 			caller=["gatk", "freebayes"],
 			sampling=["downsampled"]),
-		"stats/compiled.bcftools_stats.csv"
-
-
+		"stats/compiled.bcftools_stats.csv",
+		expand(
+			"results/maf_stats_{assembly}.txt",
+			assembly=["mmul", "pcoq"])
 
 rule prepare_reference:
 	input:
@@ -1065,3 +1068,29 @@ rule get_maf_files:
 	run:
 		shell("wget {params.web_address} -O {params.initial_output}")
 		shell("gunzip {params.initial_output}")
+
+rule change_period_to_v_in_pcoq:
+	"scaffold names differ in the annotation and the MAF file"
+	input:
+		pco = "regions/pcoq.cds.converted.bedopssorted.bed",
+		mmu = "regions/mmul.cds.converted.bedopssorted.bed"
+	output:
+		p = "regions/pcoq.cds.converted.bedopssorted.convcoords.bed",
+		m = "regions/mmul.cds.converted.bedopssorted.convcoords.bed"
+	run:
+		shell("sed 's/.1/v1/g' {input.pco} > {output.p}")
+		shell("ln -s ../{} {{output.m}} && touch -h {{output.m}}".format(input.pco))
+
+rule calc_div_and_gc:
+	input:
+		maf = "maf_files/{assembly}.maf",
+		bed = "regions/{assembly}.cds.converted.bedopssorted.convcoords.bed"
+	output:
+		"results/maf_stats_{assembly}.txt"
+	params:
+		chroms = hg38_autosomes,
+		genome = "{assembly}"
+	shell:
+		"python scripts/Calculate_divergence_and_gc_from_MAF.py "
+		"--bed {input.bed} --maf {input.maf} --species1 {params.genome} "
+		"--species2 hg38 --output {output} --include_chrom_species2 {params.chroms}"
