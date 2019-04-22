@@ -1094,3 +1094,14 @@ rule calc_div_and_gc:
 		"python scripts/Calculate_divergence_and_gc_from_MAF.py "
 		"--bed {input.bed} --maf {input.maf} --species1 {params.genome} "
 		"--species2 hg38 --output {output} --include_chrom_species2 {params.chroms}"
+
+rule bedtools_intersect_genomecov_with_cds_keeping_full_region_coords:
+	input:
+		cov = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		cds = "regions/{genome}.{region}.converted.bedopssorted.bed"
+	output:
+		"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed"
+	params:
+		bedtools = bedtools_path
+	shell:
+		"bedtools intersect -wa -wb -a {input.cov} -b {input.cds} > {output}"
