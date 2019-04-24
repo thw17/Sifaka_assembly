@@ -4,6 +4,12 @@
 		"pcoq": "http://hgdownload.cse.ucsc.edu/goldenpath/hg38/vsProCoq1/hg38.proCoq1.synNet.maf.gz"
 	},
 
+	"maf_names": {
+		"pcoq": "proCoq1",
+		"mmul": "rheMac8",
+		"hg38": "hg38"
+	},
+
 	"genome_paths": {
 		"mmul": "reference/GCF_000772875.2_Mmul_8.0.1_genomic.fna",
 		"pcoq": "reference/GCF_000956105.1_Pcoq_1.0_genomic.fna",

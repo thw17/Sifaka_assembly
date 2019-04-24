@@ -1089,11 +1089,12 @@ rule calc_div_and_gc:
 		"results/maf_stats_{assembly}.txt"
 	params:
 		chroms = hg38_autosomes,
-		genome = "{assembly}"
+		genome = lambda wildcards: config["maf_names"][wildcards.assembly],
+		human = config["maf_names"]["hg38"]
 	shell:
 		"python scripts/Calculate_divergence_and_gc_from_MAF.py "
 		"--bed {input.bed} --maf {input.maf} --species1 {params.genome} "
-		"--species2 hg38 --output {output} --include_chrom_species2 {params.chroms}"
+		"--species2 {params.human} --output {output} --include_chrom_species2 {params.chroms}"
 
 rule bedtools_intersect_genomecov_with_cds_keeping_full_region_coords:
 	input:
