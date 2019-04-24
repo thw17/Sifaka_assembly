@@ -388,13 +388,14 @@ def main():
 						# - need to bring MAF start for seq1 up to the beginning of the bed region
 						# temp_idx2 will be used for indexing from the start (positive numbers only)
 						temp_idx2 = tmp_bed_start - maf_record.start
+						orig_idx = temp_idx2
 						while True:
 							beg_seq1 = maf_record.seq1[:temp_idx2]
 							gap_count = 0
 							for x in beg_seq1:
 								if x == "-":
 									gap_count +=1
-							if gap_count == 0:
+							if temp_idx2 - gap_count == 0
 								break
 							else:
 								temp_idx2 += gap_count
