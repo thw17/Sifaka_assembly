@@ -186,6 +186,7 @@ def main():
 	data_dict = collections.OrderedDict()
 
 	# Process bed file
+	print("Processing bed file...")
 	with open(args.bed, "r") as f:
 		for line in f:
 			# parse line
@@ -208,8 +209,10 @@ def main():
 			# add target to data_dict
 			data_dict[(line_data.chrom, line_data.start)] = [
 				line_data.stop - line_data.start, 0, 0, 0, 0, 0, 0]
+	print("Processing bed file complete.")
 
 	# Process MAF file
+	print("Starting traversal through MAF file...")
 	with open(args.maf, "r") as maffile:
 		# initialize
 		maf_line_counter = 0
