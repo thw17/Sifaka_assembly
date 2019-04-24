@@ -75,6 +75,7 @@ def mafblock(file, line_num, sp1, sp2):
 		if line[0] != "a":
 			continue
 		else:
+			print(line)
 			skip_line = False
 
 	same_block = True
