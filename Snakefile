@@ -1078,8 +1078,8 @@ rule change_period_to_v_in_pcoq:
 		p = "regions/pcoq.cds.converted.bedopssorted.convcoords.bed",
 		m = "regions/mmul.cds.converted.bedopssorted.convcoords.bed"
 	run:
-		shell("sed 's/.1/v1/g' {input.pco} > {output.p}")
-		shell("ln -s ../{} {{output.m}} && touch -h {{output.m}}".format(input.pco))
+		shell("sed 's/\.1/v1/g' {input.pco} > {output.p}")
+		shell("ln -s ../{} {{output.m}} && touch -h {{output.m}}".format(input.mmu))
 
 rule calc_div_and_gc:
 	input:
