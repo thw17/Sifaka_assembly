@@ -425,10 +425,11 @@ def main():
 						# calculating stats and then advance BED target
 						elif maf_record.stop > tmp_bed_stop:
 							print("case4b")
+							print(adj_seq1)
 							temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
 							orig_idx = -1 * temp_idx1
 							while True:
-								end_seq1 = maf_record.seq1[temp_idx1:]
+								end_seq1 = adj_seq1[temp_idx1:]
 								gap_count = 0
 								for x in end_seq1:
 									if x == "-":
