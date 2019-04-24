@@ -395,7 +395,7 @@ def main():
 							for x in beg_seq1:
 								if x == "-":
 									gap_count +=1
-							if temp_idx2 - gap_count == 0:
+							if temp_idx2 - gap_count == orig_idx:
 								break
 							else:
 								temp_idx2 += gap_count
