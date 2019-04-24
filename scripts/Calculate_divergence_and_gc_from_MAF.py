@@ -295,7 +295,7 @@ def main():
 				max_idx = len(dict_starts[maf_record.chrom]) - 1
 
 				while True:
-					print("start bed loop. bed index: {}".bed_idx)
+					print("start bed loop. bed index: {}".format(bed_idx))
 					# Check if at end of targets for chromosome
 					if bed_idx > max_idx:
 						break
