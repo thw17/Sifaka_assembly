@@ -428,17 +428,20 @@ def main():
 							print(adj_seq1)
 							temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
 							orig_idx = -1 * temp_idx1
+							total_gap_count = 0
 							while True:
 								end_seq1 = adj_seq1[temp_idx1:]
 								gap_count = 0
 								for x in end_seq1:
 									if x == "-":
 										gap_count += 1
-								if orig_idx + gap_count == len(end_seq1):
+								new_gap_count = gap_count - total_gap_count
+								total_gap_count = gap_count
+								if orig_idx + total_gap_count == len(end_seq1):
 									break
 								else:
 									print(temp_idx1)
-									temp_idx1 -= gap_count
+									temp_idx1 -= new_gap_count
 							# Subset from the *already adjusted sequences*
 							adj_seq1 = adj_seq1[:temp_idx1]
 							adj_seq2 = adj_seq2[:temp_idx1]
