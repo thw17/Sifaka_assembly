@@ -41,6 +41,10 @@ def parse_args():
 		"and GC content in targets from BED")
 
 	parser.add_argument(
+		"--print_frequency", default=100,
+		help="Print update after every X number of lines. Default is 100.")
+
+	parser.add_argument(
 		"--output", required=True,
 		help="REQUIRED. Full path to and name of output file.")
 
@@ -456,7 +460,7 @@ def main():
 						# print("case5")
 						raise RuntimeError("Tim missed a condition")
 
-			if maf_record_counter % 100 == 0:
+			if maf_record_counter % int(args.print_frequency) == 0:
 				print("{} MAF records processed...".format(maf_record_counter))
 			# Advance MAF record and end if done
 			# case of considering all chromosomes
