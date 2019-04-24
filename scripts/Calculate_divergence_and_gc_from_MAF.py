@@ -306,13 +306,13 @@ def main():
 					# Break the loop; done with current MAF block
 					# Note with BED records, subtract 1 from stop coordinate (half open)
 					if maf_record.stop <= tmp_bed_start:
-						# print("case1")
+						print("case1")
 						break
 
 					# Case 2: Bed target stop is before MAF block start
 					# Advance the loop to get the next BED target
 					elif maf_record.start >= tmp_bed_stop:
-						# print("case2")
+						print("case2")
 						bed_idx += 1
 						continue
 
@@ -323,7 +323,7 @@ def main():
 						# In this case, the MAF block is completely contained
 						# within the BED target and can be processed as is
 						if maf_record.stop <= tmp_bed_stop:
-							# print("case3a")
+							print("case3a")
 							seqs_compared = comp_seq(maf_record.seq1, maf_record.seq2)
 							temp_diffs = [x for x in seqs_compared if x != "x"]
 							seq1_gc = get_gc_count(maf_record.seq1)
@@ -343,7 +343,7 @@ def main():
 						# and needs to be subset (from the end, not from the beginning
 						# of the sequence)
 						elif maf_record.stop > tmp_bed_stop:
-							# print("case3b")
+							print("case3b")
 							# Adjust sequence (shorten), but take gaps into account
 							# when indexing
 							# Here, temp_idx1 will always be used for negative indexing
@@ -404,7 +404,7 @@ def main():
 						# Case 4a: MAF block end is less than or equal to BED end
 						# No further adjustments are necessary for MAF block, calculate stats
 						if maf_record.stop <= tmp_bed_stop:
-							# print("case4a")
+							print("case4a")
 							# Process adjusted sequences
 							seqs_compared = comp_seq(adj_seq1, adj_seq2)
 							temp_diffs = [x for x in seqs_compared if x != "x"]
@@ -423,7 +423,7 @@ def main():
 						# Case 4b: MAF block end is greater than BED; subset MAF before
 						# calculating stats and then advance BED target
 						elif maf_record.stop > tmp_bed_stop:
-							# print("case4b")
+							print("case4b")
 							temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
 							while True:
 								end_seq1 = maf_record.seq1[temp_idx1:]
@@ -458,7 +458,7 @@ def main():
 
 					# Case 5: There's a condition I missed. Throw an error
 					else:
-						# print("case5")
+						print("case5")
 						raise RuntimeError("Tim missed a condition")
 
 			if maf_record_counter % int(args.print_frequency) == 0:
