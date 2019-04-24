@@ -422,7 +422,7 @@ def main():
 							break
 						# Case 4b: MAF block end is greater than BED; subset MAF before
 						# calculating stats and then advance BED target
-					elif maf_record.stop > tmp_bed_stop:
+						elif maf_record.stop > tmp_bed_stop:
 							# print("case4b")
 							temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
 							while True:
