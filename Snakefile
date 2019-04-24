@@ -130,7 +130,15 @@ rule all:
 		"stats/compiled.bcftools_stats.csv",
 		expand(
 			"results/maf_stats_{assembly}.txt",
-			assembly=["mmul", "pcoq"])
+			assembly=["mmul", "pcoq"]),
+		expand(
+			"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			sampling=["downsampled"]),
+		expand(
+			"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+			sample=macaque_samples, genome=["hg38", "mmul"],
+			sampling=["downsampled"])
 
 rule prepare_reference:
 	input:
@@ -1073,13 +1081,18 @@ rule change_period_to_v_in_pcoq:
 	"scaffold names differ in the annotation and the MAF file"
 	input:
 		pco = "regions/pcoq.cds.converted.bedopssorted.bed",
-		mmu = "regions/mmul.cds.converted.bedopssorted.bed"
 	output:
-		p = "regions/pcoq.cds.converted.bedopssorted.convcoords.bed",
-		m = "regions/mmul.cds.converted.bedopssorted.convcoords.bed"
-	run:
-		shell("sed 's/\.1/v1/g' {input.pco} > {output.p}")
-		shell("ln -s ../{} {{output.m}} && touch -h {{output.m}}".format(input.mmu))
+		p = "regions/pcoq.cds.converted.bedopssorted.convcoords.bed"
+	shell:
+		"sed 's/\.1/v1/g' {input.pco} > {output.p}"
+
+rule convert_mmul_names:
+	input:
+		"regions/mmul.cds.converted.bedopssorted.bed"
+	output:
+		"regions/mmul.cds.converted.bedopssorted.convcoords.bed"
+	shell:
+		"python scripts/Convert_hg38_names.py --bed {input} --outfile {output}")
 
 rule calc_div_and_gc:
 	input:
@@ -1099,7 +1112,7 @@ rule calc_div_and_gc:
 rule bedtools_intersect_genomecov_with_cds_keeping_full_region_coords:
 	input:
 		cov = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
-		cds = "regions/{genome}.{region}.converted.bedopssorted.bed"
+		cds = "regions/{genome}.cds.converted.bedopssorted.bed"
 	output:
 		"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed"
 	params:
