@@ -425,13 +425,14 @@ def main():
 						elif maf_record.stop > tmp_bed_stop:
 							print("case4b")
 							temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
+							orig_idx = -1 * temp_idx1
 							while True:
 								end_seq1 = maf_record.seq1[temp_idx1:]
 								gap_count = 0
 								for x in end_seq1:
 									if x == "-":
 										gap_count += 1
-								if gap_count == 0:
+								if orig_idx + gap_count == len(end_seq1):
 									break
 								else:
 									temp_idx1 -= gap_count
