@@ -437,6 +437,7 @@ def main():
 								if orig_idx + gap_count == len(end_seq1):
 									break
 								else:
+									print(temp_idx1)
 									temp_idx1 -= gap_count
 							# Subset from the *already adjusted sequences*
 							adj_seq1 = adj_seq1[:temp_idx1]
