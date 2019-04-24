@@ -303,7 +303,7 @@ def main():
 					# Get BED coords
 					tmp_bed_start = dict_starts[maf_record.chrom][bed_idx]
 					tmp_bed_stop = data_dict[(maf_record.chrom, tmp_bed_start)][0] + tmp_bed_start
-
+					print("{}: {}".format(maf_record.chrom, tmp_bed_start))
 					# Case 1: Bed target start and stop are both after the MAF block stop
 					# Break the loop; done with current MAF block
 					# Note with BED records, subtract 1 from stop coordinate (half open)
