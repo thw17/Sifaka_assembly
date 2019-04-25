@@ -387,6 +387,7 @@ def main():
 
 					# Case 4: Targets overlap and MAF start is less than BED start
 					elif maf_record.start < tmp_bed_start:
+						print("4 prep")
 						# First, adjust sequences' starts while taking into account gaps
 						# - need to bring MAF start for seq1 up to the beginning of the bed region
 						# temp_idx2 will be used for indexing from the start (positive numbers only)
