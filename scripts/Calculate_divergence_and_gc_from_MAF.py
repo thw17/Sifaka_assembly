@@ -172,13 +172,15 @@ def parsed_bed(bed_line_list):
 def jc69(p_dist):
 	if p_dist == 0:
 		return 0
+	elif p_dist >= 0.75:
+		return "Too_large"
 	else:
 		term1 = 1.0 - ((4.0 / 3.0) * p_dist)
 		try:
 			jc_dist = -0.75 * math.log(term1)
 			return jc_dist
 		except ValueError:
-			print("{} not between (0 and 1]".format(p_dist))
+			print("{} not between (0 and 0.75]".format(p_dist))
 			raise ValueError()
 
 
