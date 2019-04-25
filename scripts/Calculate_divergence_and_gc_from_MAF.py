@@ -379,8 +379,7 @@ def main():
 								if orig_idx + total_gap_count == len(end_seq1):
 									break
 								else:
-									print(temp_idx1)
-									temp_idx1 -= new_gap_count
+									temp_idx1 -= 1
 							adj_seq1 = maf_record.seq1[:temp_idx1]
 							adj_seq2 = maf_record.seq2[:temp_idx1]
 							# Process adjusted sequences
@@ -459,8 +458,7 @@ def main():
 								if orig_idx + total_gap_count == len(end_seq1):
 									break
 								else:
-									print(temp_idx1)
-									temp_idx1 -= new_gap_count
+									temp_idx1 -= 1
 							# Subset from the *already adjusted sequences*
 							adj_seq1 = adj_seq1[:temp_idx1]
 							adj_seq2 = adj_seq2[:temp_idx1]
