@@ -1092,7 +1092,7 @@ rule convert_mmul_names:
 	output:
 		"regions/mmul.cds.converted.bedopssorted.convcoords.bed"
 	shell:
-		"python scripts/Convert_hg38_names.py --bed {input} --outfile {output}"
+		"python scripts/Convert_mmul_names.py --bed {input} --outfile {output}"
 
 rule calc_div_and_gc:
 	input:

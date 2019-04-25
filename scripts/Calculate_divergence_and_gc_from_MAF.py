@@ -174,8 +174,12 @@ def jc69(p_dist):
 		return 0
 	else:
 		term1 = 1.0 - ((4.0 / 3.0) * p_dist)
-		jc_dist = -0.75 * math.log(term1)
-		return jc_dist
+		try:
+			jc_dist = -0.75 * math.log(term1)
+			return jc_dist
+		except ValueError:
+			print("{} not between (0 and 1]".format(p_dist))
+			raise ValueError()
 
 
 def main():
