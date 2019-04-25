@@ -351,33 +351,18 @@ def main():
 							# when indexing
 							# Here, temp_idx1 will always be used for negative indexing
 							# (i.e., counting from the end)
-							# temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
-							# orig_idx = temp_idx1
-							# while True:
-							# 	end_seq1 = maf_record.seq1[temp_idx1:]
-							# 	gap_count = 0
-							# 	for x in end_seq1:
-							# 		if x == "-":
-							# 			gap_count += 1
-							# 	if len(end_seq1) - gap_count == -1 * (orig_idx):
-							# 		break
-							# 	# if gap_count == 0:
-							# 	# 	break
-							# 	else:
-							# 		temp_idx1 -= gap_count
 							temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
-							orig_idx = -1 * temp_idx1
-							total_gap_count = 0
+							orig_idx = temp_idx1
 							while True:
-								end_seq1 = adj_seq1[temp_idx1:]
+								end_seq1 = maf_record.seq1[temp_idx1:]
 								gap_count = 0
 								for x in end_seq1:
 									if x == "-":
 										gap_count += 1
-								new_gap_count = gap_count - total_gap_count
-								total_gap_count = gap_count
-								if orig_idx + total_gap_count == len(end_seq1):
+								if len(end_seq1) - gap_count == -1 * (orig_idx):
 									break
+								# if gap_count == 0:
+								# 	break
 								else:
 									temp_idx1 -= 1
 							adj_seq1 = maf_record.seq1[:temp_idx1]
