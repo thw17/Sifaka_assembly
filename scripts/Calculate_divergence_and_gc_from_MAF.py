@@ -41,8 +41,8 @@ def parse_args():
 		"and GC content in targets from BED")
 
 	parser.add_argument(
-		"--print_frequency", default=100,
-		help="Print update after every X number of lines. Default is 100.")
+		"--print_frequency", default=1000,
+		help="Print update after every X number of records processed. Default is 1000.")
 
 	parser.add_argument(
 		"--output", required=True,
@@ -75,7 +75,7 @@ def mafblock(file, line_num, sp1, sp2):
 		if line[0] != "a":
 			continue
 		else:
-			print(line)
+			# print(line)
 			skip_line = False
 
 	same_block = True
@@ -295,7 +295,7 @@ def main():
 				max_idx = len(dict_starts[maf_record.chrom]) - 1
 
 				while True:
-					print("start bed loop. bed index: {}".format(bed_idx))
+					# print("start bed loop. bed index: {}".format(bed_idx))
 					# Check if at end of targets for chromosome
 					if bed_idx > max_idx:
 						break
@@ -303,19 +303,19 @@ def main():
 					# Get BED coords
 					tmp_bed_start = dict_starts[maf_record.chrom][bed_idx]
 					tmp_bed_stop = data_dict[(maf_record.chrom, tmp_bed_start)][0] + tmp_bed_start
-					print("{} {} {} {} {}".format(
-						maf_record.chrom, maf_record.start, maf_record.stop, tmp_bed_start, tmp_bed_stop))
+					# print("{} {} {} {} {}".format(
+					# 	maf_record.chrom, maf_record.start, maf_record.stop, tmp_bed_start, tmp_bed_stop))
 					# Case 1: Bed target start and stop are both after the MAF block stop
 					# Break the loop; done with current MAF block
 					# Note with BED records, subtract 1 from stop coordinate (half open)
 					if maf_record.stop <= tmp_bed_start:
-						print("case1")
+						# print("case1")
 						break
 
 					# Case 2: Bed target stop is before MAF block start
 					# Advance the loop to get the next BED target
 					elif maf_record.start >= tmp_bed_stop:
-						print("case2")
+						# print("case2")
 						bed_idx += 1
 						continue
 
@@ -326,7 +326,7 @@ def main():
 						# In this case, the MAF block is completely contained
 						# within the BED target and can be processed as is
 						if maf_record.stop <= tmp_bed_stop:
-							print("case3a")
+							# print("case3a")
 							seqs_compared = comp_seq(maf_record.seq1, maf_record.seq2)
 							temp_diffs = [x for x in seqs_compared if x != "x"]
 							seq1_gc = get_gc_count(maf_record.seq1)
@@ -346,7 +346,7 @@ def main():
 						# and needs to be subset (from the end, not from the beginning
 						# of the sequence)
 						elif maf_record.stop > tmp_bed_stop:
-							print("case3b")
+							# print("case3b")
 							# Adjust sequence (shorten), but take gaps into account
 							# when indexing
 							# Here, temp_idx1 will always be used for negative indexing
@@ -387,7 +387,7 @@ def main():
 
 					# Case 4: Targets overlap and MAF start is less than BED start
 					elif maf_record.start < tmp_bed_start:
-						print("4 prep")
+						# print("4 prep")
 						# First, adjust sequences' starts while taking into account gaps
 						# - need to bring MAF start for seq1 up to the beginning of the bed region
 						# temp_idx2 will be used for indexing from the start (positive numbers only)
@@ -408,7 +408,7 @@ def main():
 						# Case 4a: MAF block end is less than or equal to BED end
 						# No further adjustments are necessary for MAF block, calculate stats
 						if maf_record.stop <= tmp_bed_stop:
-							print("case4a")
+							# print("case4a")
 							# Process adjusted sequences
 							seqs_compared = comp_seq(adj_seq1, adj_seq2)
 							temp_diffs = [x for x in seqs_compared if x != "x"]
@@ -427,8 +427,8 @@ def main():
 						# Case 4b: MAF block end is greater than BED; subset MAF before
 						# calculating stats and then advance BED target
 						elif maf_record.stop > tmp_bed_stop:
-							print("case4b")
-							print(adj_seq1)
+							# print("case4b")
+							# print(adj_seq1)
 							temp_idx1 = -1 * (maf_record.stop - tmp_bed_stop)
 							orig_idx = -1 * temp_idx1
 							total_gap_count = 0
@@ -467,7 +467,7 @@ def main():
 
 					# Case 5: There's a condition I missed. Throw an error
 					else:
-						print("case5")
+						# print("case5")
 						raise RuntimeError("Tim missed a condition")
 
 			if maf_record_counter % int(args.print_frequency) == 0:
