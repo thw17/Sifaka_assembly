@@ -402,7 +402,7 @@ def main():
 							if temp_idx2 - gap_count == orig_idx:
 								break
 							else:
-								temp_idx2 += gap_count
+								temp_idx2 += 1
 						adj_seq1 = maf_record.seq1[temp_idx2:]
 						adj_seq2 = maf_record.seq2[temp_idx2:]
 						# Case 4a: MAF block end is less than or equal to BED end
