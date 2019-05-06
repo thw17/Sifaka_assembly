@@ -129,6 +129,9 @@ rule all:
 			sampling=["downsampled"]),
 		"stats/compiled.bcftools_stats.csv",
 		expand(
+			"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.bed",
+			assembly=["mmul", "pcoq"]),
+		expand(
 			"results/maf_stats_{assembly}.txt",
 			assembly=["mmul", "pcoq"]),
 		expand(
@@ -1076,6 +1079,36 @@ rule get_maf_files:
 	run:
 		shell("wget {params.web_address} -O {params.initial_output}")
 		shell("gunzip {params.initial_output}")
+
+rule extract_maf_coords:
+	input:
+		"maf_files/{assembly}.maf"
+	output:
+		"maf_files/{assembly}_maf_coords.bed"
+	params:
+		genome = lambda wildcards: config["maf_names"][wildcards.assembly],
+	shell:
+		"python Extract_coordinates_MAF.py --species {params.genome} --maf {input} --output {output}"
+
+rule sort_maf_coord_bed:
+	input:
+		"maf_files/{assembly}_maf_coords.bed"
+	output:
+		"maf_files/{assembly}_maf_coords.bedopssorted.bed"
+	params:
+		sort_bed = sort_bed_path
+	shell:
+		"{params.sort_bed} {input} > {output}"
+
+rule merge_count_maf_coord_bed:
+	input:
+		"maf_files/{assembly}_maf_coords.bedopssorted.bed"
+	output:
+		"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.bed"
+	params:
+		bedtools = bedtools_path
+	shell:
+		"{params.bedtools} -i {input} -c 1 > {output}"
 
 rule change_period_to_v_in_pcoq:
 	"scaffold names differ in the annotation and the MAF file"
