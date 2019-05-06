@@ -104,7 +104,7 @@ def main():
 			# Begin looping through MAF file. First record already staged
 			maf_finished = False
 			while maf_finished is False:
-				o.write("{}\t{}\t{}\{}\n".format(
+				o.write("{}\t{}\t{}\t{}\n".format(
 					maf_record.chrom, maf_record.start, maf_record.stop, maf_record.score))
 
 				if maf_record_counter % int(args.print_frequency) == 0:
