@@ -132,6 +132,9 @@ rule all:
 			"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.bed",
 			assembly=["mmul", "pcoq"]),
 		expand(
+			"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.multiple.intersect.bed",
+			assembly=["mmul", "pcoq"]),
+		expand(
 			"results/maf_stats_{assembly}.txt",
 			assembly=["mmul", "pcoq"]),
 		expand(
@@ -1109,6 +1112,27 @@ rule merge_count_maf_coord_bed:
 		bedtools = bedtools_path
 	shell:
 		"{params.bedtools} merge -i {input} -c 1,4,2 -o count,max,collapse > {output}"
+
+rule split_regions_with_one_or_multiple_overlaps:
+	input:
+		"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.bed"
+	output:
+		single = "maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.single.bed",
+		multiple = "maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.multiple.bed"
+	run:
+		shell("awk '$4 > 1' {input} > {output.multiple}")
+		shell("awk '$4 == 1' {input} > {output.single}")
+
+rule intersect_original_regions_with_merged_keep_both:
+	input:
+		a = "maf_files/{assembly}_maf_coords.bedopssorted.bed",
+		b = "maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.multiple.bed"
+	output:
+		"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.multiple.intersect.bed"
+	params:
+		bedtools = bedtools_path
+	shell:
+		"{params.bedtools} intersect -a {input.a} -b {input.b} -wa -wb > {output}"
 
 rule change_period_to_v_in_pcoq:
 	"scaffold names differ in the annotation and the MAF file"
