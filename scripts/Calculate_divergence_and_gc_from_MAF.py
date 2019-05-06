@@ -324,9 +324,6 @@ def main():
 			else:
 				advance_maf = True
 
-			if (maf_record.chrom, maf_record.start, maf_record.stop) in maf_set:
-				ad
-
 			if advance_maf is False:
 				bed_idx = bisect(dict_starts[maf_record.chrom], maf_record.start)
 				if bed_idx > 0:
