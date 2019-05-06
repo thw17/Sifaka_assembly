@@ -1088,7 +1088,7 @@ rule extract_maf_coords:
 	params:
 		genome = lambda wildcards: config["maf_names"][wildcards.assembly],
 	shell:
-		"python Extract_coordinates_MAF.py --species {params.genome} --maf {input} --output {output}"
+		"python scripts/Extract_coordinates_MAF.py --species {params.genome} --maf {input} --output {output}"
 
 rule sort_maf_coord_bed:
 	input:
