@@ -1,6 +1,7 @@
 # Tim Webster, 2019, University of Utah
 
 import argparse
+import collections
 
 def parse_args():
 	parser = argparse.ArgumentParser()
