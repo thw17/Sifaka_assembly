@@ -15,6 +15,12 @@ def parse_args():
 		help="REQUIRED. Input BED file containing target regions to include.")
 
 	parser.add_argument(
+		"--maf_coords_include", required=True,
+		help="REQUIRED. BED file of MAF blocks to include. Corresponds to species1. "
+		"Coords must match start and start plus length exactly. Additionally, scaffold "
+		"name must match exactly.")
+
+	parser.add_argument(
 		"--species1", required=True,
 		help="REQUIRED. Name of species/assembly (must match exactly) "
 		"in the MAF sequence lines that the BED targets come from).")
@@ -197,7 +203,7 @@ def main():
 	data_dict = collections.OrderedDict()
 
 	# Process bed file
-	print("Processing bed file...")
+	print("Processing targets bed file...")
 	with open(args.bed, "r") as f:
 		for line in f:
 			# parse line
@@ -220,7 +226,29 @@ def main():
 			# add target to data_dict
 			data_dict[(line_data.chrom, line_data.start)] = [
 				line_data.stop - line_data.start, 0, 0, 0, 0, 0, 0]
-	print("Processing bed file complete.")
+	print("Processing targets bed file complete.")
+
+	# Process bed file of MAF blocks to include
+	maf_coordinates = []
+	print("Processing MAF blocks bed file...")
+	with open(args.maf_coords_include, "r") as f:
+		for line in f:
+			# parse line
+			bed_record = line.strip().split()
+			if bed_record == []:
+				continue
+			if bed_record[0][0] == "#":
+				continue
+			line_data = parsed_bed(bed_record)
+			# check if chrom is included
+			if args.include_chrom_species1 is not None:
+				if line_data.chrom not in args.include_chrom_species1:
+					continue
+			# add to list
+			maf_coordinates.append((line_data.chrom, line_data.start, line_data.stop))
+
+	maf_set = set(maf_coordinates)
+
 
 	# Process MAF file
 	print("Starting traversal through MAF file...")
@@ -289,9 +317,15 @@ def main():
 		while maf_finished is False:
 			# get index of first bed start that comes before MAF block start
 			if maf_record.chrom in dict_starts:
-				advance_maf = False
+				if (maf_record.chrom, maf_record.start, maf_record.stop) in maf_set:
+					advance_maf = False
+				else:
+					advance_maf = True
 			else:
 				advance_maf = True
+
+			if (maf_record.chrom, maf_record.start, maf_record.stop) in maf_set:
+				ad
 
 			if advance_maf is False:
 				bed_idx = bisect(dict_starts[maf_record.chrom], maf_record.start)

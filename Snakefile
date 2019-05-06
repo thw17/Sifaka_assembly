@@ -1170,7 +1170,8 @@ rule convert_mmul_names:
 rule calc_div_and_gc:
 	input:
 		maf = "maf_files/{assembly}.maf",
-		bed = "regions/{assembly}.cds.converted.bedopssorted.convcoords.bed"
+		bed = "regions/{assembly}.cds.converted.bedopssorted.convcoords.bed",
+		maf_coords = "maf_files/{assembly}_maf_coords.bedopssorted.final_inclusion.bed"
 	output:
 		"results/maf_stats_{assembly}.txt"
 	params:
@@ -1180,6 +1181,7 @@ rule calc_div_and_gc:
 	shell:
 		"python scripts/Calculate_divergence_and_gc_from_MAF.py "
 		"--bed {input.bed} --maf {input.maf} --species1 {params.genome} "
+		"--maf_coords_include {input.maf_coords} "
 		"--species2 {params.human} --output {output} --include_chrom_species2 {params.chroms}"
 
 rule bedtools_intersect_genomecov_with_cds_keeping_full_region_coords:
