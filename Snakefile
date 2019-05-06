@@ -129,10 +129,7 @@ rule all:
 			sampling=["downsampled"]),
 		"stats/compiled.bcftools_stats.csv",
 		expand(
-			"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.bed",
-			assembly=["mmul", "pcoq"]),
-		expand(
-			"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.multiple.intersect.bed",
+			"maf_files/{assembly}_maf_coords.bedopssorted.final_inclusion.bed",
 			assembly=["mmul", "pcoq"]),
 		expand(
 			"results/maf_stats_{assembly}.txt",
@@ -1133,6 +1130,25 @@ rule intersect_original_regions_with_merged_keep_both:
 		bedtools = bedtools_path
 	shell:
 		"{params.bedtools} intersect -a {input.a} -b {input.b} -wa -wb > {output}"
+
+rule keep_top_score_for_overlaps:
+	input:
+		"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.multiple.intersect.bed"
+	output:
+		"maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.multiple.intersect.topscore.bed"
+	shell:
+		"awk '$4 == $9' {input} > {output}"
+
+rule cat_and_sort_beds:
+	input:
+		single = "maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.single.bed",
+		top_score = "maf_files/{assembly}_maf_coords.bedopssorted.merged_counts.multiple.intersect.topscore.bed"
+	output:
+		"maf_files/{assembly}_maf_coords.bedopssorted.final_inclusion.bed"
+	params:
+		sort_bed = sort_bed_path
+	shell:
+		"cat {input.single} {input.top_score} | {params.sort_bed} - > {output}"
 
 rule change_period_to_v_in_pcoq:
 	"scaffold names differ in the annotation and the MAF file"
