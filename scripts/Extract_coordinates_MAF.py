@@ -49,6 +49,7 @@ def mafblock(file, line_num, sp1):
 		else:
 			# print(line)
 			skip_line = False
+			score = line[1].split("=")[1]
 
 	same_block = True
 	while same_block is True:
@@ -73,13 +74,14 @@ def mafblock(file, line_num, sp1):
 
 	maf_block = collections.namedtuple(
 		"maf_block",
-		["chrom", "start", "stop", "length", "counter"])
+		["chrom", "start", "stop", "length", "score", "counter"])
 
 	return maf_block(
 		chrom=sp1_chrom,
 		start=sp1_start,
 		length=sp1_length,
 		stop=sp1_start + sp1_length,
+		score=score,
 		counter=line_counter)
 
 def main():
@@ -102,9 +104,8 @@ def main():
 			# Begin looping through MAF file. First record already staged
 			maf_finished = False
 			while maf_finished is False:
-				o.write("{}\t{}\t{}\n".format(
-					maf_record.chrom, maf_record.start, maf_record.stop))
-
+				o.write("{}\t{}\t{}\{}\n".format(
+					maf_record.chrom, maf_record.start, maf_record.stop, maf_record.score))
 
 				if maf_record_counter % int(args.print_frequency) == 0:
 					print("{} MAF records processed...".format(maf_record_counter))

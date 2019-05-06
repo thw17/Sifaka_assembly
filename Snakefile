@@ -1108,7 +1108,7 @@ rule merge_count_maf_coord_bed:
 	params:
 		bedtools = bedtools_path
 	shell:
-		"{params.bedtools} -i {input} -c 1 > {output}"
+		"{params.bedtools} merge -i {input} -c 1 -o count > {output}"
 
 rule change_period_to_v_in_pcoq:
 	"scaffold names differ in the annotation and the MAF file"
