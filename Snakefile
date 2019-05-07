@@ -1206,19 +1206,13 @@ rule bedtools_coverage_mean_depth_per_target:
 		"{params.samtools} view {input.bam} -b -F 1024 -q 20 | "
 		"{params.bedtools} coverage -a {input.bam} -b {input.bed} -mean > {output}"
 
-rule genome_cov:
+rule split_bed_regions:
 	input:
-		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
-		idx = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai",
-		genome = "new_reference/{genome}.genome"
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed"
 	output:
-		"results/{sample}.{genome}.{sampling}.mapq20_noDup.PERSITE.genome_cov"
-	params:
-		samtools = samtools_path,
-		bedtools = bedtools_path
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.bed"
 	shell:
-		"{params.samtools} view {input.bam} -b -F 1024 -q 20 | "
-		"{params.bedtools} genomecov -d -ibam stdin -g {input.genome} > {output}"
+		"python scripts/Split_bed_regions_per_site.py --bed {input} --output {output}"
 
 rule bedtools_intersect_genomecov_with_cds_keeping_full_region_coords:
 	input:
