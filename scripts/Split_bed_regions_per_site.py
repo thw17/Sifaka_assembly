@@ -37,6 +37,7 @@ def main():
 						start_2 = start
 						while stop_2 <= stop:
 							output_line = [i[0], start_2, stop_2] + i[3:]
+							output_line = [str(x) for x in output_line]
 							o.write(
 								"{}\n".format(
 									"\t".join(output_line)))
