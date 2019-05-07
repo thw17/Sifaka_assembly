@@ -140,7 +140,7 @@ rule all:
 			sampling=["downsampled"]),
 		expand(
 			"results/{sample}.{genome}.{sampling}.mapq20_noDup.coverage_per_target.cds.bed",
-			sample=macaque_samples, genome=["hg38", "pcoq"],
+			sample=macaque_samples, genome=["hg38", "mmul"],
 			sampling=["downsampled"]),
 		expand(
 			"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.bed",
