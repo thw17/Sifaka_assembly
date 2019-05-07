@@ -1204,7 +1204,7 @@ rule bedtools_coverage_mean_depth_per_target:
 		bedtools = bedtools_path
 	shell:
 		"{params.samtools} view {input.bam} -b -F 1024 -q 20 | "
-		"{params.bedtools} coverage -a {input.bam} -b {input.bed} -mean > {output}"
+		"{params.bedtools} coverage -a {input.bed} -b stdin -mean > {output}"
 
 rule split_bed_regions:
 	input:
