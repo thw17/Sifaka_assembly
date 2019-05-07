@@ -62,6 +62,11 @@
 	"freebayes_call_hg38_macaques" :
 	{
 		"n": 8
+	},
+
+	"bedtools_coverage_mean_depth_per_target" :
+	{
+		"n": 8
 	}
 
 }
