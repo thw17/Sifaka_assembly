@@ -135,11 +135,19 @@ rule all:
 			"results/maf_stats_{assembly}.txt",
 			assembly=["mmul", "pcoq"]),
 		expand(
-			"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.coverage_per_target.cds.bed",
 			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
 			sampling=["downsampled"]),
 		expand(
-			"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.coverage_per_target.cds.bed",
+			sample=macaque_samples, genome=["hg38", "pcoq"],
+			sampling=["downsampled"]),
+		expand(
+			"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.bed",
+			sample=combined_sifaka_samples, genome=["hg38", "pcoq"],
+			sampling=["downsampled"]),
+		expand(
+			"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.bed",
 			sample=macaque_samples, genome=["hg38", "mmul"],
 			sampling=["downsampled"])
 
@@ -1184,12 +1192,40 @@ rule calc_div_and_gc:
 		"--maf_coords_include {input.maf_coords} "
 		"--species2 {params.human} --output {output} --include_chrom_species2 {params.chroms}"
 
+rule bedtools_coverage_mean_depth_per_target:
+	input:
+		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
+		bai = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai",
+		bed = "regions/{genome}.cds.converted.bedopssorted.bed"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.coverage_per_target.cds.bed"
+	params:
+		samtools = samtools_path,
+		bedtools = bedtools_path
+	shell:
+		"{params.samtools} view {input.bam} -b -F 1024 -q 20 | "
+		"{params.bedtools} coverage -a {input.bam} -b {input.bed} -mean > {output}"
+
+rule genome_cov:
+	input:
+		bam = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam",
+		idx = "processed_bams/{sample}.{genome}.sorted.mkdup.{sampling}.bam.bai",
+		genome = "new_reference/{genome}.genome"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.PERSITE.genome_cov"
+	params:
+		samtools = samtools_path,
+		bedtools = bedtools_path
+	shell:
+		"{params.samtools} view {input.bam} -b -F 1024 -q 20 | "
+		"{params.bedtools} genomecov -d -ibam stdin -g {input.genome} > {output}"
+
 rule bedtools_intersect_genomecov_with_cds_keeping_full_region_coords:
 	input:
-		cov = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed",
+		cov = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.bed",
 		cds = "regions/{genome}.cds.converted.bedopssorted.bed"
 	output:
-		"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.bed"
+		"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.bed"
 	params:
 		bedtools = bedtools_path
 	shell:
