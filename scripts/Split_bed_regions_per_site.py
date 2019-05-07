@@ -29,10 +29,9 @@ def main():
 					start = int(i[1])
 					stop = int(i[2])
 					if stop - start == 1:
-						i.insert(2, stop)
 						o.write(
 							"{}\n".format(
-								i.join("\t")))
+								"\t".join(i)))
 					else:
 						stop_2 = start + 1
 						start_2 = start
@@ -40,7 +39,7 @@ def main():
 							output_line = [i[0], start_2, stop_2] + i[3:]
 							o.write(
 								"{}\n".format(
-									output_line.join("\t")))
+									"\t".join(output_line)))
 							stop_2 += 1
 							start_2 += 1
 
