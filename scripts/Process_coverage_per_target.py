@@ -62,8 +62,8 @@ def main():
 						# and site_collector
 						else:
 							# process previous target
-							start = current_target[1]
-							stop = current_target[2]
+							start = int(current_target[1])
+							stop = int(current_target[2])
 							total_length = stop - start
 							site_counter = 0
 							total_depth = 0
