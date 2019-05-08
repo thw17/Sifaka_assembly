@@ -77,7 +77,7 @@ def main():
 								rel_depth = float(site[depth_idx]) / mean_depth
 								od.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
 									site[0], site[1], site[2], site[depth_idx],
-									rel_depth, mean_depth, site[1] - start, stop - site[2]))
+									rel_depth, mean_depth, int(site[1]) - start, stop - int(site[2])))
 
 							# reset with new target
 							current_target = target_tuple
