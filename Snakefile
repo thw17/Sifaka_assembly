@@ -143,11 +143,11 @@ rule all:
 			sample=macaque_samples, genome=["mmul"],
 			sampling=["downsampled"]),
 		expand(
-			"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed",
 			sample=combined_sifaka_samples, genome=["pcoq"],
 			sampling=["downsampled"]),
 		expand(
-			"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed",
 			sample=macaque_samples, genome=["mmul"],
 			sampling=["downsampled"])
 
@@ -1224,3 +1224,12 @@ rule bedtools_intersect_genomecov_with_cds_keeping_full_region_coords:
 		bedtools = bedtools_path
 	shell:
 		"bedtools intersect -wa -wb -a {input.cov} -b {input.cds} > {output}"
+
+rule process_coverage_per_target:
+	input:
+		"results/with_full_coords.{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.bed"
+	output:
+		per_site = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERSITE.distance_and_depth.bed",
+		target = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed"
+	shell:
+		"python scripts/Process_coverage_per_target.py --coverage_bed {input} --output_distance {output.per_site} --output_target_depth {output.target}"
