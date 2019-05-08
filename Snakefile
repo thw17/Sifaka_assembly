@@ -134,14 +134,14 @@ rule all:
 		expand(
 			"results/maf_stats_{assembly}.txt",
 			assembly=["mmul", "pcoq"]),
-		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.coverage_per_target.cds.bed",
-			sample=combined_sifaka_samples, genome=["pcoq"],
-			sampling=["downsampled"]),
-		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.coverage_per_target.cds.bed",
-			sample=macaque_samples, genome=["mmul"],
-			sampling=["downsampled"]),
+		# expand(
+		# 	"results/{sample}.{genome}.{sampling}.mapq20_noDup.coverage_per_target.cds.bed",
+		# 	sample=combined_sifaka_samples, genome=["pcoq"],
+		# 	sampling=["downsampled"]),
+		# expand(
+		# 	"results/{sample}.{genome}.{sampling}.mapq20_noDup.coverage_per_target.cds.bed",
+		# 	sample=macaque_samples, genome=["mmul"],
+		# 	sampling=["downsampled"]),
 		expand(
 			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed",
 			sample=combined_sifaka_samples, genome=["pcoq"],
