@@ -68,7 +68,7 @@ def main():
 							site_counter = 0
 							total_depth = 0
 							for site in site_collector:
-								total_depth += site[depth_idx]
+								total_depth += int(site[depth_idx])
 								site_counter += 1
 							mean_depth = float(total_depth) / float(total_length)
 							ot.write("{}\t{}\t{}\t{}\t{}\n".format(
