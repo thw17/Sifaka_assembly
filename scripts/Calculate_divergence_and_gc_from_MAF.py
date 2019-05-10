@@ -147,6 +147,33 @@ def get_gc_count(sequence):
 	return (gc_count, total_count)
 
 
+def shannon_weaver(sequence):
+	a = 0
+	t = 0
+	c = 0
+	g = 0
+	for i in sequence:
+		if check_nucleotide(i) is False:
+			continue
+		if i.lower() == "a":
+			a += 1
+		elif i.lower() == "t":
+			t += 1
+		elif i.lower() == "c":
+			c += 1
+		elif i.lower() == "g":
+			g += 1
+	freqs = [a, t, c, g]
+	tot = sum(freqs)
+	div_sum = 0
+	for i in freqs:
+		if i == 0:
+			continue
+		else:
+			div_sum += i * math.log(i)
+	return -1 * div_sum
+
+
 def comp_seq(s1, s2):
 	diff_list = []
 	for idx, i in enumerate(s1):
@@ -225,7 +252,7 @@ def main():
 
 			# add target to data_dict
 			data_dict[(line_data.chrom, line_data.start)] = [
-				line_data.stop - line_data.start, 0, 0, 0, 0, 0, 0]
+				line_data.stop - line_data.start, 0, 0, 0, 0, 0, 0, 0, 0]
 	print("Processing targets bed file complete.")
 
 	# Process bed file of MAF blocks to include
@@ -368,6 +395,8 @@ def main():
 							temp_diffs = [x for x in seqs_compared if x != "x"]
 							seq1_gc = get_gc_count(maf_record.seq1)
 							seq2_gc = get_gc_count(maf_record.seq2)
+							seq1_sw = shannon_weaver(maf_record.seq1)
+							seq2_sw = shannon_weaver(maf_record.seq2)
 							# add sites and differences
 							data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
 							data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
@@ -376,6 +405,8 @@ def main():
 							data_dict[(maf_record.chrom, tmp_bed_start)][4] += seq1_gc[1]
 							data_dict[(maf_record.chrom, tmp_bed_start)][5] += seq2_gc[0]
 							data_dict[(maf_record.chrom, tmp_bed_start)][6] += seq2_gc[1]
+							data_dict[(maf_record.chrom, tmp_bed_start)][7] += seq1_sw
+							data_dict[(maf_record.chrom, tmp_bed_start)][8] += seq2_sw
 							# MAF block done; advance to next block
 							break
 						# Case 3b: MAF stop greater than BED stop
@@ -409,6 +440,8 @@ def main():
 							temp_diffs = [x for x in seqs_compared if x != "x"]
 							seq1_gc = get_gc_count(adj_seq1)
 							seq2_gc = get_gc_count(adj_seq2)
+							seq1_sw = shannon_weaver(maf_record.seq1)
+							seq2_sw = shannon_weaver(maf_record.seq2)
 							# add sites and differences
 							data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
 							data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
@@ -417,6 +450,8 @@ def main():
 							data_dict[(maf_record.chrom, tmp_bed_start)][4] += seq1_gc[1]
 							data_dict[(maf_record.chrom, tmp_bed_start)][5] += seq2_gc[0]
 							data_dict[(maf_record.chrom, tmp_bed_start)][6] += seq2_gc[1]
+							data_dict[(maf_record.chrom, tmp_bed_start)][7] += seq1_sw
+							data_dict[(maf_record.chrom, tmp_bed_start)][8] += seq2_sw
 							# MAF record IS NOT done; keep MAF and advance to next BED
 							# target
 							bed_idx += 1
@@ -451,6 +486,8 @@ def main():
 							temp_diffs = [x for x in seqs_compared if x != "x"]
 							seq1_gc = get_gc_count(adj_seq1)
 							seq2_gc = get_gc_count(adj_seq2)
+							seq1_sw = shannon_weaver(maf_record.seq1)
+							seq2_sw = shannon_weaver(maf_record.seq2)
 							# add sites and differences
 							data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
 							data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
@@ -459,6 +496,8 @@ def main():
 							data_dict[(maf_record.chrom, tmp_bed_start)][4] += seq1_gc[1]
 							data_dict[(maf_record.chrom, tmp_bed_start)][5] += seq2_gc[0]
 							data_dict[(maf_record.chrom, tmp_bed_start)][6] += seq2_gc[1]
+							data_dict[(maf_record.chrom, tmp_bed_start)][7] += seq1_sw
+							data_dict[(maf_record.chrom, tmp_bed_start)][8] += seq2_sw
 							# MAF record is done; move to next MAF
 							break
 						# Case 4b: MAF block end is greater than BED; subset MAF before
@@ -489,6 +528,8 @@ def main():
 							temp_diffs = [x for x in seqs_compared if x != "x"]
 							seq1_gc = get_gc_count(adj_seq1)
 							seq2_gc = get_gc_count(adj_seq2)
+							seq1_sw = shannon_weaver(maf_record.seq1)
+							seq2_sw = shannon_weaver(maf_record.seq2)
 							# add sites and differences
 							data_dict[(maf_record.chrom, tmp_bed_start)][1] += len(temp_diffs)
 							data_dict[(maf_record.chrom, tmp_bed_start)][2] += sum(temp_diffs)
@@ -497,6 +538,8 @@ def main():
 							data_dict[(maf_record.chrom, tmp_bed_start)][4] += seq1_gc[1]
 							data_dict[(maf_record.chrom, tmp_bed_start)][5] += seq2_gc[0]
 							data_dict[(maf_record.chrom, tmp_bed_start)][6] += seq2_gc[1]
+							data_dict[(maf_record.chrom, tmp_bed_start)][7] += seq1_sw
+							data_dict[(maf_record.chrom, tmp_bed_start)][8] += seq2_sw
 							# MAF record IS NOT done; keep MAF and advance to next BED
 							# target
 							bed_idx += 1
@@ -563,7 +606,8 @@ def main():
 
 	# Output results
 	with open(args.output, "w") as f:
-		f.write("chrom\tstart\tlength\tnum_sites\tdiffs\tp_dist\tJC69\tfrac_gc_sp1\tfrac_gc_sp2\n")
+		f.write(
+			"chrom\tstart\tlength\tnum_sites\tdiffs\tp_dist\tJC69\tfrac_gc_sp1\tfrac_gc_sp2\tsw_sp1\tsw_sp2\n")
 		for key in data_dict:
 			tmp_list = data_dict[key]
 			if tmp_list[1] == 0:
@@ -571,11 +615,15 @@ def main():
 				jc = 0
 				frac_gc_sp1 = 0
 				frac_gc_sp2 = 0
+				sw_sp1 = 0
+				sw_sp2 = 0
 			else:
 				p_dist = tmp_list[2] / tmp_list[1]
 				jc = jc69(tmp_list[2] / tmp_list[1])
 				frac_gc_sp1 = tmp_list[3] / tmp_list[4]
 				frac_gc_sp2 = tmp_list[5] / tmp_list[6]
+				sw1 = tmp_list[7]
+				sw2 = tmp_list[8]
 			f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
 				key[0],
 				key[1],
@@ -585,7 +633,9 @@ def main():
 				p_dist,
 				jc,
 				frac_gc_sp1,
-				frac_gc_sp2))
+				frac_gc_sp2,
+				sw1,
+				sw2))
 
 
 if __name__ == "__main__":
