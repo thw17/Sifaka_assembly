@@ -622,8 +622,8 @@ def main():
 				jc = jc69(tmp_list[2] / tmp_list[1])
 				frac_gc_sp1 = tmp_list[3] / tmp_list[4]
 				frac_gc_sp2 = tmp_list[5] / tmp_list[6]
-				sw1 = tmp_list[7]
-				sw2 = tmp_list[8]
+				sw_sp1 = tmp_list[7]
+				sw_sp2 = tmp_list[8]
 			f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
 				key[0],
 				key[1],
@@ -634,8 +634,8 @@ def main():
 				jc,
 				frac_gc_sp1,
 				frac_gc_sp2,
-				sw1,
-				sw2))
+				sw_sp1,
+				sw_sp2))
 
 
 if __name__ == "__main__":
