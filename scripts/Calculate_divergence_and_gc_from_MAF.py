@@ -165,6 +165,7 @@ def shannon_weaver(sequence):
 			g += 1
 	freqs = [a, t, c, g]
 	tot = sum(freqs)
+	freqs = [float(x)/tot for x in freqs]
 	div_sum = 0
 	for i in freqs:
 		if i == 0:
@@ -624,7 +625,7 @@ def main():
 				frac_gc_sp2 = tmp_list[5] / tmp_list[6]
 				sw_sp1 = tmp_list[7]
 				sw_sp2 = tmp_list[8]
-			f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\{}\t{}\n".format(
+			f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
 				key[0],
 				key[1],
 				tmp_list[0],
