@@ -1265,7 +1265,7 @@ rule add_key_columns_to_pertarget_depth:
 	input:
 		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.coverted.bed"
 	output:
-		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.converted.bed"
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.bed"
 	params:
 		id = "{sample}"
 	shell:
