@@ -132,7 +132,7 @@ rule all:
 			"maf_files/{assembly}_maf_coords.bedopssorted.final_inclusion.bed",
 			assembly=["mmul", "pcoq"]),
 		expand(
-			"results/maf_stats_{assembly}.txt",
+			"results/maf_stats_{assembly}.withidcolumn.txt",
 			assembly=["mmul", "pcoq"]),
 		# expand(
 		# 	"results/{sample}.{genome}.{sampling}.mapq20_noDup.coverage_per_target.cds.bed",
@@ -143,11 +143,11 @@ rule all:
 		# 	sample=macaque_samples, genome=["mmul"],
 		# 	sampling=["downsampled"]),
 		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.withidcolumns.bed",
 			sample=combined_sifaka_samples, genome=["pcoq"],
 			sampling=["downsampled"]),
 		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.withidcolumns.bed",
 			sample=macaque_samples, genome=["mmul"],
 			sampling=["downsampled"])
 
@@ -1233,3 +1233,21 @@ rule process_coverage_per_target:
 		target = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed"
 	shell:
 		"python scripts/Process_coverage_per_target.py --coverage_bed {input} --output_distance {output.per_site} --output_target_depth {output.target}"
+
+rule add_key_columns_to_pertarget_depth:
+	input:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.withidcolumns.bed"
+	params:
+		id = "{sample}"
+	shell:
+		"python scripts/Add_columns_to_depth_per_target.py --input {input} --id {params.id} --output {output}"
+
+rule add_key_column_to_maf_stats:
+	input:
+		"results/maf_stats_{assembly}.txt"
+	output:
+		"results/maf_stats_{assembly}.withidcolumn.txt"
+	shell:
+		"python scripts/Add_column_to_maf_stats.py --input {input} --output {output}"
