@@ -56,7 +56,7 @@ def main():
 				out_line = "\t".join(line1)
 				o.write("{}\n".format(out_line))
 			for item in missing_targets:
-				out_line = "\t".join(missing_targets[item])
+				out_line = "\t".join([str(x) for x in missing_targets[item]])
 				o.write("{}\n".format(out_line))
 
 
