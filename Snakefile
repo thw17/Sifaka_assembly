@@ -1263,7 +1263,7 @@ rule add_missing_targets_to_pertarget_depth:
 
 rule add_key_columns_to_pertarget_depth:
 	input:
-		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.coverted.bed"
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.bed"
 	output:
 		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.bed"
 	params:
