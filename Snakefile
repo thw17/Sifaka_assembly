@@ -1234,7 +1234,7 @@ rule process_coverage_per_target:
 	shell:
 		"python scripts/Process_coverage_per_target.py --coverage_bed {input} --output_distance {output.per_site} --output_target_depth {output.target}"
 
-rule change_period_to_v_in_pcoq:
+rule change_period_to_v_in_pcoq_depth:
 	"scaffold names differ in the annotation and the MAF file"
 	input:
 		pco = "results/{sample}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed",
@@ -1243,7 +1243,7 @@ rule change_period_to_v_in_pcoq:
 	shell:
 		"sed 's/\.1/v1/g' {input.pco} > {output.p}"
 
-rule convert_mmul_names:
+rule convert_mmul_names_depth:
 	input:
 		"results/{sample}.mmul.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed"
 	output:
