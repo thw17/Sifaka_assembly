@@ -143,11 +143,11 @@ rule all:
 		# 	sample=macaque_samples, genome=["mmul"],
 		# 	sampling=["downsampled"]),
 		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.withidcolumns.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.withidcolumns.bed",
 			sample=combined_sifaka_samples, genome=["pcoq"],
 			sampling=["downsampled"]),
 		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.withidcolumns.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.withidcolumns.bed",
 			sample=macaque_samples, genome=["mmul"],
 			sampling=["downsampled"])
 
@@ -1234,11 +1234,21 @@ rule process_coverage_per_target:
 	shell:
 		"python scripts/Process_coverage_per_target.py --coverage_bed {input} --output_distance {output.per_site} --output_target_depth {output.target}"
 
+rule add_missing_targets_to_pertarget_depth:
+	input:
+		depth = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed",
+		maf_stats = "results/maf_stats_{genome}.txt"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.bed"
+	shell:
+		"python scripts/Add_missing_targets_to_depth.py --input_depth {input.depth} --input_maf_stats {input.maf_stats} --output {output}"
+
+
 rule add_key_columns_to_pertarget_depth:
 	input:
-		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed"
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.bed"
 	output:
-		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.withidcolumns.bed"
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.withidcolumns.bed"
 	params:
 		id = "{sample}"
 	shell:
