@@ -143,11 +143,11 @@ rule all:
 		# 	sample=macaque_samples, genome=["mmul"],
 		# 	sampling=["downsampled"]),
 		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.withidcolumns.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.bed",
 			sample=combined_sifaka_samples, genome=["pcoq"],
 			sampling=["downsampled"]),
 		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.withidcolumns.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.bed",
 			sample=macaque_samples, genome=["mmul"],
 			sampling=["downsampled"])
 
@@ -1234,21 +1234,38 @@ rule process_coverage_per_target:
 	shell:
 		"python scripts/Process_coverage_per_target.py --coverage_bed {input} --output_distance {output.per_site} --output_target_depth {output.target}"
 
+rule change_period_to_v_in_pcoq:
+	"scaffold names differ in the annotation and the MAF file"
+	input:
+		pco = "results/{sample}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed",
+	output:
+		p = "results/{sample}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.bed"
+	shell:
+		"sed 's/\.1/v1/g' {input.pco} > {output.p}"
+
+rule convert_mmul_names:
+	input:
+		"results/{sample}.mmul.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed"
+	output:
+		"results/{sample}.mmul.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.bed"
+	shell:
+		"python scripts/Convert_mmul_names.py --bed {input} --outfile {output}"
+
 rule add_missing_targets_to_pertarget_depth:
 	input:
-		depth = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.bed",
+		depth = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.bed",
 		maf_stats = "results/maf_stats_{genome}.txt"
 	output:
-		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.bed"
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.bed"
 	shell:
 		"python scripts/Add_missing_targets_to_depth.py --input_depth {input.depth} --input_maf_stats {input.maf_stats} --output {output}"
 
 
 rule add_key_columns_to_pertarget_depth:
 	input:
-		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.bed"
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.coverted.bed"
 	output:
-		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.alltargets.withidcolumns.bed"
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.converted.bed"
 	params:
 		id = "{sample}"
 	shell:
