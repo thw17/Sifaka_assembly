@@ -1282,7 +1282,7 @@ rule add_key_column_to_maf_stats:
 rule merge_depth_and_maf_stats:
 	input:
 		depth = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.bed",
-		maf_stats = "results/maf_stats_{assembly}.withidcolumn.txt"
+		maf_stats = "results/maf_stats_{genome}.withidcolumn.txt"
 	output:
 		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.MERGED.bed"
 	shell:
