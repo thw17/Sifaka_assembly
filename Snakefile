@@ -143,11 +143,11 @@ rule all:
 		# 	sample=macaque_samples, genome=["mmul"],
 		# 	sampling=["downsampled"]),
 		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.MERGED.bed",
 			sample=combined_sifaka_samples, genome=["pcoq"],
 			sampling=["downsampled"]),
 		expand(
-			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.bed",
+			"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.MERGED.bed",
 			sample=macaque_samples, genome=["mmul"],
 			sampling=["downsampled"])
 
@@ -1278,3 +1278,12 @@ rule add_key_column_to_maf_stats:
 		"results/maf_stats_{assembly}.withidcolumn.txt"
 	shell:
 		"python scripts/Add_column_to_maf_stats.py --input {input} --output {output}"
+
+rule merge_depth_and_maf_stats:
+	input:
+		depth = "results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.bed",
+		maf_stats = "results/maf_stats_{assembly}.withidcolumn.txt"
+	output:
+		"results/{sample}.{genome}.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.alltargets.withidcolumns.MERGED.bed"
+	shell:
+		"python scripts/Merge_depth_and_maf_stats.py --input_depth {input.depth} --input_maf_stats {input.maf_stats} --output {output}"
