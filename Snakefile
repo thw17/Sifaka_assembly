@@ -1241,7 +1241,7 @@ rule change_period_to_v_in_pcoq_depth:
 	output:
 		p = "results/{sample}.pcoq.{sampling}.mapq20_noDup.genome_cov.bedopssorted.PERTARGET.depth.converted.bed"
 	shell:
-		"sed 's/\.1/v1/g' {input.pco} > {output.p}"
+		"sed 's/\.1\t/v1\t/g' {input.pco} > {output.p}"
 
 rule convert_mmul_names_depth:
 	input:
